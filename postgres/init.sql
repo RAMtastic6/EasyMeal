@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2024-04-05 16:59:05
+-- Started on 2024-05-04 17:54:10
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -49,7 +49,8 @@ CREATE TABLE public.customer (
     id integer NOT NULL,
     name character varying(30) NOT NULL,
     surname character varying(30) NOT NULL,
-    email character varying(256) NOT NULL
+    email character varying(256) NOT NULL,
+    password character varying(256) NOT NULL
 );
 
 
@@ -241,7 +242,7 @@ ALTER TABLE public.restaurant ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 -- Data for Name: customer; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.customer (id, name, surname, email) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'user');
+INSERT INTO public.customer (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'user', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb');
 
 
 --
@@ -568,7 +569,7 @@ ALTER TABLE ONLY public.order_detail
     ADD CONSTRAINT "FK_c2a7f2de6b58c7c5ccf4303e1aa" FOREIGN KEY (customer_id) REFERENCES public.customer(id);
 
 
--- Completed on 2024-04-05 16:59:05
+-- Completed on 2024-05-04 17:54:10
 
 --
 -- PostgreSQL database dump complete
