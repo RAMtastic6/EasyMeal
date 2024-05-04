@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: easy-meal
+    build: 
+      context: postgres/.
+      dockerfile: Dockerfile
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "7070:7070"
+    command: -p 7070
+
+  nestjs:
+    build: 
+      context: nest-js/easy-meal-backend/.
+      dockerfile: Dockerfile
+    ports:
+      - "6969:6969"
+    volumes:
+      - ./nest-js:/usr/nest/app
+    command: npm run start:dev #:dev <- Si perdono i logs iniziali
+    depends_on:
+      - postgres
+
+  socket:
+    build: 
+      context: websocket-server/.
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    command: npm run start:dev #:dev <- Si perdono i logs iniziali
+    depends_on:
+      - postgres
+
+  nextjs:
+    build:
+      context: next-js/poc/.
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./next-js:/usr/next/app
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: true #Fast refresh non funziona, fixare oppure togliere questa riga
+    command: npm run dev
+    depends_on:
+      - nestjs
+      
+volumes:
+  postgres_data:
