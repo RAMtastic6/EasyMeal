@@ -4,6 +4,7 @@ export class Endpoints {
     static readonly host = "http://localhost:6969/";
     static readonly restaurant = Endpoints.host + "restaurant/";
     static readonly reservation = Endpoints.host + "reservation/";
+    static readonly customer = Endpoints.host + "customer/"; 
     static readonly order = Endpoints.host + "order/";
     static readonly socket = "http://localhost:8000/";
 }

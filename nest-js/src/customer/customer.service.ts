@@ -35,13 +35,11 @@ export class CustomerService {
   }
 
   async login(email: string, password: string) {
-    console.log(email, password);
     const result = await this.customerRepo.findOne({where: {email, password}});
-    if(result == null) {
-      return new HttpException('Login not valid', HttpStatus.UNAUTHORIZED);
+    if (!result) {
+      return false;
     }
     const token = this.jwtService.sign({id: result.id, name: result.name});
-    console.log(token);
-    return {token: token, userName: result.name};
+    return {token: token, userName: result.name, role: 'customer'};
   }
 }

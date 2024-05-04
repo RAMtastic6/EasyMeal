@@ -1,4 +1,4 @@
-import { createReservation } from "@/app/lib/database/reservation";
+import { createReservation } from "../lib/database/reservation";
 import { useState } from 'react';
 import Link from "next/link";
 

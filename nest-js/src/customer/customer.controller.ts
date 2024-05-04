@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, HttpCode } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -33,10 +33,15 @@ export class CustomerController {
   }
 
   @Post('login')
-  login(@Body() body: {
+  @HttpCode(200)
+  async login(@Body() body: {
     email: string,
     password: string
   }) {
-    return this.customerService.login(body.email, body.password);
+    const result = await this.customerService.login(body.email, body.password);
+    if(!result) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
+    return result;
   }
 }

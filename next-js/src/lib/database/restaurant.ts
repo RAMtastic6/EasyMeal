@@ -1,3 +1,4 @@
+import next from "next";
 import { Endpoints } from "./endpoints";
 
 export interface RestaurantFilter {
@@ -54,8 +55,9 @@ export async function getRestaurantOrders(id: number) {
 }
 
 //Get all the cuisines
-export async function getCuisines(): Promise<JSON> {
-    const response = await fetch(`${Endpoints.restaurant}cuisines`);
+export async function getAllCuisines(): Promise<string[]> {
+    //cacha la risposta per un ora
+    const response = await fetch(`${Endpoints.restaurant}cuisines`, { next: { revalidate: 3600 } });
     if (!response.ok) {
         throw new Error('Error fetching cuisines from the database');
     }
@@ -64,8 +66,8 @@ export async function getCuisines(): Promise<JSON> {
 }
 
 //Get all the cities
-export async function getCities(): Promise<JSON> {
-    const response = await fetch(`${Endpoints.restaurant}cities`);
+export async function getAllCities(): Promise<string[]> {
+    const response = await fetch(`${Endpoints.restaurant}cities`, { next: { revalidate: 3600 } });
     if (!response.ok) {
         throw new Error('Error fetching cities from the database');
     }

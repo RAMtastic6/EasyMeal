@@ -18,7 +18,7 @@ services:
 
   nestjs:
     build: 
-      context: nest-js/easy-meal-backend/.
+      context: nest-js/.
       dockerfile: Dockerfile
     ports:
       - "6969:6969"
@@ -40,7 +40,7 @@ services:
 
   nextjs:
     build:
-      context: next-js/poc/.
+      context: next-js/.
       dockerfile: Dockerfile
     ports:
       - "3000:3000"

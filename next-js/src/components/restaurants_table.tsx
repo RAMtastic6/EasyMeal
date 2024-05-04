@@ -2,7 +2,7 @@
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getFilteredRestaurants, RestaurantFilter } from '@/app/lib/database/restaurant';
+import { getFilteredRestaurants, RestaurantFilter } from '../lib/database/restaurant';
 import SkeletonTable from './skeleton_restaurants_table';
 
 export default function RestaurantsTable() {

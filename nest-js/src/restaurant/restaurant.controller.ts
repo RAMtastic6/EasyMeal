@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto as RestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
@@ -63,7 +63,11 @@ export class RestaurantController {
   }
 
   @Get(':id/menu')
-  getMenuByReservationId(@Param('id') id: string) {
-    return this.restaurantService.getMenuByRestaurantId(+id);
+  async getMenuByReservationId(@Param('id') id: string) {
+    const result = await this.restaurantService.getMenuByRestaurantId(+id);
+    if(result == null) {
+      throw new NotFoundException('Reservation not found');
+    }
+    return result;
   }
 }

@@ -1,4 +1,4 @@
-import Login from '@/app/ui/login/login';
+import Login from '../../components/login';
 
 export default function Page() {
     return (

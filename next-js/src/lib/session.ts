@@ -3,6 +3,7 @@ import 'server-only'
 
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers';
+import { Endpoints } from './database/endpoints';
 
 const secretKey = 'sgroi';
 const encodeKey = new TextEncoder().encode(secretKey);
@@ -19,13 +20,16 @@ export async function decryptToken(token: string) {
 export async function createSession(email: string, hashedPassword: string) {
     let token;
     try {
-        const response = await fetch('http://localhost:6969/customer/login', {
+        const response = await fetch(Endpoints.customer+"login", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email: email, password: hashedPassword }),
         });
+        if (response.status != 200) {
+            return false;
+        }
         token = (await response.json()).token;
     } catch (error) {
         //TODO: Handle error

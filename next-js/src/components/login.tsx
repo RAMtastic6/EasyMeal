@@ -1,20 +1,25 @@
 'use client';
-import { createSession } from "@/app/lib/session";
+import { createSession } from "../lib/session";
 import { sha256 } from "crypto-sha";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 
-export default function Example() {
+export default function login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [error, setError] = useState('');
+	const router = useRouter();
 
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const hashedPassword = await sha256(password);
 		const result = await createSession(email, hashedPassword);
-		console.log(result);
+		if(result)
+			router.push('/create_reservation');
+		else
+			setError('Credenziali non corrette.');
 	}
-
 
 	return (
 		<>
@@ -80,9 +85,10 @@ export default function Example() {
 									>
 										Login
 									</button>
+
 								</div>
 							</form>
-
+							{error && <p className="mt-4 text-center text-red-500">{error}</p>}
 							<p className="mt-10 text-center text-sm text-gray-500">
 								Non sei ancora registrato?{' '}
 								<a href="#" className="font-semibold leading-6 text-red-950 hover:text-white underline">

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 
-export default function RestaurantSearch() {
+export default function RestaurantSearch({ cuisines, cities } : {cuisines: string[], cities: string[]}) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
@@ -37,8 +37,8 @@ export default function RestaurantSearch() {
     const [city, setCity] = useState('');
     const [cuisine, setCuisine] = useState('');
 
-    const cuisines = getCuisines();
-    const cities = getCities();
+    //const cuisines = getCuisines();
+    //const cities = ['Milano', 'Roma', 'Napoli', 'Torino', 'Bologna', 'Firenze', 'Palermo', 'Genova', 'Bari', 'Catania'];
 
     return (
         <div>
@@ -82,6 +82,7 @@ export default function RestaurantSearch() {
                         type="text"
                         id="Search"
                         placeholder="Inserisci una città..."
+                        list='citySuggestions'
                         className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-10 shadow-sm sm:text-sm pl-[14px]"
                         value={city}
                         onChange={(e) => {
@@ -89,6 +90,11 @@ export default function RestaurantSearch() {
                             handleSearch(nameRestaurant, date, e.target.value, cuisine);
                         }}
                     />
+                    <datalist id="citySuggestions">
+                        {cities.map((city) => (
+                            <option key={city} value={city} />
+                        ))}
+                    </datalist>
 
                     <span className="absolute inset-y-0 end-0 grid w-10 place-content-center">
                         <button type="button" className="text-gray-600 hover:text-gray-700">
@@ -125,11 +131,6 @@ export default function RestaurantSearch() {
                 </div>
 
                 <div className="relative">
-                    <datalist id="citySuggestions">
-                        {cities.map((city) => (
-                            <option key={city} value={city} />
-                        ))}
-                    </datalist>
                     <select
                         name="HeadlineAct"
                         id="HeadlineAct"

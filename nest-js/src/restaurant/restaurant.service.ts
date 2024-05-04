@@ -101,9 +101,6 @@ export class RestaurantService {
       where: { id }, 
       relations: ['restaurant.menu', 'restaurant.menu.foods'],
     });
-    if(result == null) {
-      throw new NotFoundException('Reservation not found');
-    }
     return result;
   }
 }
