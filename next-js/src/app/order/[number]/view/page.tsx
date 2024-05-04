@@ -1,9 +1,9 @@
 'use client';
-import MenuTable from '@/app/ui/order/menu_table';
-import Header from '@/app/ui/header';
-import OrderCart from '@/app/ui/order/order_cart';
-import { Endpoints } from '@/app/lib/database/endpoints';
-import { getRestaurantOrders } from '@/app/lib/database/restaurant';
+import MenuTable from '@/src/components/menu_table';
+import Header from '@/src/components/header';
+import OrderCart from '@/src/components/order_cart';
+import { Endpoints } from '@/src/lib/database/endpoints';
+import { getRestaurantOrders } from '@/src/lib/database/restaurant';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 

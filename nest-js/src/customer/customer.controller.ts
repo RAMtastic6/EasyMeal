@@ -18,8 +18,11 @@ export class CustomerController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.customerService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.customerService.findOne(+id);
+    if(result == false) 
+      throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
+    return result;
   }
 
   @Patch(':id')

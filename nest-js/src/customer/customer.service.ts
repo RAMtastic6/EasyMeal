@@ -22,8 +22,11 @@ export class CustomerService {
     return `This action returns all customer`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
+  async findOne(id: number) {
+    const customer = await this.customerRepo.findOne({where: {id}});
+    if(customer) {
+      return customer;
+    } else return false;
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
@@ -36,10 +39,11 @@ export class CustomerService {
 
   async login(email: string, password: string) {
     const result = await this.customerRepo.findOne({where: {email, password}});
+    console.log(result);
     if (!result) {
       return false;
     }
-    const token = this.jwtService.sign({id: result.id, name: result.name});
+    const token = this.jwtService.sign({id: result.id, role: 'customer'});
     return {token: token, userName: result.name, role: 'customer'};
   }
 }

@@ -8,9 +8,10 @@ import { Endpoints } from './database/endpoints';
 const secretKey = 'sgroi';
 const encodeKey = new TextEncoder().encode(secretKey);
 
-export async function decryptToken(token: string) {
+export async function decryptToken(token: string | undefined) {
     try {
-        const { payload } = await jwtVerify(token, encodeKey, { algorithms: ['HS256'] });
+        const { payload } = await jwtVerify(token ?? '', encodeKey, 
+        { algorithms: ['HS256'] });
         return payload;
     } catch (error) {
         console.log('Error decrypting token', error);

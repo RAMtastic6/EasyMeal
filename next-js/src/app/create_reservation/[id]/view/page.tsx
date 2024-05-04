@@ -1,7 +1,7 @@
 'use client';
-import { getRestaurantById } from '@/app/lib/database/restaurant';
-import ReservationForm from '@/app/ui/create_reservation/reservation_form';
-import Header from '@/app/ui/header';
+import { getRestaurantById } from '@/src/lib/database/restaurant';
+import ReservationForm from '@/src/components/reservation_form';
+import Header from '@/src/components/header';
 import { useEffect, useState } from 'react';
 
 export default function Page({ params }: { params: { id: string } }) {
