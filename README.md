@@ -5,19 +5,19 @@ Progetto del gruppo 14 per il capitolato Easy Meal.
 
 **Clonare il repository del progetto**:
    
-    ```bash
-    git clone https://github.com/tuoutis/easy-meal.git
-    cd easy-meal
-    ```
+```bash
+git clone https://github.com/tuoutis/easy-meal.git
+cd easy-meal
+```
 
 ## Procedimento per avviare l'applicazione:
 
 - [Docker](#docker)
 - [Npm](#npm) 
 
-N.B: Si consiglia il metodo npm durante lo sviluppo poichè supporta il fast refresh
+**N.B**: Si consiglia il metodo npm durante lo sviluppo poichè supporta il fast refresh
 
-## Docket <a name="docker"></a>
+## <a name="docker"></a> Docker
 
 Questo progetto utilizza Docker Compose per gestire l'avvio dei container Docker. Segui le istruzioni di seguito per avviare i container e utilizzare l'applicazione.
 
@@ -60,7 +60,7 @@ Assicurati di avere un backup dei dati importanti prima di eseguire `docker-comp
 
 Per ulteriori informazioni su Docker Compose, consulta la documentazione ufficiale: https://docs.docker.com/compose/
 
-## NPM <a name="npm"></a>
+## <a name="npm"></a> NPM
 
 **Senza Docker**
 
@@ -69,47 +69,47 @@ Per ulteriori informazioni su Docker Compose, consulta la documentazione ufficia
 - npm (Node Package Manager)
 - postgresSQL
 
-N.B: Si ricorda che bisogna importare il dump del database nel proprio computer, per farlo si puo usare pgAdmin
+**N.B**: Si ricorda che bisogna importare il dump del database nel proprio computer, per farlo si puo usare pgAdmin
 
 1. **Installare le dipendenze per il backend Nest.js**:
 
-    ```bash
-    cd nest-js
-    npm install
-    ``` 
+```bash
+cd nest-js
+npm install
+``` 
 
 2. **Avviare il server backend Nest.js**:
 
-    ```bash
-    npm run start:dev
-    ```
+```bash
+npm run start:dev
+```
 
 3. **Installare le dipendenze per il frontend Next.js**:
     Aprire una nuova shell lasciando la precedente in esecuzione
 
-    ```bash
-    cd next-js
-    npm install
-    ```
+```bash
+cd next-js
+npm install
+```
 
 4. **Avviare il server frontend Next.js**:
 
-    ```bash
-    npm run dev
-    ```
+```bash
+npm run dev
+```
 
 5. **Installare le dipendenze per il progetto socket Nest.js**:
 
-    ```bash
-    cd websocket-server
-    npm install
-    ```
+```bash
+cd websocket-server
+npm install
+```
 
 6. **Avviare il server backend Nest.js**:
 
-    ```bash
-    npm run start:dev
-    ```
+```bash
+npm run start:dev
+```
 
 7. **Accedere all'applicazione**:
    
