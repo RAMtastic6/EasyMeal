@@ -2,56 +2,90 @@ version: '3'
 
 services:
   postgres:
+    networks:
+      - webnet
     image: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: easy-meal
-    build: 
-      context: postgres/.
-      dockerfile: Dockerfile
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/:/docker-entrypoint-initdb.d
     ports:
       - "7070:7070"
     command: -p 7070
 
   backend:
+    networks:
+      - webnet
     build: 
       context: nest-js/.
       dockerfile: Dockerfile
     ports:
       - "6969:6969"
-    command: npm run start:dev #:dev <- Si perdono i logs iniziali
+    command: npm run start:dev
     depends_on:
       - postgres
     environment:
       - POSTGRES_PORT=7070
       - POSTGRES_HOST=postgres
+    develop:
+      watch:
+        - path: ./nest-js
+          target: /var/backend
+          action: sync
+          ignore:
+            - node_modules/
+        - path: ./nest-js/package.json
+          target: /var/backend/package.json
+          action: rebuild
 
   socket:
+    networks:
+      - webnet
     build: 
       context: websocket-server/.
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    command: npm run start:dev #:dev <- Si perdono i logs iniziali
+    command: npm run start:dev
     depends_on:
       - postgres
+    develop:
+      watch:
+        - path: ./socket
+          target: /var/socket
+          action: sync
+          ignore:
+            - node_modules/
+        - path: ./socket/package.json
+          target: /var/socket/package.json
+          action: rebuild
 
   frontend:
+    networks:
+      - webnet
     build:
       context: next-js/.
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    develop:
+      watch:
+        - path: ./next-js
+          target: /var/frontend
+          action: sync
+          ignore:
+            - node_modules/
+        - path: ./next-js/package.json
+          target: /var/frontend/package.json
+          action: rebuild
     environment:
-      - NODE_ENV=development
-      - WATCHPACK_POLLING=true #Fast refresh non funziona, fixare oppure togliere questa riga
       - BACKEND_HOST=backend
     command: npm run dev
     depends_on:
       - backend
       
-volumes:
-  postgres_data:
+networks:
+  webnet:
+    driver: bridge

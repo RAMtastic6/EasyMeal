@@ -2,7 +2,7 @@
 FROM node:21
 
 # Imposta la directory di lavoro all'interno del contenitore
-WORKDIR /app
+WORKDIR /var/frontend
 
 # Copia i file di dipendenza
 COPY package*.json ./

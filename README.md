@@ -12,10 +12,9 @@ cd easy-meal
 
 ## Procedimento per avviare l'applicazione:
 
-- [Docker](#docker)
+- [Docker](#docker) **consigliato**
 - [Npm](#npm) 
 
-**N.B**: Si consiglia il metodo npm durante lo sviluppo poichè supporta il fast refresh
 
 ## <a name="docker"></a> Docker
 
@@ -27,6 +26,18 @@ Per avviare i container utilizzando Docker Compose, esegui il seguente comando n
 
 ```bash
 docker-compose up
+```
+
+Se intendi usare docker per lo sviluppo locale allora utilizza il seguente comando per vedere in "tempo reale" le modifiche:
+
+```bash
+docker-compose watch
+```
+
+Se invece intendi solo far partire i servizi senza che la console di comando attendi la chiusura usa:
+
+```bash
+docker-compose up -d
 ```
 
 Questo comando avvierà i container secondo la configurazione definita nel file `docker-compose.yml`. Assicurati di avere Docker e Docker Compose installati sul tuo sistema prima di eseguire questo comando.

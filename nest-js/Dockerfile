@@ -2,7 +2,7 @@
 FROM node:21
 
 # Imposta il working directory nell'applicazione
-WORKDIR /src
+WORKDIR /var/backend
 
 # Copia il package.json e l'package-lock.json nella directory di lavoro
 COPY package*.json ./
