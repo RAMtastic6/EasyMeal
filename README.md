@@ -28,6 +28,8 @@ Per avviare i container utilizzando Docker Compose, esegui il seguente comando n
 docker-compose up
 ```
 
+**Sviluppo locale:**
+
 Se intendi usare docker per lo sviluppo locale allora utilizza il seguente comando per vedere in "tempo reale" le modifiche:
 
 ```bash
