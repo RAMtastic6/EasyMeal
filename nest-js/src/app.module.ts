@@ -15,8 +15,8 @@ import { ReservationModule } from './reservation/reservation.module';
   imports: [RestaurantModule, MenuModule, FoodModule, 
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
+      host: process.env.POSTGRES_HOST,
+      port: parseInt(process.env.POSTGRES_PORT),
       username: 'postgres',
       password: 'postgres',
       database: 'easy-meal',

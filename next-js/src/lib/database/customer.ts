@@ -1,3 +1,5 @@
+'use server';
+import 'server-only'
 import { Endpoints } from "./endpoints";
 
 export async function getCustomerById(id: number) {

@@ -16,17 +16,18 @@ services:
       - "7070:7070"
     command: -p 7070
 
-  nestjs:
+  backend:
     build: 
       context: nest-js/.
       dockerfile: Dockerfile
     ports:
       - "6969:6969"
-    volumes:
-      - ./nest-js:/usr/nest/app
     command: npm run start:dev #:dev <- Si perdono i logs iniziali
     depends_on:
       - postgres
+    environment:
+      - POSTGRES_PORT=7070
+      - POSTGRES_HOST=postgres
 
   socket:
     build: 
@@ -38,20 +39,19 @@ services:
     depends_on:
       - postgres
 
-  nextjs:
+  frontend:
     build:
       context: next-js/.
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - ./next-js:/usr/next/app
     environment:
-      NODE_ENV: development
-      WATCHPACK_POLLING: true #Fast refresh non funziona, fixare oppure togliere questa riga
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true #Fast refresh non funziona, fixare oppure togliere questa riga
+      - BACKEND_HOST=backend
     command: npm run dev
     depends_on:
-      - nestjs
+      - backend
       
 volumes:
   postgres_data:
