@@ -6,7 +6,7 @@ Progetto del gruppo 14 per il capitolato Easy Meal.
 **Clonare il repository del progetto**:
    
 ```bash
-git clone https://github.com/tuoutis/easy-meal.git
+git clone https://github.com/RAMtastic6/EasyMeal.git
 cd easy-meal
 ```
 
