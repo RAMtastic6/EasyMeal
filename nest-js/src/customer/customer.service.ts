@@ -1,21 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateCustomerDto } from './dto/create-customer.dto';
+import { CustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from './entities/customer.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { hashPassword } from '../utils';
 
 @Injectable()
 export class CustomerService {
   constructor(
     @InjectRepository(Customer)
     private customerRepo: Repository<Customer>,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
   
-  async create(createCustomerDto: CreateCustomerDto) {
-    const { email, name, surname, password } = createCustomerDto;
+  async create(customerDto: CustomerDto) {
+    const { email, name, surname, password } = customerDto;
 
     // Check if email is already registered
     const existingCustomer = await this.customerRepo.findOne({ where: { email } });
@@ -23,12 +24,19 @@ export class CustomerService {
       throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
     }
 
-    if (email.length < 5 || name.length < 2 || surname.length < 2 || !password) {
+    // Check if any of the required fields are missing
+    if (!email || !name || !surname || !password || password != "") {
       throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
     }
 
+    // Hash the password
+    const hashedPassword = await hashPassword(password);
+    
     // Create the customer entity
-    const customer = this.customerRepo.create(createCustomerDto);
+    const customer = this.customerRepo.create({
+      ...customerDto,
+      password: hashedPassword
+    });
 
     // Save the customer entity to the database
     const createdCustomer = await this.customerRepo.save(customer);
@@ -42,14 +50,6 @@ export class CustomerService {
       throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
     }
     return customer
-  }
-
-  update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    return `This action updates a #${id} customer`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} customer`;
   }
 
   async login(email: string, password: string) {
