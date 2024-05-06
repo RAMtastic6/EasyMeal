@@ -1,4 +1,4 @@
-import { Customer } from "src/customer/entities/customer.entity";
+import { Customer } from "../../customer/entities/customer.entity";
 import { Food } from "src/food/entities/food.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";

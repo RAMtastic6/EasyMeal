@@ -9,7 +9,9 @@ import { JwtModule } from '@nestjs/jwt';
   controllers: [CustomerController],
   providers: [CustomerService],
   imports: [
-    TypeOrmModule.forFeature([Customer]),
+    TypeOrmModule.forFeature([
+      Customer
+    ]),
     //TODO: definire la firma del token
     JwtModule.register({
       secret: 'sgroi',

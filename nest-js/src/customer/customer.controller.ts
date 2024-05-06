@@ -8,20 +8,14 @@ export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
   @Post()
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customerService.create(createCustomerDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.customerService.findAll();
+  async create(@Body() createCustomerDto: CreateCustomerDto) {
+    const result = await this.customerService.create(createCustomerDto);
+    return result;
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const result = await this.customerService.findOne(+id);
-    if(result == false) 
-      throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
     return result;
   }
 

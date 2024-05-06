@@ -9,7 +9,7 @@ export class Reservation {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'timestamp without time zone'})
+    @Column({ type: 'timestamp without time zone' })
     date: Date;
 
     @Column()
@@ -18,7 +18,7 @@ export class Reservation {
     @Column()
     restaurant_id: number;
 
-    @Column({default: true})
+    @Column({ default: true })
     pending: boolean;
 
     @OneToMany(() => Orders, order => order.reservation)

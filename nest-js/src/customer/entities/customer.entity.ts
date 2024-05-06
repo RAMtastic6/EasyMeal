@@ -1,6 +1,6 @@
-import { Orders } from "src/orders/entities/order.entity";
-import { Reservation } from "src/reservation/entities/reservation.entity";
-import { ReservationGruop } from "src/reservation/entities/reservation_group.enity";
+import { Orders } from "../../orders/entities/order.entity";
+import { Reservation } from "../../reservation/entities/reservation.entity";
+import { ReservationGruop } from "../../reservation/entities/reservation_group.enity";
 import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

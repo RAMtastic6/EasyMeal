@@ -14,19 +14,34 @@ export class CustomerService {
     private jwtService: JwtService
   ) {}
   
-  create(createCustomerDto: CreateCustomerDto) {
-    return 'This action adds a new customer';
-  }
+  async create(createCustomerDto: CreateCustomerDto) {
+    const { email, name, surname, password } = createCustomerDto;
 
-  findAll() {
-    return `This action returns all customer`;
+    // Check if email is already registered
+    const existingCustomer = await this.customerRepo.findOne({ where: { email } });
+    if (existingCustomer) {
+      throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
+    }
+
+    if (email.length < 5 || name.length < 2 || surname.length < 2 || !password) {
+      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+    }
+
+    // Create the customer entity
+    const customer = this.customerRepo.create(createCustomerDto);
+
+    // Save the customer entity to the database
+    const createdCustomer = await this.customerRepo.save(customer);
+
+    return createdCustomer;
   }
 
   async findOne(id: number) {
     const customer = await this.customerRepo.findOne({where: {id}});
-    if(customer) {
-      return customer;
-    } else return false;
+    if(!customer) {
+      throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
+    }
+    return customer
   }
 
   update(id: number, updateCustomerDto: UpdateCustomerDto) {
