@@ -22,10 +22,10 @@ export class CustomerService {
     if (existingCustomer) {
       throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
     }
-
+    /*
     if (email.length < 5 || name.length < 2 || surname.length < 2 || !password) {
       throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
-    }
+    }*/
 
     // Create the customer entity
     const customer = this.customerRepo.create(createCustomerDto);
