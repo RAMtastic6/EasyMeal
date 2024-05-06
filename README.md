@@ -36,21 +36,24 @@ Se intendi usare docker per lo sviluppo locale allora utilizza il seguente coman
 docker-compose watch
 ```
 
+**N.B:**: per fermare i container dopo "watch" non basta ctrl-c ma bisogna usare:
+
+```bash
+docker-compose stop
+```
+
 Se invece intendi solo far partire i servizi senza che la console di comando attendi la chiusura usa:
 
 ```bash
 docker-compose up -d
 ```
 
-Questo comando avvierà i container secondo la configurazione definita nel file `docker-compose.yml`. Assicurati di avere Docker e Docker Compose installati sul tuo sistema prima di eseguire questo comando.
-
 Una volta avviati i container, potrai accedere all'applicazione utilizzando il browser o gli strumenti di sviluppo appropriati.
 Per esempio per poter accedere al progetto NextJS collegati al link: http://localhost:3000/create_reservation .
 
-Tieni presente che NextJS utilizza la porta 3000, NestJS 6969 e Postgres utilizza 7070.
+Tieni presente che NextJS utilizza la porta 3000, NestJS 6969, Postgres utilizza 7070 e Socket 8000.
 
 ### Modifica dei file Dockerfile e compose.yaml
-Se modifichi i files devi usare ctrl-c sul termianle e premere S per fermare l'applicazione.
 Per applicare le modifiche e far partire il progetto devi usare:
 
 ```bash
@@ -59,17 +62,11 @@ docker-compose up --build
 
 ## Ripetizione del processo
 
-Se desideri ricreare completamente l'ambiente, per esempio ricaricare il database dal file init.sql in "postgres/" e avviare nuovamente i container, è possibile utilizzare il seguente comando:
+Se desideri cancellare completamente l'ambiente è possibile utilizzare il seguente comando:
 
 ```bash
 docker-compose down -v
 ```
-
-Questo comando fermerà e rimuoverà tutti i container definiti nel file `docker-compose.yml`, e rimuoverà anche i volumi Docker associati. L'opzione `-v` viene utilizzata per rimuovere anche i volumi, quindi tutti i dati persistenti all'interno dei volumi verranno eliminati.
-
-Dopo aver eseguito `docker-compose down -v`, puoi eseguire nuovamente `docker-compose up` per ricreare l'ambiente e avviare i container nuovamente.
-
-Assicurati di avere un backup dei dati importanti prima di eseguire `docker-compose down -v`, poiché i dati non saranno più recuperabili una volta eliminati.
 
 Per ulteriori informazioni su Docker Compose, consulta la documentazione ufficiale: https://docs.docker.com/compose/
 
@@ -118,7 +115,7 @@ cd websocket-server
 npm install
 ```
 
-6. **Avviare il server backend Nest.js**:
+6. **Avviare il server socket Nest.js**:
 
 ```bash
 npm run start:dev
@@ -127,3 +124,4 @@ npm run start:dev
 7. **Accedere all'applicazione**:
    
    Una volta avviati sia il server backend Nest.js che il server frontend Next.js, è possibile accedere all'applicazione utilizzando il browser. Apri il browser e vai all'indirizzo [http://localhost:3000/create_reservation](http://localhost:3000/create_reservation) per accedere alla pagina di creazione delle prenotazioni.
+

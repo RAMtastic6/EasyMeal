@@ -23,11 +23,10 @@ export class CustomerService {
     if (existingCustomer) {
       throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
     }
-    /*
-    // Check if any of the required fields are missing
+
     if (!email || !name || !surname || !password || password != "") {
       throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
-    }*/
+    }
 
     // Hash the password
     const hashedPassword = await hashPassword(password);
@@ -40,8 +39,7 @@ export class CustomerService {
 
     // Save the customer entity to the database
     const createdCustomer = await this.customerRepo.save(customer);
-
-    return createdCustomer;
+    return createdCustomer; 
   }
 
   async findOne(id: number) {

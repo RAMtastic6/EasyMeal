@@ -160,25 +160,23 @@
 <p>Se intendi usare docker per lo sviluppo locale allora utilizza il seguente comando per vedere in &quot;tempo reale&quot; le modifiche:</p>
 <pre><code class="language-bash">docker-compose watch
 </code></pre>
+<p><strong>N.B:</strong>: per fermare i container dopo &quot;watch&quot; non basta ctrl-c ma bisogna usare:</p>
+<pre><code class="language-bash">docker-compose stop
+</code></pre>
 <p>Se invece intendi solo far partire i servizi senza che la console di comando attendi la chiusura usa:</p>
 <pre><code class="language-bash">docker-compose up -d
 </code></pre>
-<p>Questo comando avvierà i container secondo la configurazione definita nel file <code>docker-compose.yml</code>. Assicurati di avere Docker e Docker Compose installati sul tuo sistema prima di eseguire questo comando.</p>
 <p>Una volta avviati i container, potrai accedere all'applicazione utilizzando il browser o gli strumenti di sviluppo appropriati.
 Per esempio per poter accedere al progetto NextJS collegati al link: <a href="http://localhost:3000/create_reservation">http://localhost:3000/create_reservation</a> .</p>
-<p>Tieni presente che NextJS utilizza la porta 3000, NestJS 6969 e Postgres utilizza 7070.</p>
+<p>Tieni presente che NextJS utilizza la porta 3000, NestJS 6969, Postgres utilizza 7070 e Socket 8000.</p>
 <h3 id="modifica-dei-file-dockerfile-e-composeyaml">Modifica dei file Dockerfile e compose.yaml</h3>
-<p>Se modifichi i files devi usare ctrl-c sul termianle e premere S per fermare l'applicazione.
-Per applicare le modifiche e far partire il progetto devi usare:</p>
+<p>Per applicare le modifiche e far partire il progetto devi usare:</p>
 <pre><code class="language-bash">docker-compose up --build
 </code></pre>
 <h2 id="ripetizione-del-processo">Ripetizione del processo</h2>
-<p>Se desideri ricreare completamente l'ambiente, per esempio ricaricare il database dal file init.sql in &quot;postgres/&quot; e avviare nuovamente i container, è possibile utilizzare il seguente comando:</p>
+<p>Se desideri cancellare completamente l'ambiente è possibile utilizzare il seguente comando:</p>
 <pre><code class="language-bash">docker-compose down -v
 </code></pre>
-<p>Questo comando fermerà e rimuoverà tutti i container definiti nel file <code>docker-compose.yml</code>, e rimuoverà anche i volumi Docker associati. L'opzione <code>-v</code> viene utilizzata per rimuovere anche i volumi, quindi tutti i dati persistenti all'interno dei volumi verranno eliminati.</p>
-<p>Dopo aver eseguito <code>docker-compose down -v</code>, puoi eseguire nuovamente <code>docker-compose up</code> per ricreare l'ambiente e avviare i container nuovamente.</p>
-<p>Assicurati di avere un backup dei dati importanti prima di eseguire <code>docker-compose down -v</code>, poiché i dati non saranno più recuperabili una volta eliminati.</p>
 <p>Per ulteriori informazioni su Docker Compose, consulta la documentazione ufficiale: <a href="https://docs.docker.com/compose/">https://docs.docker.com/compose/</a></p>
 <h2 id="-npm"><a name="npm"></a> NPM</h2>
 <p><strong>Senza Docker</strong></p>
@@ -219,7 +217,7 @@ npm install
 npm install
 </code></pre>
 <ol start="6">
-<li><strong>Avviare il server backend Nest.js</strong>:</li>
+<li><strong>Avviare il server socket Nest.js</strong>:</li>
 </ol>
 <pre><code class="language-bash">npm run start:dev
 </code></pre>
