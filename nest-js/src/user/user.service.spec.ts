@@ -5,6 +5,8 @@ import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { RestaurantService } from '../restaurant/restaurant.service';
+import { StaffService } from '../staff/staff.service';
 
 describe('UserService', () => {
   let service: UserService;
@@ -28,6 +30,18 @@ describe('UserService', () => {
           provide: JwtService,
           useValue: {
             sign: jest.fn(),
+          },
+        },
+        {
+          provide: RestaurantService,
+          useValue: {
+            create: jest.fn(),
+          },
+        },
+        {
+          provide: StaffService,
+          useValue: {
+            create: jest.fn(),
           },
         }
       ],
