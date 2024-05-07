@@ -19,7 +19,7 @@ jobs:
     - name: npm install, make test-coverage
       run: |
         cd nest-js/
-        npm install
+        npm ci 
         make test-coverage
 
     - name: Coveralls
