@@ -20,7 +20,8 @@ jobs:
           node-version: 20.9.0
       - name:  
         run: | 
-          npm ci
+          cd nest-js
+          echo "ls -a"
       - name: Run API tests
         run: npm run test:cov 
 
