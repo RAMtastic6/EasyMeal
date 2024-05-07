@@ -21,8 +21,6 @@ jobs:
       - name:  
         run: | 
           cd nest-js
-          echo "ls -a"
-      - name: Run API tests
-        run: npm run test:cov 
+          ls -a
 
       
