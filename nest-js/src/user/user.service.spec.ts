@@ -100,27 +100,31 @@ describe('UserService', () => {
   });
 
   describe('create_admin', () => {
+    const adminDto: AdminDto = {
+      name: 'admin',
+      email: 'admin@example.com',
+      password: 'admin123',
+      surname: 'admin',
+      restaurant_name: '',
+      restaurant_address: '',
+      restaurant_city: '',
+      restaurant_cuisine: '',
+      restaurant_tables: 0,
+      restaurant_phone_number: '',
+      restaurant_email: ''
+    };
+    const admin: User = {
+      id: 1, name: 'admin',
+      email: 'admin@example.com',
+      password: 'hashed-admin',
+      role: UserRole.USER,
+      surname: 'admin',
+      orders: [],
+      reservation_group: [],
+      reservations: []
+    };
     describe('create_admin', () => {
       it('should create an admin', async () => {
-        const adminDto: AdminDto = {
-          name: 'admin', email: 'admin@example.com', password: 'admin123',
-          surname: 'admin',
-          restaurant_name: '',
-          restaurant_address: '',
-          restaurant_city: '',
-          restaurant_cuisine: '',
-          restaurant_tables: 0,
-          restaurant_phone_number: '',
-          restaurant_email: ''
-        };
-        const admin = { 
-          id: 1, 
-          name: 'admin', 
-          email: 'admin@example.com', 
-          password: 'hashed-admin', 
-          role: UserRole.USER,
-          surname: 'admin'
-        };
         jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(null);
         jest.spyOn(userService, 'create_user').mockResolvedValueOnce(admin as User);
         jest.spyOn(bycript, 'hashPassword').mockResolvedValueOnce('hashed-admin');
@@ -130,47 +134,14 @@ describe('UserService', () => {
       });
 
       it('should throw an exception if email is already used', async () => {
-        const adminDto: AdminDto = {
-          name: 'admin',
-          email: 'admin@example.com',
-          password: 'admin123',
-          surname: 'admin',
-          restaurant_name: '',
-          restaurant_address: '',
-          restaurant_city: '',
-          restaurant_cuisine: '',
-          restaurant_tables: 0,
-          restaurant_phone_number: '',
-          restaurant_email: ''
-        };
-        const existingAdmin: User = {
-          id: 1, name: 'admin',
-          email: 'admin@example.com',
-          password: 'hashed-admin',
-          role: UserRole.USER,
-          surname: 'admin',
-          orders: [],
-          reservation_group: [],
-          reservations: []
-        };
-        jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(existingAdmin);
+        jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(admin);
         await expect(userService.create_admin(adminDto)).rejects.toThrow(HttpException);
       });
 
       it('should throw an exception if input is invalid', async () => {
-        const adminDto: AdminDto = {
-          name: 'a', email: 'admin@example.com', password: '',
-          surname: '',
-          restaurant_name: '',
-          restaurant_address: '',
-          restaurant_city: '',
-          restaurant_cuisine: '',
-          restaurant_tables: 0,
-          restaurant_phone_number: '',
-          restaurant_email: ''
-        };
+        const invalidAdminDto = { ...adminDto, password: '' };
         jest.spyOn(userRepo, 'findOne').mockResolvedValueOnce(null);
-        await expect(userService.create_admin(adminDto)).rejects.toThrow(HttpException);
+        await expect(userService.create_admin(invalidAdminDto)).rejects.toThrow(HttpException);
       });
     });
   });
