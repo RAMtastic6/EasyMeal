@@ -7,18 +7,21 @@ on:
 
 
 jobs:
-  testing:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with: 
-          node-version: 20.9.0
-      - name:  
-        run: | 
-          cd next-js
-          npm ci
+          node-version: 21
+          cache: npm
+          cache-dependency-path: next-js/package-lock.json
+
+      - name:  Install NPM dependencies
+        run: npm ci
+        working-directory: next-js
