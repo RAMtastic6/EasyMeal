@@ -20,7 +20,7 @@ jobs:
       run: |
         cd nest-js/
         npm ci 
-        make test-coverage
+        npm run test:coverage
 
     - name: Coveralls
       uses: coverallsapp/github-action@v2
