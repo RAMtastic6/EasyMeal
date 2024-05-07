@@ -19,7 +19,7 @@ export class RestaurantService {
         city?: string, 
         cuisine?: string }): Promise<Restaurant[]> {
     let queryBuilder = this.restaurantRepo.createQueryBuilder('restaurant');
-    //FIXME: non funziona la data e il nome del ristorante
+
     if (query.date) {
       const dayOfWeek = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][new Date(query.date).getDay()];
       queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
@@ -36,8 +36,9 @@ export class RestaurantService {
     return await queryBuilder.getMany();
   }
 
-  create(createRestaurantDto: RestaurantDto) {
-    return 'This action adds a new restaurant';
+  async create(createRestaurantDto: RestaurantDto) {
+    const restaurant = this.restaurantRepo.create(createRestaurantDto);
+    return await this.restaurantRepo.save(restaurant);
   }
 
   async findAll(): Promise<Restaurant[]> {
