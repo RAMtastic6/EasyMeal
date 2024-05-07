@@ -59,15 +59,8 @@ export class UserService {
       throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
     }
 
-    // Create the user with role admin
-    const admin = this.userRepo.create({
-      ...adminDto,
-    });
-
-    // Save the admin entity to the database
-    const createdAdmin = await this.userRepo.save(admin);
-
-    console.log(adminDto);
+    // Create and save the user with role admin
+    const user = await this.create_user(adminDto, UserRole.USER);
 
     // Create a restaurant for the admin
     const restaurant = await this.restaurantService.create({
@@ -84,10 +77,10 @@ export class UserService {
     await this.staffService.create({
       restaurant_id: restaurant.id,
       role: StaffRole.ADMIN,
-      user_id: createdAdmin.id
+      user_id: user.id
     });
 
-    return createdAdmin;
+    return user;
   }
 
   async findOne(id: number) {
