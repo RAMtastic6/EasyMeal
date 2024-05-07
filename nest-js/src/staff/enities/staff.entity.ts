@@ -12,7 +12,7 @@ export class Staff {
   @PrimaryGeneratedColumn()
   id: number; 
 
-  @Column({type: 'enum', enum: StaffRole, default: StaffRole.STAFF, name: 'ruolo'})
+  @Column({default: StaffRole.STAFF, name: 'ruolo'})
   role: StaffRole;
 
   @Column()

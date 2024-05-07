@@ -5,11 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User, UserRole } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { hashPassword } from '../utils';
+import { comparePasswords, hashPassword } from '../utils';
 import { AdminDto } from './dto/create-admin.dto';
 import { RestaurantService } from '../restaurant/restaurant.service';
 import { CreateRestaurantDto } from '../restaurant/dto/create-restaurant.dto';
 import { StaffService } from '../staff/staff.service';
+import { StaffRole } from '../staff/enities/staff.entity';
 
 @Injectable()
 export class UserService {
@@ -24,14 +25,13 @@ export class UserService {
 
   async create_user(userDto: UserDto, role: UserRole = UserRole.USER) {
     const { email, name, surname, password } = userDto;
-
     // Check if email is already registered
     const existingCustomer = await this.userRepo.findOne({ where: { email } });
     if (existingCustomer) {
       throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
     }
 
-    if (!email || !name || !surname || !password || password != "") {
+    if (!email || !name || !surname || !password || password == "") {
       throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
     }
 
@@ -39,19 +39,25 @@ export class UserService {
     const hashedPassword = await hashPassword(password);
 
     // Create the customer entity
-    const customer = this.userRepo.create({
+    const user = this.userRepo.create({
       ...userDto,
       password: hashedPassword,
       role
     });
 
     // Save the customer entity to the database
-    const createdCustomer = await this.userRepo.save(customer);
-    return createdCustomer;
+    const createdUser = await this.userRepo.save(user);
+    return createdUser;
   }
 
   async create_admin(adminDto: AdminDto){
     //check if the user can create an admin
+
+    // Check if email is already registered
+    const existingAdmin = await this.userRepo.findOne({ where: { email: adminDto.email } });
+    if (existingAdmin) {
+      throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
+    }
 
     // Create the user with role admin
     const admin = this.userRepo.create({
@@ -60,6 +66,8 @@ export class UserService {
 
     // Save the admin entity to the database
     const createdAdmin = await this.userRepo.save(admin);
+
+    console.log(adminDto);
 
     // Create a restaurant for the admin
     const restaurant = await this.restaurantService.create({
@@ -75,7 +83,7 @@ export class UserService {
     
     await this.staffService.create({
       restaurant_id: restaurant.id,
-      role: UserRole.ADMIN,
+      role: StaffRole.ADMIN,
       user_id: createdAdmin.id
     });
 
@@ -83,21 +91,20 @@ export class UserService {
   }
 
   async findOne(id: number) {
-    const customer = await this.userRepo.findOne({ where: { id } });
-    if (!customer) {
-      throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
+    const user = await this.userRepo.findOne({ where: { id } });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    return customer
+    return user
   }
 
   async login(email: string, password: string) {
-    const result = await this.userRepo.findOne({ where: { email, password } });
-    console.log(result);
-    if (!result) {
-      return false;
+    const result = await this.userRepo.findOne({ where: { email } });
+    if (!result || (await comparePasswords(password, result.password)) == false) {
+        throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
-    const token = this.jwtService.sign({ id: result.id, role: 'customer' });
-    return { token: token, userName: result.name, role: 'customer' };
+    const token = this.jwtService.sign({ id: result.id, role: result.role });
+    return { token: token, userName: result.name, role: result.role };
   }
 }
 

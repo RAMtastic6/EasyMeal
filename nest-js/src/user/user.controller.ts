@@ -1,15 +1,21 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, HttpCode } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AdminDto } from './dto/create-admin.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @Post()
+  @Post('user')
   async create(@Body() createCustomerDto: UserDto) {
     const result = await this.userService.create_user(createCustomerDto);
+    return result;
+  }
+
+  @Post('admin')
+  async createAdmin(@Body() createAdminDto: AdminDto) {
+    const result = await this.userService.create_admin(createAdminDto);
     return result;
   }
 

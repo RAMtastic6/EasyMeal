@@ -1,14 +1,15 @@
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
-import { validateSignUp } from '@/src/actions/validateSignUp'
+import { useFormState, useFormStatus } from 'react-dom';
+import { validateSignUpAdmin } from '../actions/validateSignUpAdmin';
 
 const initialState = {
   message: '',
 }
 
 export default function SignupAdmin() {
-  const [state, formAction] = useFormState(validateSignUp, initialState)
+  //const { pending } = useFormStatus();
+  const [state, formAction] = useFormState(validateSignUpAdmin, initialState)
   return (
     <>
       <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-color-white">
@@ -71,7 +72,7 @@ export default function SignupAdmin() {
                 <div className="mt-2">
                   <input
                     id="città"
-                    name="Città"
+                    name="città"
                     type="text"
                     placeholder="Città..."
                     required
@@ -103,8 +104,8 @@ export default function SignupAdmin() {
                 <label htmlFor="numero" className='block text-sm font-medium leading-6 text-gray-900'>Numero di telefono</label>
                 <div className="mt-2">
                   <input
-                    id="Numero"
-                    name="Numero"
+                    id="numero"
+                    name="numero"
                     type="text"
                     placeholder="Numero..."
                     required

@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { RestaurantService } from '../restaurant/restaurant.service';
 import { RestaurantModule } from '../restaurant/restaurant.module';
+import { StaffModule } from '../staff/staff.module';
 
 @Module({
   controllers: [UserController],
@@ -19,7 +20,8 @@ import { RestaurantModule } from '../restaurant/restaurant.module';
       secret: 'sgroi',
       signOptions: { expiresIn: '1h' },
     }),
-    RestaurantModule
+    RestaurantModule,
+    StaffModule,
   ],
   exports: [TypeOrmModule, UserService]
 })

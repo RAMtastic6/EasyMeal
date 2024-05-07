@@ -13,8 +13,7 @@ export default function login() {
 
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const hashedPassword = await sha256(password);
-		const result = await createSession(email, hashedPassword);
+		const result = await createSession(email, password);
 		if(result)
 			router.push('/create_reservation');
 		else

@@ -1,4 +1,4 @@
-import next from "next";
+'use server';
 import { Endpoints } from "./endpoints";
 
 export interface RestaurantFilter {

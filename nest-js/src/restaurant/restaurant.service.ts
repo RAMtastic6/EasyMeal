@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRestaurantDto as RestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
@@ -37,7 +37,23 @@ export class RestaurantService {
   }
 
   async create(createRestaurantDto: RestaurantDto) {
-    const restaurant = this.restaurantRepo.create(createRestaurantDto);
+    // Check if the restaurant already exists
+    const existingRestaurant = await this.restaurantRepo.findOne({ where: { name: createRestaurantDto.name } });
+    if (existingRestaurant) {
+      throw new HttpException('Restaurant already exists', HttpStatus.CONFLICT);
+    }
+    // Check if inputs are valid 
+    if (!createRestaurantDto.name || !createRestaurantDto.address || !createRestaurantDto.city || !createRestaurantDto.cuisine || !createRestaurantDto.email || !createRestaurantDto.phone_number) {
+      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+    }
+    const restaurant = this.restaurantRepo.create({
+      address: createRestaurantDto.address,
+      city: createRestaurantDto.city,
+      cuisine: createRestaurantDto.cuisine,
+      email: createRestaurantDto.email,
+      name: createRestaurantDto.name,
+      phone_number: createRestaurantDto.phone_number,
+    });
     return await this.restaurantRepo.save(restaurant);
   }
 

@@ -1,5 +1,5 @@
 'use server'
-import { createCustomer } from "../lib/database/customer"
+import { createUser } from "../lib/database/user"
 
 export async function validateSignUp(prevState:any, formData: FormData) {
 
@@ -36,7 +36,9 @@ export async function validateSignUp(prevState:any, formData: FormData) {
     }
 
     // Create the customer
-    const x = await createCustomer({ email:email, name:firstName, surname:lastName, password:password })
-    console.log(x)
+    const response = await createUser({ email: email, name: firstName, surname: lastName, password: password })
+    if (!response) {
+        return { message: 'Registration failed' }
+    }
     return { message: 'Registration successful' }
 }
