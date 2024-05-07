@@ -27,6 +27,12 @@ export class Restaurant {
     @Column()
     tables: number;
 
+    @Column({type: "varchar", length: 20})
+    phone_number: string;
+
+    @Column({type: "varchar", length: 256})
+    email: string;
+
     @OneToOne(() => Menu, menu => menu.restaurant, {cascade: true})
     @JoinColumn({name: "menu_id"})
     menu: Menu;

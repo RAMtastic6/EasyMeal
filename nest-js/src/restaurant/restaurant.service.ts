@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRestaurantDto as RestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
@@ -19,7 +19,7 @@ export class RestaurantService {
         city?: string, 
         cuisine?: string }): Promise<Restaurant[]> {
     let queryBuilder = this.restaurantRepo.createQueryBuilder('restaurant');
-    //FIXME: non funziona la data e il nome del ristorante
+
     if (query.date) {
       const dayOfWeek = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][new Date(query.date).getDay()];
       queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
@@ -36,8 +36,25 @@ export class RestaurantService {
     return await queryBuilder.getMany();
   }
 
-  create(createRestaurantDto: RestaurantDto) {
-    return 'This action adds a new restaurant';
+  async create(createRestaurantDto: RestaurantDto) {
+    // Check if the restaurant already exists
+    const existingRestaurant = await this.restaurantRepo.findOne({ where: { name: createRestaurantDto.name } });
+    if (existingRestaurant) {
+      throw new HttpException('Restaurant already exists', HttpStatus.CONFLICT);
+    }
+    // Check if inputs are valid 
+    if (!createRestaurantDto.name || !createRestaurantDto.address || !createRestaurantDto.city || !createRestaurantDto.cuisine || !createRestaurantDto.email || !createRestaurantDto.phone_number) {
+      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+    }
+    const restaurant = this.restaurantRepo.create({
+      address: createRestaurantDto.address,
+      city: createRestaurantDto.city,
+      cuisine: createRestaurantDto.cuisine,
+      email: createRestaurantDto.email,
+      name: createRestaurantDto.name,
+      phone_number: createRestaurantDto.phone_number,
+    });
+    return await this.restaurantRepo.save(restaurant);
   }
 
   async findAll(): Promise<Restaurant[]> {

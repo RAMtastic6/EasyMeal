@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 import { Reservation } from "./reservation.entity";
-import { Customer } from "src/customer/entities/customer.entity";
+import { User } from "src/user/entities/user.entity";
 
 @Entity({ name: 'reservation_group' })
 export class ReservationGruop {
@@ -14,7 +14,7 @@ export class ReservationGruop {
     @JoinColumn({ name: 'reservation_id' })
     reservation: Reservation;
 
-    @ManyToOne(() => Customer, customer => customer.reservation_group, { cascade: true })
+    @ManyToOne(() => User, customer => customer.reservation_group, { cascade: true })
     @JoinColumn({ name: 'customer_id' })
-    customer: Customer;
+    customer: User;
 }

@@ -13,8 +13,7 @@ export default function login() {
 
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		const hashedPassword = await sha256(password);
-		const result = await createSession(email, hashedPassword);
+		const result = await createSession(email, password);
 		if(result)
 			router.push('/create_reservation');
 		else
@@ -91,7 +90,7 @@ export default function login() {
 							{error && <p className="mt-4 text-center text-red-500">{error}</p>}
 							<p className="mt-10 text-center text-sm text-gray-500">
 								Non sei ancora registrato?{' '}
-								<a href="#" className="font-semibold leading-6 text-red-950 hover:text-white underline">
+								<a href="../sign_up" className="font-semibold leading-6 text-red-950 hover:text-white underline">
 									Registrati qui
 								</a>
 							</p>

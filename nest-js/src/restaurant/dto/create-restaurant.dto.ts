@@ -4,5 +4,7 @@ export class CreateRestaurantDto {
     address: string;
     city: string;
     cuisine: string;
-    menu_id: number;
+    daysOpen: string;
+    phone_number: string;
+    email: string;
 }

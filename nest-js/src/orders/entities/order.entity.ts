@@ -1,4 +1,4 @@
-import { Customer } from "../../customer/entities/customer.entity";
+import { User } from "../../user/entities/user.entity";
 import { Food } from "src/food/entities/food.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
@@ -22,9 +22,9 @@ export class Orders {
     @JoinColumn({ name: 'food_id' })
     food: Food;
 
-    @ManyToOne(() => Customer, customer => customer.orders)
+    @ManyToOne(() => User, customer => customer.orders)
     @JoinColumn({ name: 'customer_id' })
-    customer: Customer;
+    customer: User;
 
     @ManyToOne(() => Reservation, reservation => reservation.orders)
     @JoinColumn({ name: 'reservation_id' })
