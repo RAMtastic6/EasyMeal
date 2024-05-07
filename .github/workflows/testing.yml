@@ -21,6 +21,6 @@ jobs:
       - name:  
         run: | 
           cd nest-js
-          ls -a
-
+          npm ci
+          npm run test
       
