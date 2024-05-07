@@ -153,7 +153,7 @@ describe('UserController', () => {
 
     it('should return the result of the service login method', async () => {
       jest.spyOn(service, 'login').mockResolvedValueOnce(result);
-      expect(await controller.login(loginDto)).toBe(true);
+      expect(await controller.login(loginDto)).toBe(result);
     });
 
     it('should throw an HttpException if the service login method returns null', async () => {
