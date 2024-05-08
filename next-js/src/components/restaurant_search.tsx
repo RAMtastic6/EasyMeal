@@ -47,6 +47,7 @@ export default function RestaurantSearch({ cuisines, cities }: { cuisines: strin
           <input
             type="text"
             id="Search"
+            data-testid={"InputNomeRistorante"}
             placeholder="Inserisci il nome di un ristorante..."
             className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-10 shadow-sm sm:text-sm pl-[14px]"
             value={nameRestaurant}
