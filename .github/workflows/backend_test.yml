@@ -48,11 +48,18 @@ jobs:
           echo "### Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
+        working-directory: nest-js
+      
+      # - name: Add coverage report to the PR
+      #   uses: mshick/add-pr-comment@v2
+      #   with:
+      #     message: ${{ steps.coverage.outputs.MD_REPORT }}
 
       - name: Add coverage report to the job summary
         run: |
           echo "### Code Coverage" >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.coverage.outputs.MD_REPORT }}" >> $GITHUB_STEP_SUMMARY
+        working-directory: nest-js
 
 
           
