@@ -8,13 +8,17 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Get('filter')
-  getFilteredRestaurants(@Query() query: { 
-    date?: string,
-    name?: string,
-    city?: string, 
-    cuisine?: string }) 
-    {
-    return this.restaurantService.getFilteredRestaurants(query);
+  getFilteredRestaurants(
+    @Query() query: { 
+      date?: string,
+      name?: string,
+      city?: string, 
+      cuisine?: string 
+    },
+    @Query('currentPage') currentPage: number,
+    @Query('ITEMS_PER_PAGE') ITEMS_PER_PAGE: number
+  ) {
+    return this.restaurantService.getFilteredRestaurants(query, currentPage, ITEMS_PER_PAGE);
   }
 
   @Post()
