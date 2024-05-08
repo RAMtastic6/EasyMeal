@@ -48,6 +48,7 @@ export async function getRestaurantById(id: number): Promise<any> {
 export async function getRestaurantOrders(id: number) {
     const response = await fetch(`${Endpoints.reservation}${id}/orders`);
     if (!response.ok) {
+        console.log(response.statusText);
         throw new Error('Error fetching restaurant menu from the database');
     }
     const data = await response.json();
