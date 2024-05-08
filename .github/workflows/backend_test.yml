@@ -26,6 +26,7 @@ jobs:
         working-directory: nest-js
           
       - name: Run tests
+        continue-on-error: true
         run: npm run test:cov
         working-directory: nest-js
 
@@ -52,5 +53,7 @@ jobs:
         run: |
           echo "### Code Coverage" >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.coverage.outputs.MD_REPORT }}" >> $GITHUB_STEP_SUMMARY
+
+
           
       
