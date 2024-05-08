@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Staff, StaffRole } from './enities/staff.entity';
 import { StaffDto } from './dto/create-staff.dto';
-import { UserRole } from '../user/entities/user.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('StaffService', () => {
@@ -65,8 +64,8 @@ describe('StaffService', () => {
       });
     });
 
-    it('should thorw conflic if staff already exists', async () => {
-      jest.spyOn(staffRepository, 'findOne').mockResolvedValue(staff as Staff);
+    it('should throw conflic if staff already exists', async () => {
+      jest.spyOn(staffRepository, 'findOne').mockResolvedValueOnce(staff as Staff);
       await expect(service.create(staff)).rejects.toThrow(HttpException).catch((e) => {
         expect(e.status).toBe(HttpStatus.CONFLICT);
       });

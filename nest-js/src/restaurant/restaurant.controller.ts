@@ -8,13 +8,13 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Get('filter')
-  getFilteredRestaurants(@Query() query: { 
+  async getFilteredRestaurants(@Query() query: { 
     date?: string,
     name?: string,
     city?: string, 
     cuisine?: string }) 
     {
-    return this.restaurantService.getFilteredRestaurants(query);
+    return await this.restaurantService.getFilteredRestaurants(query);
   }
 
   @Post()
@@ -47,23 +47,13 @@ export class RestaurantController {
     return this.restaurantService.findMenuByRestaurantId(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRestaurantDto: UpdateRestaurantDto) {
-    return this.restaurantService.update(+id, updateRestaurantDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.restaurantService.remove(+id);
-  }
-
   @Get(':id/booked-tables')
   getBookedTables(@Param('id') id: string, @Query('date') date: string) {
     return this.restaurantService.getBookedTables(+id, date);
   }
 
   @Get(':id/menu')
-  async getMenuByReservationId(@Param('id') id: string) {
+  async getMenuByRestaurantId(@Param('id') id: string) {
     const result = await this.restaurantService.getMenuByRestaurantId(+id);
     if(result == null) {
       throw new NotFoundException('Reservation not found');

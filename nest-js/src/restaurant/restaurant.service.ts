@@ -33,6 +33,8 @@ export class RestaurantService {
     if (query.cuisine) {
       queryBuilder = queryBuilder.andWhere('restaurant.cuisine = :cuisine', { cuisine: query.cuisine.toLowerCase() });
     }
+    
+    console.log("dc");
     return await queryBuilder.getMany();
   }
 
@@ -84,14 +86,6 @@ export class RestaurantService {
   async findOne(id: number) {
     const restaurant = await this.restaurantRepo.findOne({ where: { id } });
     return restaurant;
-  }
-
-  update(id: number, updateRestaurantDto: UpdateRestaurantDto) {
-    return `This action updates a #${id} restaurant`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} restaurant`;
   }
 
   //Ritorna i tavoli prenotati in un ristorante in una data specifica

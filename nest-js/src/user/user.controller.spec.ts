@@ -65,7 +65,6 @@ describe('UserController', () => {
     };
 
     it('should call the method with correct parameters', async () => {
-      jest.spyOn(service, 'create_admin').mockImplementationOnce(async (x) => admin);
       await controller.createAdmin(createAdminDto);
       expect(service.create_admin).toHaveBeenCalledWith(createAdminDto);
     });
@@ -96,7 +95,6 @@ describe('UserController', () => {
     };
 
     it('should call the service create method with the correct parameters', async () => {
-      jest.spyOn(service, 'create_user').mockImplementationOnce(async (x) => user);
       await controller.create(createUserDto);
       expect(service.create_user).toHaveBeenCalledWith(createUserDto);
     });
@@ -122,7 +120,6 @@ describe('UserController', () => {
     };
 
     it('should call the service findOne method with the correct parameter', async () => {
-      jest.spyOn(service, 'findOne').mockImplementationOnce(async (x) => user);
       await controller.findOne(userId.toString());
       expect(service.findOne).toHaveBeenCalledWith(userId);
     });
@@ -146,7 +143,7 @@ describe('UserController', () => {
     }
 
     it('should call the service login method with the correct parameters', async () => {
-      jest.spyOn(service, 'login').mockImplementationOnce(async (x, y) => result);
+      jest.spyOn(service, 'login').mockResolvedValueOnce(result);
       await controller.login(loginDto);
       expect(service.login).toHaveBeenCalledWith(loginDto.email, loginDto.password);
     });

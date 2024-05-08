@@ -66,16 +66,6 @@ export class ReservationService {
     return reservation;
   }
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    //TODO: update reservation with this id
-    return `This action updates a #${id} reservation`;
-  }
-
-  remove(id: number) {
-    //TODO: remove all reservations with this id
-    return `This action removes a #${id} reservation`;
-  }
-
   async getOrdersWithQuantityByIdReservation(id: number) {
     //otteniamo il menu e i cibi ordinati per una prenotazione
     const result = await this.reservationRepository.findOne({
