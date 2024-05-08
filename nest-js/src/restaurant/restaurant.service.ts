@@ -33,8 +33,6 @@ export class RestaurantService {
     if (query.cuisine) {
       queryBuilder = queryBuilder.andWhere('restaurant.cuisine = :cuisine', { cuisine: query.cuisine.toLowerCase() });
     }
-    
-    console.log("dc");
     return await queryBuilder.getMany();
   }
 

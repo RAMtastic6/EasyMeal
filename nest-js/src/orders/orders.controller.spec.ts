@@ -73,7 +73,8 @@ describe('OrdersController', () => {
         reservation_id: 1,
         food_id: 1,
         quantity: 2,
-      } as UpdateOrderDto;
+      };
+      jest.spyOn(service, 'update').mockResolvedValueOnce(updateOrder as any);
       expect(await controller.update(updateOrder)).toEqual(updateOrder);
       expect(service.update).toHaveBeenCalledWith(updateOrder);
     });
@@ -86,9 +87,7 @@ describe('OrdersController', () => {
         reservation_id: 1,
         food_id: 1,
       };
-
-      jest.spyOn(service, 'remove').mockResolvedValueOnce(order);
-
+      jest.spyOn(service, 'remove').mockResolvedValueOnce(order as any);
       expect(await controller.remove(order)).toEqual(order);
       expect(service.remove).toHaveBeenCalledWith(order);
     });
@@ -108,16 +107,14 @@ describe('OrdersController', () => {
     });
   });
 
-  describe('totalBill', () => {
+  describe('fullBill', () => {
     it('should calculate the total bill for an order', async () => {
       const order = {
         customer_id: 1,
         reservation_id: 1,
       };
-
       jest.spyOn(service, 'getTotalBill').mockResolvedValueOnce(20);
-
-      expect(await controller.totalBill(order)).toEqual(20);
+      expect(await controller.fullBill(order)).toEqual(20);
       expect(service.getTotalBill).toHaveBeenCalledWith(order);
     });
   });
@@ -125,13 +122,17 @@ describe('OrdersController', () => {
   describe('getReservationOrders', () => {
     it('should get orders for a reservation', async () => {
       const id = '1';
-      const orders = [/* Provide sample orders */];
-
+      const orders = [
+        {
+          customer_id: 1,
+          reservation_id: 1,
+          food_id: 1,
+          quantity: 1,
+        },
+      ] as Orders[];
       jest.spyOn(service, 'getReservationOrders').mockResolvedValueOnce(orders);
-
       expect(await controller.getReservationOrders(id)).toEqual(orders);
       expect(service.getReservationOrders).toHaveBeenCalledWith(+id);
     });
   });
-
 });
