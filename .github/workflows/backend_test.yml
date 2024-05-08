@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'develop'
+      - 'P1-296-unit-test-backend'
 
 
 jobs:
