@@ -25,7 +25,9 @@ export default function Page({ params }: { params: { number: string } }) {
 			setLoadingrRest(false);
 		}
 		fetchRestaurant();
-		const socket = io(Endpoints.socket + "?id_prenotazione=" + params.number);
+		const socket = io(Endpoints.socket + "?id_prenotazione=" + params.number, {
+			
+		});
 		socket.on('onMessage', (menu) => {
 			console.log(menu);
 			setMenu(menu);

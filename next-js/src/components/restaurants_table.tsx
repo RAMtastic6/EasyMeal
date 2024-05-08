@@ -5,11 +5,12 @@ import { useEffect, useState } from 'react';
 import { getFilteredRestaurants, RestaurantFilter } from '../lib/database/restaurant';
 import SkeletonTable from './skeleton_restaurants_table';
 
-export default function RestaurantsTable() {
+export default function RestaurantsTable({ ITEMS_PER_PAGE }: { ITEMS_PER_PAGE: number }) {
     const searchParams = useSearchParams();
     const [restaurants, setRestaurants] = useState<any[]>([]);
     const [loadingRestaurant, setLoadingRestaurant] = useState(true);
-    
+    const currentPage = Number(searchParams.get('page')) || 1;
+
     //useEffect per ottenere i ristoranti filtrati ed aspettare che la promise venga risolta
     //viene chiamata 2 volte ma è normale in RUN DEV
     useEffect(() => {
@@ -24,8 +25,8 @@ export default function RestaurantsTable() {
                 // Simulated wait time
                 console.log('Fecthing restaurants data...');
                 await new Promise((resolve) => setTimeout(resolve, 1000));
-                
-                const json = await getFilteredRestaurants(filter);
+
+                const json = await getFilteredRestaurants(filter, currentPage, ITEMS_PER_PAGE);
                 console.log('Data fecth completed after 3 seconds.');
                 setRestaurants(json);
             } catch (error) {
@@ -45,7 +46,7 @@ export default function RestaurantsTable() {
             </div>
         );
     }
-    
+
     if (restaurants.length === 0) {
         return (
             <div>

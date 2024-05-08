@@ -51,14 +51,16 @@ services:
     command: npm run start:dev
     depends_on:
       - postgres
+    environment:
+      - BACKEND_HOST=backend
     develop:
       watch:
-        - path: ./socket
+        - path: ./websocket-server
           target: /var/socket
           action: sync
           ignore:
             - node_modules/
-        - path: ./socket/package.json
+        - path: ./websocket-server/package.json
           target: /var/socket/package.json
           action: rebuild
 
@@ -82,6 +84,7 @@ services:
           action: rebuild
     environment:
       - BACKEND_HOST=backend
+      - SOCKET=socket
     command: npm run dev
     depends_on:
       - backend

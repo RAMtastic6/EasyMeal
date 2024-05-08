@@ -37,6 +37,7 @@ export default function MenuTable(
 		setSelectedOption(option);
 	};
 
+	console.log(menu);
 	const price = menu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0);
 
 	return (
