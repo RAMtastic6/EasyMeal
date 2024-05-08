@@ -41,6 +41,7 @@ jobs:
         working-directory: nest-js
 
       - name: Convert coverage to MD
+        id: coverage
         run: |
           echo 'MD_REPORT<<EOF' >> $GITHUB_OUTPUT
           echo "### Code Coverage" >> $GITHUB_OUTPUT
