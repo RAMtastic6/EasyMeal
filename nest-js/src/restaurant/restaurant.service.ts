@@ -1,25 +1,25 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRestaurantDto as RestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Days } from 'src/daysopen/entities/daysopen.entity';
 
 @Injectable()
 export class RestaurantService {
   constructor(
     @InjectRepository(Restaurant)
     private restaurantRepo: Repository<Restaurant>,
-  ){}
+  ) { }
 
   async getFilteredRestaurants(query: {
-        date?: string,
-        name?: string, 
-        city?: string, 
-        cuisine?: string }): Promise<Restaurant[]> {
+    date?: string,
+    name?: string,
+    city?: string,
+    cuisine?: string
+  }): Promise<Restaurant[]> {
     let queryBuilder = this.restaurantRepo.createQueryBuilder('restaurant');
-    //FIXME: non funziona la data e il nome del ristorante
+
     if (query.date) {
       const dayOfWeek = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][new Date(query.date).getDay()];
       queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
@@ -36,8 +36,25 @@ export class RestaurantService {
     return await queryBuilder.getMany();
   }
 
-  create(createRestaurantDto: RestaurantDto) {
-    return 'This action adds a new restaurant';
+  async create(createRestaurantDto: RestaurantDto) {
+    // Check if the restaurant already exists
+    const existingRestaurant = await this.restaurantRepo.findOne({ where: { name: createRestaurantDto.name } });
+    if (existingRestaurant) {
+      throw new HttpException('Restaurant already exists', HttpStatus.CONFLICT);
+    }
+    // Check if inputs are valid 
+    if (!createRestaurantDto.name || !createRestaurantDto.address || !createRestaurantDto.city || !createRestaurantDto.cuisine || !createRestaurantDto.email || !createRestaurantDto.phone_number) {
+      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+    }
+    const restaurant = this.restaurantRepo.create({
+      address: createRestaurantDto.address,
+      city: createRestaurantDto.city,
+      cuisine: createRestaurantDto.cuisine,
+      email: createRestaurantDto.email,
+      name: createRestaurantDto.name,
+      phone_number: createRestaurantDto.phone_number,
+    });
+    return await this.restaurantRepo.save(restaurant);
   }
 
   async findAll(): Promise<Restaurant[]> {
@@ -60,12 +77,12 @@ export class RestaurantService {
   }
 
   async findMenuByRestaurantId(id: number) {
-    const restaurant = await this.restaurantRepo.findOne({where: {id}, relations: ['menu', 'menu.foods']});
-    return restaurant?.menu ?? {};	
+    const restaurant = await this.restaurantRepo.findOne({ where: { id }, relations: ['menu', 'menu.foods'] });
+    return restaurant?.menu ?? {};
   }
 
   async findOne(id: number) {
-    const restaurant = await this.restaurantRepo.findOne({where: {id}});
+    const restaurant = await this.restaurantRepo.findOne({ where: { id } });
     return restaurant;
   }
 
@@ -84,21 +101,16 @@ export class RestaurantService {
       where: {
         id: restaurantId, 
         reservations: {
-          date: new Date(date)
-        }
-      }
-    });
-    /*const result = await this.restaurantRepo.createQueryBuilder('restaurant')
-      .innerJoin('reservation', 'reservation', 'reservation.restaurant_id = restaurant.id')
-      .where('restaurant.id = :restaurantId', { restaurantId })
-      .andWhere('reservation.date = :date', { date })
-      .getCount();*/
+            date: new Date(date),
+          }
+        },
+      });
     return result;
   }
 
   async getMenuByRestaurantId(id: number) {
-    const result = await this.restaurantRepo.findOne({ 
-      where: { id }, 
+    const result = await this.restaurantRepo.findOne({
+      where: { id },
       relations: ['restaurant.menu', 'restaurant.menu.foods'],
     });
     return result;

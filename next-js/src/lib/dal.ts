@@ -1,11 +1,9 @@
 'use server';
-import 'server-only'
-
 import { cookies } from 'next/headers'
 import { decryptToken } from './session';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
-import { getCustomerById } from './database/customer';
+import { getUserById } from './database/user';
 
 
 export const verifySession = cache(async () => {
@@ -23,7 +21,7 @@ export const getUser = cache(async () => {
     if (!session) return null
    
     try {
-      const user = await getCustomerById(session.userId as number);
+      const user = await getUserById(session.userId as number);
       return user
     } catch (error) {
       console.log('Failed to fetch user')

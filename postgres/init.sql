@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2024-05-04 17:54:10
+-- Started on 2024-05-07 15:51:39
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -19,7 +19,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 870 (class 1247 OID 19302)
+-- TOC entry 869 (class 1247 OID 19302)
 -- Name: daysopen_day_open_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -36,32 +36,74 @@ CREATE TYPE public.daysopen_day_open_enum AS ENUM (
 
 ALTER TYPE public.daysopen_day_open_enum OWNER TO postgres;
 
+--
+-- TOC entry 887 (class 1247 OID 19700)
+-- Name: role_user; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.role_user AS ENUM (
+    'admin',
+    'user'
+);
+
+
+ALTER TYPE public.role_user OWNER TO postgres;
+
+--
+-- TOC entry 884 (class 1247 OID 19648)
+-- Name: staff_ruolo_enum; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.staff_ruolo_enum AS ENUM (
+    'admin',
+    'staff'
+);
+
+
+ALTER TYPE public.staff_ruolo_enum OWNER TO postgres;
+
+--
+-- TOC entry 878 (class 1247 OID 19597)
+-- Name: user_role_enum; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.user_role_enum AS ENUM (
+    'admin',
+    'customer',
+    'staff',
+    'user'
+);
+
+
+ALTER TYPE public.user_role_enum OWNER TO postgres;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
 -- TOC entry 222 (class 1259 OID 19167)
--- Name: customer; Type: TABLE; Schema: public; Owner: postgres
+-- Name: user; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.customer (
+CREATE TABLE public."user" (
     id integer NOT NULL,
     name character varying(30) NOT NULL,
     surname character varying(30) NOT NULL,
     email character varying(256) NOT NULL,
-    password character varying(256) NOT NULL
+    password character varying(256) NOT NULL,
+    role public.role_user DEFAULT 'user'::public.role_user
 );
 
 
-ALTER TABLE public.customer OWNER TO postgres;
+ALTER TABLE public."user" OWNER TO postgres;
 
 --
 -- TOC entry 221 (class 1259 OID 19166)
 -- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-ALTER TABLE public.customer ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+ALTER TABLE public."user" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME public.customer_id_seq
     START WITH 1
     INCREMENT BY 1
@@ -215,7 +257,9 @@ CREATE TABLE public.restaurant (
     city character varying(100) NOT NULL,
     cuisine character varying(100) NOT NULL,
     menu_id integer NOT NULL,
-    tables integer NOT NULL
+    tables integer NOT NULL,
+    email character varying(256) NOT NULL,
+    phone_number character varying(20) NOT NULL
 );
 
 
@@ -237,16 +281,55 @@ ALTER TABLE public.restaurant ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- TOC entry 3387 (class 0 OID 19167)
--- Dependencies: 222
--- Data for Name: customer; Type: TABLE DATA; Schema: public; Owner: postgres
+-- TOC entry 228 (class 1259 OID 19630)
+-- Name: staff; Type: TABLE; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.customer (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'user', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb');
+CREATE TABLE public.staff (
+    id integer NOT NULL,
+    ruolo public.staff_ruolo_enum DEFAULT 'staff'::public.staff_ruolo_enum NOT NULL,
+    restaurant_id integer,
+    user_id integer
+);
+
+
+ALTER TABLE public.staff OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 19629)
+-- Name: staff_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.staff_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.staff_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3420 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: staff_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.staff_id_seq OWNED BY public.staff.id;
 
 
 --
--- TOC entry 3379 (class 0 OID 19133)
+-- TOC entry 3225 (class 2604 OID 19633)
+-- Name: staff id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff ALTER COLUMN id SET DEFAULT nextval('public.staff_id_seq'::regclass);
+
+
+--
+-- TOC entry 3400 (class 0 OID 19133)
 -- Dependencies: 214
 -- Data for Name: daysopen; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -284,7 +367,7 @@ INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (
 
 
 --
--- TOC entry 3383 (class 0 OID 19145)
+-- TOC entry 3404 (class 0 OID 19145)
 -- Dependencies: 218
 -- Data for Name: food; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -301,7 +384,7 @@ INSERT INTO public.food (id, menu_id, name, price) OVERRIDING SYSTEM VALUE VALUE
 
 
 --
--- TOC entry 3381 (class 0 OID 19139)
+-- TOC entry 3402 (class 0 OID 19139)
 -- Dependencies: 216
 -- Data for Name: menu; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -312,7 +395,7 @@ INSERT INTO public.menu (id, name) OVERRIDING SYSTEM VALUE VALUES (3, 'Menu 3');
 
 
 --
--- TOC entry 3391 (class 0 OID 19375)
+-- TOC entry 3412 (class 0 OID 19375)
 -- Dependencies: 226
 -- Data for Name: order_detail; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -323,7 +406,7 @@ INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id)
 
 
 --
--- TOC entry 3389 (class 0 OID 19173)
+-- TOC entry 3410 (class 0 OID 19173)
 -- Dependencies: 224
 -- Data for Name: reservation; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -336,10 +419,11 @@ INSERT INTO public.reservation (id, date, number_people, restaurant_id, pending)
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, pending) OVERRIDING SYSTEM VALUE VALUES (6, '2024-04-03 20:20:00', 20, 1, true);
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, pending) OVERRIDING SYSTEM VALUE VALUES (7, '2024-04-09 20:20:00', 20, 1, true);
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, pending) OVERRIDING SYSTEM VALUE VALUES (8, '2024-04-18 20:20:00', 20, 1, true);
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, pending) OVERRIDING SYSTEM VALUE VALUES (9, '2220-02-10 20:20:00', 1000000, 1, true);
 
 
 --
--- TOC entry 3390 (class 0 OID 19183)
+-- TOC entry 3411 (class 0 OID 19183)
 -- Dependencies: 225
 -- Data for Name: reservation_group; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -349,21 +433,39 @@ INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (5, 1)
 INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (6, 1);
 INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (7, 1);
 INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (8, 1);
+INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (9, 1);
 
 
 --
--- TOC entry 3385 (class 0 OID 19156)
+-- TOC entry 3406 (class 0 OID 19156)
 -- Dependencies: 220
 -- Data for Name: restaurant; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.restaurant (id, name, address, city, cuisine, menu_id, tables) OVERRIDING SYSTEM VALUE VALUES (1, 'Ristorante 1', 'Via Roma', 'Roma', 'italiana', 1, 100);
-INSERT INTO public.restaurant (id, name, address, city, cuisine, menu_id, tables) OVERRIDING SYSTEM VALUE VALUES (2, 'Ristorante 2', 'Via Milano', 'Milano', 'cinese', 2, 100);
-INSERT INTO public.restaurant (id, name, address, city, cuisine, menu_id, tables) OVERRIDING SYSTEM VALUE VALUES (3, 'Ristorante 3', 'Via Napoli', 'Napoli', 'pizza', 3, 100);
+INSERT INTO public.restaurant (id, name, address, city, cuisine, menu_id, tables, email, phone_number) OVERRIDING SYSTEM VALUE VALUES (1, 'Ristorante 1', 'Via Roma', 'Roma', 'italiana', 1, 100, 'test1', 'test1');
+INSERT INTO public.restaurant (id, name, address, city, cuisine, menu_id, tables, email, phone_number) OVERRIDING SYSTEM VALUE VALUES (2, 'Ristorante 2', 'Via Milano', 'Milano', 'cinese', 2, 100, 'test2', 'test2');
+INSERT INTO public.restaurant (id, name, address, city, cuisine, menu_id, tables, email, phone_number) OVERRIDING SYSTEM VALUE VALUES (3, 'Ristorante 3', 'Via Napoli', 'Napoli', 'pizza', 3, 100, 'test3', 'test3');
 
 
 --
--- TOC entry 3397 (class 0 OID 0)
+-- TOC entry 3414 (class 0 OID 19630)
+-- Dependencies: 228
+-- Data for Name: staff; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3408 (class 0 OID 19167)
+-- Dependencies: 222
+-- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."user" (id, name, surname, email, password, role) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'user', '04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb', 'user');
+
+
+--
+-- TOC entry 3421 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -372,7 +474,7 @@ SELECT pg_catalog.setval('public.customer_id_seq', 1, true);
 
 
 --
--- TOC entry 3398 (class 0 OID 0)
+-- TOC entry 3422 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: food_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -381,7 +483,7 @@ SELECT pg_catalog.setval('public.food_id_seq', 9, true);
 
 
 --
--- TOC entry 3399 (class 0 OID 0)
+-- TOC entry 3423 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: menu_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -390,16 +492,16 @@ SELECT pg_catalog.setval('public.menu_id_seq', 3, true);
 
 
 --
--- TOC entry 3400 (class 0 OID 0)
+-- TOC entry 3424 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: reservation_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.reservation_id_seq', 8, true);
+SELECT pg_catalog.setval('public.reservation_id_seq', 9, true);
 
 
 --
--- TOC entry 3401 (class 0 OID 0)
+-- TOC entry 3425 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: restaurant_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -408,7 +510,16 @@ SELECT pg_catalog.setval('public.restaurant_id_seq', 3, true);
 
 
 --
--- TOC entry 3217 (class 2606 OID 19226)
+-- TOC entry 3426 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: staff_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.staff_id_seq', 1, false);
+
+
+--
+-- TOC entry 3234 (class 2606 OID 19226)
 -- Name: restaurant UQ_5a6420c3086d9d50d001cc01713; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -417,16 +528,16 @@ ALTER TABLE ONLY public.restaurant
 
 
 --
--- TOC entry 3221 (class 2606 OID 19171)
--- Name: customer customer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 3238 (class 2606 OID 19171)
+-- Name: user customer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.customer
+ALTER TABLE ONLY public."user"
     ADD CONSTRAINT customer_pkey PRIMARY KEY (id);
 
 
 --
--- TOC entry 3211 (class 2606 OID 19318)
+-- TOC entry 3228 (class 2606 OID 19318)
 -- Name: daysopen daysopen_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -435,7 +546,7 @@ ALTER TABLE ONLY public.daysopen
 
 
 --
--- TOC entry 3215 (class 2606 OID 19254)
+-- TOC entry 3232 (class 2606 OID 19254)
 -- Name: food food_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -444,7 +555,7 @@ ALTER TABLE ONLY public.food
 
 
 --
--- TOC entry 3213 (class 2606 OID 19143)
+-- TOC entry 3230 (class 2606 OID 19143)
 -- Name: menu menu_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -453,7 +564,7 @@ ALTER TABLE ONLY public.menu
 
 
 --
--- TOC entry 3227 (class 2606 OID 19380)
+-- TOC entry 3244 (class 2606 OID 19380)
 -- Name: order_detail order_detail_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -462,7 +573,7 @@ ALTER TABLE ONLY public.order_detail
 
 
 --
--- TOC entry 3225 (class 2606 OID 19187)
+-- TOC entry 3242 (class 2606 OID 19187)
 -- Name: reservation_group reservation_group_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -471,7 +582,7 @@ ALTER TABLE ONLY public.reservation_group
 
 
 --
--- TOC entry 3223 (class 2606 OID 19177)
+-- TOC entry 3240 (class 2606 OID 19177)
 -- Name: reservation reservation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -480,7 +591,7 @@ ALTER TABLE ONLY public.reservation
 
 
 --
--- TOC entry 3219 (class 2606 OID 19160)
+-- TOC entry 3236 (class 2606 OID 19160)
 -- Name: restaurant restaurant_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -489,7 +600,16 @@ ALTER TABLE ONLY public.restaurant
 
 
 --
--- TOC entry 3228 (class 2606 OID 19323)
+-- TOC entry 3246 (class 2606 OID 19636)
+-- Name: staff staff_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT staff_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3247 (class 2606 OID 19323)
 -- Name: daysopen FK_0a42a99a85bac74cdc4154d38a1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -498,7 +618,7 @@ ALTER TABLE ONLY public.daysopen
 
 
 --
--- TOC entry 3234 (class 2606 OID 19402)
+-- TOC entry 3253 (class 2606 OID 19402)
 -- Name: order_detail FK_176c75e9405cb6cb95a6377af00; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -507,7 +627,16 @@ ALTER TABLE ONLY public.order_detail
 
 
 --
--- TOC entry 3229 (class 2606 OID 19213)
+-- TOC entry 3256 (class 2606 OID 19658)
+-- Name: staff FK_1b1658ba3bb205874b325403b08; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT "FK_1b1658ba3bb205874b325403b08" FOREIGN KEY (restaurant_id) REFERENCES public.restaurant(id);
+
+
+--
+-- TOC entry 3248 (class 2606 OID 19213)
 -- Name: food FK_5149a648c96d6c3c7c670b500d6; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -516,7 +645,7 @@ ALTER TABLE ONLY public.food
 
 
 --
--- TOC entry 3230 (class 2606 OID 19227)
+-- TOC entry 3249 (class 2606 OID 19227)
 -- Name: restaurant FK_5a6420c3086d9d50d001cc01713; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -525,7 +654,7 @@ ALTER TABLE ONLY public.restaurant
 
 
 --
--- TOC entry 3232 (class 2606 OID 19328)
+-- TOC entry 3251 (class 2606 OID 19328)
 -- Name: reservation_group FK_5e20008280cf4827cab610088b9; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -534,16 +663,16 @@ ALTER TABLE ONLY public.reservation_group
 
 
 --
--- TOC entry 3233 (class 2606 OID 19333)
+-- TOC entry 3252 (class 2606 OID 19333)
 -- Name: reservation_group FK_6c218069a2d6f54685067c744fc; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.reservation_group
-    ADD CONSTRAINT "FK_6c218069a2d6f54685067c744fc" FOREIGN KEY (customer_id) REFERENCES public.customer(id);
+    ADD CONSTRAINT "FK_6c218069a2d6f54685067c744fc" FOREIGN KEY (customer_id) REFERENCES public."user"(id);
 
 
 --
--- TOC entry 3235 (class 2606 OID 19412)
+-- TOC entry 3254 (class 2606 OID 19412)
 -- Name: order_detail FK_73c5df246d4307f6abb1071be42; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -552,7 +681,7 @@ ALTER TABLE ONLY public.order_detail
 
 
 --
--- TOC entry 3231 (class 2606 OID 19428)
+-- TOC entry 3250 (class 2606 OID 19428)
 -- Name: reservation FK_b8e66a59e3500c7a85cde4fb020; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -561,15 +690,24 @@ ALTER TABLE ONLY public.reservation
 
 
 --
--- TOC entry 3236 (class 2606 OID 19407)
+-- TOC entry 3255 (class 2606 OID 19407)
 -- Name: order_detail FK_c2a7f2de6b58c7c5ccf4303e1aa; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.order_detail
-    ADD CONSTRAINT "FK_c2a7f2de6b58c7c5ccf4303e1aa" FOREIGN KEY (customer_id) REFERENCES public.customer(id);
+    ADD CONSTRAINT "FK_c2a7f2de6b58c7c5ccf4303e1aa" FOREIGN KEY (customer_id) REFERENCES public."user"(id);
 
 
--- Completed on 2024-05-04 17:54:10
+--
+-- TOC entry 3257 (class 2606 OID 19663)
+-- Name: staff FK_cec9365d9fc3a3409158b645f2e; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT "FK_cec9365d9fc3a3409158b645f2e" FOREIGN KEY (user_id) REFERENCES public."user"(id);
+
+
+-- Completed on 2024-05-07 15:51:39
 
 --
 -- PostgreSQL database dump complete
