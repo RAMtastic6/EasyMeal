@@ -74,3 +74,21 @@ export async function getAllCities(): Promise<string[]> {
     const data = await response.json();
     return data;
 }
+
+//Get the total number of pages
+export async function getRestaurantsTotalPages(params: RestaurantFilter, ITEMS_PER_PAGE: number): Promise<number> {
+    let filter = [];
+    for (const key in params) {
+        if (params[key as keyof RestaurantFilter] != "") {
+            filter.push(`${key}=${params[key as keyof RestaurantFilter]}`);
+        }
+    }
+    console.log("filter", filter);
+    const response = await fetch(`${Endpoints.restaurant}count${filter.join('&')}`);
+    if (!response.ok) {
+        console.log(response);
+        //throw new Error('Error fetching total pages from the database');
+    }
+    const data = await response.json();
+    return Math.ceil(data.total / ITEMS_PER_PAGE);
+}

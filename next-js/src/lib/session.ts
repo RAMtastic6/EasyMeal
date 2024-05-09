@@ -15,20 +15,20 @@ export async function decryptToken(token: string | undefined) {
       { algorithms: ['HS256'] });
     return payload;
   } catch (error) {
-    //TODO: Handle error
     return null;
   }
 }
 
-export async function createSession(email: string, hashedPassword: string) {
+export async function createSession(email: string, password: string) {
   let token;
   try {
     const response = await fetch(Endpoints.user + "login", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
       },
-      body: JSON.stringify({ email: email, password: hashedPassword }),
+      body: JSON.stringify({ email: email, password: password }),
     });
     if (response.status != 200) {
       return false;
@@ -39,11 +39,14 @@ export async function createSession(email: string, hashedPassword: string) {
     console.log('Error:', error);
     return false;
   }
+  if (cookies().get('session')) {
+    cookies().delete('session');
+  }
   cookies().set('session', token, {
     httpOnly: true,
     secure: true,
     sameSite: 'strict',
-    expires: new Date(Date.now() + 1000 * 60 * 60),
+    expires: new Date(Date.now() + 60 * 60 * 1000),
     path: '/',
   });
   return true;

@@ -5,15 +5,15 @@ import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 
 @Controller('restaurant')
 export class RestaurantController {
-  constructor(private readonly restaurantService: RestaurantService) {}
+  constructor(private readonly restaurantService: RestaurantService) { }
 
   @Get('filter')
   getFilteredRestaurants(
-    @Query() query: { 
+    @Query() query: {
       date?: string,
       name?: string,
-      city?: string, 
-      cuisine?: string 
+      city?: string,
+      cuisine?: string
     },
     @Query('currentPage') currentPage: number,
     @Query('ITEMS_PER_PAGE') ITEMS_PER_PAGE: number
@@ -68,10 +68,21 @@ export class RestaurantController {
 
   @Get(':id/menu')
   async getMenuByReservationId(@Param('id') id: string) {
-    const result = await this.restaurantService.getMenuByRestaurantId(+id);
-    if(result == null) {
+    const result = await this.restaurantService.findMenuByRestaurantId(+id);
+    if (result == null) {
       throw new NotFoundException('Reservation not found');
     }
     return result;
+  }
+
+  @Get('count')
+  async getNumberOfFilteredRestaurants(@Query() query: {
+    date?: string,
+    name?: string,
+    city?: string,
+    cuisine?: string
+  }) {
+    console.log(query);
+    //return this.restaurantService.getNumberOfFilteredRestaurants(query);
   }
 }

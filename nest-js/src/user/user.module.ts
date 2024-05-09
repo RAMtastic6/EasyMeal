@@ -18,7 +18,7 @@ import { StaffModule } from '../staff/staff.module';
     //TODO: definire la firma del token
     JwtModule.register({
       secret: 'sgroi',
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '1h', algorithm: 'HS256'},
     }),
     RestaurantModule,
     StaffModule,
