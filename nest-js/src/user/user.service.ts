@@ -20,7 +20,7 @@ export class UserService {
     @Inject(JwtService)
     private jwtService: JwtService,
     private readonly restaurantService: RestaurantService,
-    private readonly staffService: StaffService
+    private staffService: StaffService
   ) { }
 
   async create_user(userDto: UserDto, role: UserRole = UserRole.USER) {
@@ -96,7 +96,11 @@ export class UserService {
     if (!result || (await comparePasswords(password, result.password)) == false) {
         throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
-    const token = this.jwtService.sign({ id: result.id, role: result.role });
+    const token = this.jwtService.sign({ 
+        id: result.id, 
+        role: result.role,
+      }, 
+    );
     return { token: token, userName: result.name, role: result.role };
   }
 }
