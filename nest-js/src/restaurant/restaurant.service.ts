@@ -117,8 +117,7 @@ export class RestaurantService {
     name?: string,
     city?: string,
     cuisine?: string
-  }): Promise<number> {
-    /*
+  }) {
     let queryBuilder = this.restaurantRepo.createQueryBuilder('restaurant');
     if (query.date) {
       const dayOfWeek = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][new Date(query.date).getDay()];
@@ -132,10 +131,7 @@ export class RestaurantService {
     }
     if (query.cuisine) {
       queryBuilder = queryBuilder.andWhere('restaurant.cuisine = :cuisine', { cuisine: query.cuisine.toLowerCase() });
-    }*/
-    //console.log(queryBuilder.getCount());
-    return await this.restaurantRepo.count();
-    //return queryBuilder.getCount();
+    }
+    return await queryBuilder.getCount();
   }
-
 }

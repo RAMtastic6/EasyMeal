@@ -1,7 +1,7 @@
 'use server';
-import { SignJWT, jwtVerify } from 'jose';
+import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { Endpoints } from './database/endpoints';
+import { login } from './database/user';
 
 const secretKey = 'sgroi';
 const encodeKey = new TextEncoder().encode(secretKey);
@@ -20,34 +20,38 @@ export async function decryptToken(token: string | undefined) {
 }
 
 export async function createSession(email: string, password: string) {
-  let token;
-  try {
-    const response = await fetch(Endpoints.user + "login", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-      },
-      body: JSON.stringify({ email: email, password: password }),
-    });
-    if (response.status != 200) {
-      return false;
-    }
-    token = (await response.json()).token;
-  } catch (error) {
-    //TODO: Handle error
-    console.log('Error:', error);
+  const token: string = await login(email, password);
+  if (!token) {
     return false;
   }
-  if (cookies().get('session')) {
-    cookies().delete('session');
-  }
   cookies().set('session', token, {
-    httpOnly: true,
     secure: true,
-    sameSite: 'strict',
+    httpOnly: true,
     expires: new Date(Date.now() + 60 * 60 * 1000),
+    sameSite: 'strict',
     path: '/',
   });
   return true;
+}
+
+export async function updateSession() {
+  const session = cookies().get('session')?.value
+  const payload = await decryptToken(session)
+
+  if (!session || !payload) {
+    return null
+  }
+  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  cookies().set('session', session, {
+    httpOnly: true,
+    secure: true,
+    expires: expires,
+    sameSite: 'lax',
+    path: '/',
+  })
+}
+
+ 
+export async function deleteSession() {
+  cookies().delete('session')
 }

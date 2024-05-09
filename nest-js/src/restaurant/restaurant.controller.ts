@@ -41,6 +41,16 @@ export class RestaurantController {
     return this.restaurantService.findAllCities();
   }
 
+  @Get('count')
+  async getNumberOfFilteredRestaurants(@Query() query: {
+    date?: string,
+    name?: string,
+    city?: string,
+    cuisine?: string
+  }) {
+    return await this.restaurantService.getNumberOfFilteredRestaurants(query);
+  }
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.restaurantService.findOne(+id);
@@ -73,16 +83,5 @@ export class RestaurantController {
       throw new NotFoundException('Reservation not found');
     }
     return result;
-  }
-
-  @Get('count')
-  async getNumberOfFilteredRestaurants(@Query() query: {
-    date?: string,
-    name?: string,
-    city?: string,
-    cuisine?: string
-  }) {
-    console.log(query);
-    //return this.restaurantService.getNumberOfFilteredRestaurants(query);
   }
 }
