@@ -17,7 +17,11 @@ export async function getFilteredRestaurants(params: RestaurantFilter, currentPa
 			filter.push(`${key}=${params[key as keyof RestaurantFilter]}`);
 		}
 	}
-	const response = await fetch(`${Endpoints.restaurant}filter?currentPage=${currentPage}&ITEMS_PER_PAGE=${ITEMS_PER_PAGE}&${filter.join('&')}`);
+	const response = await fetch(`${Endpoints.restaurant}filter?currentPage=${currentPage}&ITEMS_PER_PAGE=${ITEMS_PER_PAGE}&${filter.join('&')}`,
+        {
+            method: 'GET',
+            cache: 'no-cache',
+        });
 	if (!response.ok) {
 		throw new Error('Error fetching restaurants from the database');
 	}
