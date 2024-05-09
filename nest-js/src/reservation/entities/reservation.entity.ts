@@ -4,6 +4,12 @@ import { ReservationGruop as ReservationGroup } from "./reservation_group.enity"
 import { User } from "src/user/entities/user.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
 
+export enum ReservationStatus {
+    PENDING = 'pending',
+    ACCEPTED = 'accept',
+    REJECTED = 'reject',
+}
+
 @Entity()
 export class Reservation {
     @PrimaryGeneratedColumn()
@@ -18,8 +24,8 @@ export class Reservation {
     @Column()
     restaurant_id: number;
 
-    @Column({ default: true })
-    pending: boolean;
+    @Column({ default: ReservationStatus.PENDING })
+    state: ReservationStatus;
 
     @OneToMany(() => Orders, order => order.reservation)
     orders: Orders[];

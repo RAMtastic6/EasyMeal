@@ -11,6 +11,7 @@ export default function Page({ params }: { params: { number: string } }) {
 	useEffect(() => {
 		getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)).then((data) => {
 			setData(data.restaurant);
+			console.log(data.restaurant.menu);
 		});
 	}, []);
 

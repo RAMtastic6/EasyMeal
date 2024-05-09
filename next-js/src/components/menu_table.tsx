@@ -135,6 +135,12 @@ export default function MenuTable(
 										</div>
 									</div>
 								</td>
+								{food.foodIngredients.map((element: any) => {
+									const ingredient = element.ingredient;
+									return (
+										<td key={ingredient.id} className="whitespace-nowrap px-4 py-2 text-gray-700">{ingredient.name}</td>
+									)
+								})}
 							</tr>
 						))}
 					</tbody>

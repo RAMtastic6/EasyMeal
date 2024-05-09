@@ -1,5 +1,5 @@
 import { User } from "../../user/entities/user.entity";
-import { Food } from "src/food/entities/food.entity";
+import { Food } from "src/reservation/entities/food.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";

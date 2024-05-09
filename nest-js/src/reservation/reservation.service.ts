@@ -75,7 +75,11 @@ export class ReservationService {
       relations: {
         restaurant: {
           menu: {
-            foods: true,
+            foods: {
+              foodIngredients: {
+                ingredient: true,
+              }
+            }
           }
         },
         orders: {
@@ -83,6 +87,7 @@ export class ReservationService {
         }
       },
     });
+    console.log(result);
     if(result == null) {
       throw new NotFoundException('Reservation not found');
     }
