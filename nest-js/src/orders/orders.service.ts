@@ -12,8 +12,28 @@ export class OrdersService {
     private ordersRepository: Repository<Orders>,
   ) {}
   
-  create(createOrderDto: CreateOrderDto) {
-    return this.ordersRepository.save(createOrderDto);
+  async create(createOrderDto: CreateOrderDto) {
+    const result = await this.ordersRepository.findOne({ where: {
+      customer_id: createOrderDto.customer_id,
+      reservation_id: createOrderDto.reservation_id,
+      food_id: createOrderDto.food_id
+    }});
+    if(result != null) {
+      await this.ordersRepository.update({
+        customer_id: createOrderDto.customer_id,
+        reservation_id: createOrderDto.reservation_id,
+        food_id: createOrderDto.food_id
+      }, {
+        quantity: createOrderDto.quantity
+      });
+      return result;
+    }
+    return await this.ordersRepository.save({
+      customer_id: createOrderDto.customer_id,
+      reservation_id: createOrderDto.reservation_id,
+      food_id: createOrderDto.food_id,
+      quantity: createOrderDto.quantity
+    });
   }
 
   async findAll() {
@@ -42,13 +62,20 @@ export class OrdersService {
     return result;
   }
 
-  update(updateOrder: {
+  async update(updateOrder: {
     customer_id: number,
     reservation_id: number,
     food_id: number,
     quantity: number
   }) {
-    return this.ordersRepository.update({
+    if (await this.ordersRepository.findOne({ where: {
+      customer_id: updateOrder.customer_id,
+      reservation_id: updateOrder.reservation_id,
+      food_id: updateOrder.food_id
+    }}) == null) {
+      throw new NotFoundException('Order not found');
+    }
+    return await this.ordersRepository.update({
       customer_id: updateOrder.customer_id,
       reservation_id: updateOrder.reservation_id,
       food_id: updateOrder.food_id
@@ -57,12 +84,12 @@ export class OrdersService {
     });
   }
 
-  remove(order: {
+  async remove(order: {
     customer_id: number,
     reservation_id: number,
     food_id: number,
   }) {
-    return this.ordersRepository.delete([order.customer_id, order.reservation_id, order.food_id]);
+    return await this.ordersRepository.delete([order.customer_id, order.reservation_id, order.food_id]);
   }
 
   async getPartialBill(order: {
@@ -110,7 +137,7 @@ export class OrdersService {
     return orders;
   }
 
-  async getRomanBill(order: {
+  /*async getRomanBill(order: {
     reservation_id: number,
   }) {
     const orders = await this.ordersRepository.find({
@@ -123,5 +150,5 @@ export class OrdersService {
       throw new NotFoundException('No orders found for this reservation');
     }
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
-  }
+  }*/
 }

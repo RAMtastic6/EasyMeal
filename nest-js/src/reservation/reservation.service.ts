@@ -66,17 +66,7 @@ export class ReservationService {
     return reservation;
   }
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    //TODO: update reservation with this id
-    return `This action updates a #${id} reservation`;
-  }
-
-  remove(id: number) {
-    //TODO: remove all reservations with this id
-    return `This action removes a #${id} reservation`;
-  }
-
-  async getOrdersWithQuantityByIdReservation(id: number) {
+  async getMenuWithOrdersQuantityByIdReservation(id: number) {
     //otteniamo il menu e i cibi ordinati per una prenotazione
     const result = await this.reservationRepository.findOne({
       where: { 
@@ -89,43 +79,13 @@ export class ReservationService {
           }
         },
         orders: {
-          customer: true,
           food: true,
         }
       },
-      select: {
-        id: true,
-        restaurant: {
-          id: true,
-          address: true,
-          city: true,
-          cuisine: true,
-          name: true,
-          menu: {
-            id: true,
-            foods: {
-              id: true,
-              name: true,
-              price: true,
-            }
-          }
-        },
-        orders: {
-          quantity: true,
-          customer: {
-            id: true,
-          },
-          food: {
-            id: true,
-          }
-        }
-      },
     });
-
     if(result == null) {
       throw new NotFoundException('Reservation not found');
     }
-
     //associamo la quantita del cibo direttamente al menu
     // e rimuoviamo l'array degli ordini
     result.restaurant.menu.foods.forEach((food: any) => {

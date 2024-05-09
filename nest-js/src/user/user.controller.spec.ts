@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserDto } from './dto/create-user.dto';
+import { AdminDto } from './dto/create-admin.dto';
+import { User, UserRole } from './entities/user.entity';
+import { HttpException } from '@nestjs/common';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -10,62 +13,155 @@ describe('UserController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
-      providers: [UserService],
+      providers: [
+        {
+          provide: UserService,
+          useValue: {
+            create_user: jest.fn(),
+            create_admin: jest.fn(),
+            findOne: jest.fn(),
+            login: jest.fn()
+          }
+        }
+      ],
     }).compile();
 
     controller = module.get<UserController>(UserController);
     service = module.get<UserService>(UserService);
   });
 
-  /*describe('create', () => {
+  it('the controller should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  it('the service should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
+  describe('createAdmin', () => {
+    const createAdminDto: AdminDto = {
+      name: 'admin',
+      email: 'admin@test.com',
+      password: 'admin123',
+      surname: 'admin',
+      restaurant_name: '',
+      restaurant_address: '',
+      restaurant_city: '',
+      restaurant_cuisine: '',
+      restaurant_tables: 0,
+      restaurant_phone_number: '',
+      restaurant_email: ''
+    };
+    const admin: User = {
+      name: 'admin',
+      email: 'admin@test.com',
+      password: 'admin123',
+      surname: 'admin',
+      id: 1,
+      role: UserRole.USER,
+      orders: [],
+      reservation_group: [],
+      reservations: []
+    };
+
+    it('should call the method with correct parameters', async () => {
+      await controller.createAdmin(createAdminDto);
+      expect(service.create_admin).toHaveBeenCalledWith(createAdminDto);
+    });
+
+    it('should return the result of the service createAdmin method', async () => {
+      jest.spyOn(service, 'create_admin').mockResolvedValueOnce(admin);
+      expect(await controller.createAdmin(createAdminDto)).toBe(admin);
+    });
+  });
+
+  describe('create', () => {
+    const createUserDto: UserDto = {
+      name: 'user',
+      email: 'user@test.com',
+      password: 'user123',
+      surname: 'user',
+    };
+    const user: User = {
+      name: 'user',
+      email: 'user@test.com',
+      password: 'user123',
+      surname: 'user',
+      id: 1,
+      role: UserRole.USER,
+      orders: [],
+      reservation_group: [],
+      reservations: []
+    };
+
     it('should call the service create method with the correct parameters', async () => {
-      const createCustomerDto = { name: 'test', surname: 'test', email: 'test', password: 'test' };
-      const result = { id: 1, name: 'test', surname: 'test', email: 'test', password: 'test' };
-      jest.spyOn(service, 'create').mockImplementation(async () => result as any);
-      expect(await controller.create(createCustomerDto)).toBe(result);
-      expect(service.create).toHaveBeenCalledWith(createCustomerDto);
+      await controller.create(createUserDto);
+      expect(service.create_user).toHaveBeenCalledWith(createUserDto);
+    });
+
+    it('should return the result of the service create method', async () => {
+      jest.spyOn(service, 'create_user').mockResolvedValueOnce(user);
+      expect(await controller.create(createUserDto)).toBe(user);
     });
   });
 
   describe('findOne', () => {
-    it('should call the service findOne method with the correct parameters', async () => {
-      jest.spyOn(service, 'findOne').mockImplementation(async () => 'test');
-      expect(await controller.findOne('1')).toBe('test');
-      expect(service.findOne).toHaveBeenCalledWith(1);
-    });
-  });
+    const userId = 1;
+    const user: User = {
+      name: 'user',
+      email: 'user@test.com',
+      password: 'user123',
+      surname: 'user',
+      id: userId,
+      role: UserRole.USER,
+      orders: [],
+      reservation_group: [],
+      reservations: []
+    };
 
-  describe('update', () => {
-    it('should call the service update method with the correct parameters', () => {
-      const updateCustomerDto = new UpdateCustomerDto();
-      jest.spyOn(service, 'update').mockImplementation(async () => 'test');
-      expect(controller.update('1', updateCustomerDto)).toBe('test');
-      expect(service.update).toHaveBeenCalledWith(1, updateCustomerDto);
+    it('should call the service findOne method with the correct parameter', async () => {
+      await controller.findOne(userId.toString());
+      expect(service.findOne).toHaveBeenCalledWith(userId);
     });
-  });
 
-  describe('remove', () => {
-    it('should call the service remove method with the correct parameters', () => {
-      jest.spyOn(service, 'remove').mockImplementation(async () => 'test');
-      expect(controller.remove('1')).toBe('test');
-      expect(service.remove).toHaveBeenCalledWith(1);
+    it('should return the result of the service findOne method', async () => {
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(user);
+      expect(await controller.findOne(userId.toString())).toBe(user);
     });
   });
 
   describe('login', () => {
+    const loginDto = {
+      email: 'user@test.com',
+      password: 'user123',
+    };
+
+    const result = {
+      token: 'token',
+      userName: 'user',
+      role: UserRole.USER
+    }
+
     it('should call the service login method with the correct parameters', async () => {
-      const loginCredentials = { email: 'test@test.com', password: 'password' };
-      jest.spyOn(service, 'login').mockImplementation(async () => 'test');
-      expect(await controller.login(loginCredentials)).toBe('test');
-      expect(service.login).toHaveBeenCalledWith(loginCredentials.email, loginCredentials.password);
+      jest.spyOn(service, 'login').mockResolvedValueOnce(result);
+      await controller.login(loginDto);
+      expect(service.login).toHaveBeenCalledWith(loginDto.email, loginDto.password);
     });
 
-    it('should throw an HttpException when the service login method returns null', async () => {
-      const loginCredentials = { email: 'test@test.com', password: 'password' };
-      jest.spyOn(service, 'login').mockImplementation(async () => null);
-      await expect(controller.login(loginCredentials)).rejects.toThrow(HttpException);
+    it('should return the result of the service login method', async () => {
+      jest.spyOn(service, 'login').mockResolvedValueOnce(result);
+      expect(await controller.login(loginDto)).toBe(result);
     });
-  });*/
 
+    it('should throw an HttpException if the service login method returns null', async () => {
+      jest.spyOn(service, 'login').mockResolvedValueOnce(null);
+      expect(async () => {
+        await controller.login(loginDto);
+      }).rejects.toThrow(HttpException).catch((e) => {
+        expect(e.message).toBe('Invalid credentials');
+        expect(e.getStatus()).toBe(401);
+      });
+    });
+  });
 });
 

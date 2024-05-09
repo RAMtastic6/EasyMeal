@@ -25,21 +25,7 @@ Questo progetto utilizza Docker Compose per gestire l'avvio dei container Docker
 Per avviare i container utilizzando Docker Compose, esegui il seguente comando nella directory del progetto:
 
 ```bash
-docker-compose up
-```
-
-**Sviluppo locale:**
-
-Se intendi usare docker per lo sviluppo locale allora utilizza il seguente comando per vedere in "tempo reale" le modifiche:
-
-```bash
-docker-compose watch
-```
-
-**N.B:**: per fermare i container dopo "watch" non basta ctrl-c ma bisogna usare:
-
-```bash
-docker-compose stop
+docker-compose up --build --watch
 ```
 
 Se invece intendi solo far partire i servizi senza che la console di comando attendi la chiusura usa:

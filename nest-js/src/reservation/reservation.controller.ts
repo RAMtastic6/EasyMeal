@@ -8,37 +8,27 @@ export class ReservationController {
   constructor(private readonly reservationService: ReservationService) {}
 
   @Post()
-  create(@Body() createReservationDto: CreateReservationDto) {
-    return this.reservationService.create(createReservationDto);
+  async create(@Body() createReservationDto: CreateReservationDto) {
+    return await this.reservationService.create(createReservationDto);
   }
 
   @Post('addCustomer')
-  addCustomer(@Body() params: {customer_id: number, reservation_id: number}) {
-    return this.reservationService.addCustomer(params);
+  async addCustomer(@Body() params: {customer_id: number, reservation_id: number}) {
+    return await this.reservationService.addCustomer(params);
   }
 
   @Get()
-  findAll() {
-    return this.reservationService.findAll();
+  async findAll() {
+    return await this.reservationService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reservationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
-    return this.reservationService.update(+id, updateReservationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reservationService.remove(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.reservationService.findOne(+id);
   }
 
   @Get(':id/orders')
-  getOrdersWithClients(@Param('id') id: number) {
-    return this.reservationService.getOrdersWithQuantityByIdReservation(id);
+  async getMenuWithOrdersQuantityByIdReservation(@Param('id') id: number) {
+    return await this.reservationService.getMenuWithOrdersQuantityByIdReservation(id);
   }
 }
