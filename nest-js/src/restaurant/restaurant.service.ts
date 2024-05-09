@@ -120,7 +120,9 @@ export class RestaurantService {
       queryBuilder = queryBuilder.andWhere('restaurant.cuisine = :cuisine', { cuisine: query.cuisine.toLowerCase() });
     }
     return await queryBuilder.getCount();
-  async getRestaurantAndMenuByReastaurantId(id: number) {
+  }
+
+  async getRestaurantAndMenuByRestaurantId(id: number) {
     const result = await this.restaurantRepo.findOne({
       where: { id },
       relations: {

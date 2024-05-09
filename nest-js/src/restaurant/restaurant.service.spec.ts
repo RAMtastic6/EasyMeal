@@ -178,7 +178,7 @@ describe('RestaurantService', () => {
         }
       } as Restaurant;
       jest.spyOn(repo, 'findOne').mockResolvedValueOnce(expectedResult);
-      const result = await service.getRestaurantAndMenuByReastaurantId(restaurantId);
+      const result = await service.getRestaurantAndMenuByRestaurantId(restaurantId);
       expect(repo.findOne).toHaveBeenCalledWith({
         where: { id: restaurantId },
         relations: {
