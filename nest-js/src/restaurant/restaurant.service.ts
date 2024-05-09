@@ -80,11 +80,6 @@ export class RestaurantService {
     return rest.map(rest => rest.city);
   }
 
-  async findMenuByRestaurantId(id: number) {
-    const restaurant = await this.restaurantRepo.findOne({ where: { id }, relations: ['menu', 'menu.foods'] });
-    return restaurant?.menu ?? {};
-  }
-
   async findOne(id: number) {
     const restaurant = await this.restaurantRepo.findOne({ where: { id } });
     return restaurant;
@@ -104,10 +99,14 @@ export class RestaurantService {
     return result;
   }
 
-  async getMenuByRestaurantId(id: number) {
+  async getRestaurantAndMenuByReastaurantId(id: number) {
     const result = await this.restaurantRepo.findOne({
       where: { id },
-      relations: ['restaurant.menu', 'restaurant.menu.foods'],
+      relations: {
+        menu: {
+          foods: true
+        }
+      }
     });
     return result;
   }

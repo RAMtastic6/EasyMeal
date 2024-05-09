@@ -28,7 +28,7 @@ export class ReservationController {
   }
 
   @Get(':id/orders')
-  async getOrdersWithClients(@Param('id') id: number) {
-    return await this.reservationService.getOrdersWithQuantityByIdReservation(id);
+  async getMenuWithOrdersQuantityByIdReservation(@Param('id') id: number) {
+    return await this.reservationService.getMenuWithOrdersQuantityByIdReservation(id);
   }
 }

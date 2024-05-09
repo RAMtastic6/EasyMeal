@@ -13,7 +13,27 @@ export class OrdersService {
   ) {}
   
   async create(createOrderDto: CreateOrderDto) {
-    return await this.ordersRepository.save(createOrderDto);
+    const result = await this.ordersRepository.findOne({ where: {
+      customer_id: createOrderDto.customer_id,
+      reservation_id: createOrderDto.reservation_id,
+      food_id: createOrderDto.food_id
+    }});
+    if(result != null) {
+      await this.ordersRepository.update({
+        customer_id: createOrderDto.customer_id,
+        reservation_id: createOrderDto.reservation_id,
+        food_id: createOrderDto.food_id
+      }, {
+        quantity: createOrderDto.quantity
+      });
+      return result;
+    }
+    return await this.ordersRepository.save({
+      customer_id: createOrderDto.customer_id,
+      reservation_id: createOrderDto.reservation_id,
+      food_id: createOrderDto.food_id,
+      quantity: createOrderDto.quantity
+    });
   }
 
   async findAll() {

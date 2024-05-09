@@ -8,6 +8,6 @@ export class Endpoints {
     static readonly restaurant = Endpoints.host + "restaurant/";
     static readonly reservation = Endpoints.host + "reservation/";
     static readonly user = Endpoints.host + "user/"; 
-    static readonly order = Endpoints.host + "order/";
+    static readonly order = Endpoints.host + "orders/";
     static readonly socket = "http://" + socket +":8000/";
 }

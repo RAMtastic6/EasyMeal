@@ -19,6 +19,21 @@ export async function getReservationById(id: number): Promise<JSON> {
   return data;
 }
 
+//Get restaurant and menu from reservation id
+export async function getMenuWithOrdersQuantityByIdReservation(id: number) {
+  const response = await fetch(`${Endpoints.reservation}${id}/orders`, {
+    method: "GET",
+    headers: {
+      "Cache-Control": "no-cache",
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Error fetching restaurant from the database');
+  }
+  const data = await response.json();
+  return data;
+}
+
 export async function createReservation(reservation: {}): Promise<any> {
   const response = await fetch(Endpoints.reservation, {
     method: "POST",

@@ -1,34 +1,85 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Endpoints } from '../lib/database/endpoints';
+import { Socket, io } from 'socket.io-client';
+import { verifySession } from '../lib/dal';
 
 export default function MenuTable(
-	{ menu, updateHandler, setMenu }: {
-		menu: {
+	{ menuData, params }: {
+		menuData: {
 			id: number,
 			name: string,
 			price: number,
 			description: string,
 			foods: any[],
 		},
-		updateHandler: (name: string, menu: any) => void,
-		setMenu: any
+		params: { number: string },
 	},
 ) {
+	const socket = useRef<Socket>();
+	const [menu, setMenu] = useState(menuData);
+	const [price, setPrice] = useState(menuData.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
+
+	const sendData = async (index: number, menu: any) => {
+		const user = await verifySession();
+		const request = await fetch(Endpoints.order, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				customer_id: user.userId,
+				reservation_id: params.number,
+				food_id: menu.foods[index].id,
+				quantity: menu.foods[index].quantity,
+			}),
+		});
+		await request.json();
+		socket.current?.emit('onMessage', {
+			id_prenotazione: params.number,
+			data: {
+				index: index,
+				quantity: menu.foods[index].quantity,
+			},
+		});
+	} 
+
+	const handleMessage =  (body: any) => {
+		const newMenu = { ...menu };
+		newMenu.foods[body.index].quantity = body.quantity;
+		setMenu(newMenu);
+		setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
+	}
+
+	useEffect(() => {
+		const soc = io(Endpoints.socket + '?id_prenotazione=' + params.number);
+		socket.current = soc;
+		socket.current.on('onMessage',handleMessage);
+		//Close the socket connection when the component is unmounted
+		return () => {
+			socket.current?.off('onMessage', handleMessage);
+			socket.current?.disconnect();
+		}
+	}, []);
+
 	const decreaseQuantity = (index: number) => {
-		console.log(index);
+		const newMenu = { ...menu };
 		if (menu.foods[index].quantity > 0) {
-			menu.foods[index].quantity -= 1;
-			setMenu(menu);
-			updateHandler('decrement', menu);
+			newMenu.foods[index].quantity -= 1;
+			sendData(index, newMenu);
+			setMenu(newMenu);
+			setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 		}
 	};
 
 	const increaseQuantity = (index: number) => {
-		menu.foods[index].quantity += 1;
-		setMenu(menu);
-		updateHandler('increment', menu);
+		const newMenu = { ...menu };
+		newMenu.foods[index].quantity += 1;
+		sendData(index, newMenu);
+		setMenu(newMenu);
+		setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 	};
 
 	const [selectedOption, setSelectedOption] = useState('AllaRomana');
@@ -36,9 +87,6 @@ export default function MenuTable(
 	const handleOptionChange = (option: string) => {
 		setSelectedOption(option);
 	};
-
-	console.log(menu);
-	const price = menu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0);
 
 	return (
 		<>

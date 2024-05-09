@@ -18,7 +18,7 @@ describe('ReservationController', () => {
             addCustomer: jest.fn(),
             findAll: jest.fn(),
             findOne: jest.fn(),
-            getOrdersWithQuantityByIdReservation: jest.fn(),
+            getMenuWithOrdersQuantityByIdReservation: jest.fn(),
           },
         }
       ],
@@ -70,11 +70,11 @@ describe('ReservationController', () => {
     });
   });
 
-  describe('getOrdersWithClients', () => {
+  describe('getMenuWithOrdersQuantityByIdReservation', () => {
     it('should return orders with clients by reservation id', async () => {
       const id = 1;
-      await controller.getOrdersWithClients(id);
-      expect(service.getOrdersWithQuantityByIdReservation).toHaveBeenCalledWith(id);
+      await controller.getMenuWithOrdersQuantityByIdReservation(id);
+      expect(service.getMenuWithOrdersQuantityByIdReservation).toHaveBeenCalledWith(id);
     });
   });
 });

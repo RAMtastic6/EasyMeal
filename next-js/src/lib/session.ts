@@ -20,7 +20,7 @@ export async function decryptToken(token: string | undefined) {
   }
 }
 
-export async function createSession(email: string, hashedPassword: string) {
+export async function createSession(email: string, password: string) {
   let token;
   try {
     const response = await fetch(Endpoints.user + "login", {
@@ -28,7 +28,7 @@ export async function createSession(email: string, hashedPassword: string) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email: email, password: hashedPassword }),
+      body: JSON.stringify({ email: email, password: password }),
     });
     if (response.status != 200) {
       return false;

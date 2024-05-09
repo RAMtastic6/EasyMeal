@@ -55,7 +55,7 @@ describe('RestaurantService', () => {
         andWhere: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockReturnValueOnce([])
       } as any);
-      await service.getFilteredRestaurants(query);
+      await service.getFilteredRestaurants(query, 1, 1);
       expect(repo.createQueryBuilder).toHaveBeenCalled();
     });
   });
@@ -139,13 +139,6 @@ describe('RestaurantService', () => {
     });
   });
 
-  describe('findMenuByRestaurantId', () => {
-    it('should return the menu of a restaurant', async () => {
-      await service.findMenuByRestaurantId(0);
-      expect(repo.findOne).toHaveBeenCalledWith({ where: { id: 0 }, relations: ['menu', 'menu.foods'] });
-    });
-  });
-
   describe('findOne', () => {
     it('should return a restaurant', async () => {
       await service.findOne(0);
@@ -170,6 +163,31 @@ describe('RestaurantService', () => {
         },
       });
       expect(result).toBe(expectedResult);
+    });
+  });
+
+  describe('getRestaurantAndMenuByReastaurantId', () => {
+    it('should return the restaurant and its menu', async () => {
+      const restaurantId = 1;
+      const expectedResult = {
+        id: 1,
+        name: 'Restaurant',
+        menu: {
+          id: 1,
+          foods: []
+        }
+      } as Restaurant;
+      jest.spyOn(repo, 'findOne').mockResolvedValueOnce(expectedResult);
+      const result = await service.getRestaurantAndMenuByReastaurantId(restaurantId);
+      expect(repo.findOne).toHaveBeenCalledWith({
+        where: { id: restaurantId },
+        relations: {
+          menu: {
+            foods: true
+          }
+        }
+      });
+      expect(result).toEqual(expectedResult);
     });
   });
 });

@@ -1,52 +1,21 @@
 'use client';
 import MenuTable from '@/src/components/menu_table';
 import Header from '@/src/components/header';
-import OrderCart from '@/src/components/order_cart';
-import { Endpoints } from '@/src/lib/database/endpoints';
-import { getRestaurantOrders } from '@/src/lib/database/restaurant';
+import { getMenuWithOrdersQuantityByIdReservation } from '../../../../lib/database/reservation';
 import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 
 export default function Page({ params }: { params: { number: string } }) {
-	const [restaurant, setRestaurant] = useState<any>();
-	const [menu, setMenu] = useState<any>();
-	const [loadingRest, setLoadingrRest] = useState(true);
-	const [loadingMenu, setLoadingMenu] = useState(true);
-	const [socket, setSocket] = useState<any>();
+
+	const [data, setData] = useState<any>();
 
 	useEffect(() => {
-		async function fetchRestaurant() {
-			const response = await getRestaurantOrders(parseInt(params.number));
-			if (!response) {
-				throw new Error('Error fetching restaurant from the database');
-			}
-			setRestaurant(response.restaurant);
-			//setMenu(response.restaurant.menu);
-			setLoadingrRest(false);
-		}
-		fetchRestaurant();
-		const socket = io(Endpoints.socket + "?id_prenotazione=" + params.number, {
-			
+		getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)).then((data) => {
+			setData(data.restaurant);
 		});
-		socket.on('onMessage', (menu) => {
-			console.log(menu);
-			setMenu(menu);
-			setLoadingMenu(false);
-		});
-		setSocket(socket);
-		return () => {
-			socket.off('onMessage');
-			socket.disconnect();
-		}
 	}, []);
 
-	const update = (name: string, menu: any) => {
-		console.log(name, menu);
-		socket.emit(name, { id_prenotazione: params.number, menu: menu });
- };
-
-	if (loadingRest || loadingMenu) {
-		return <div>Loading...</div>
+	if (!data) {
+		return <div>Loading...</div>;
 	}
 
 	return (
@@ -62,22 +31,19 @@ export default function Page({ params }: { params: { number: string } }) {
 						/>
 					</div>
 					<div className="self-start py-20 text-orange-950">
-						<h1 className="text-3xl font-bold">{restaurant.name}</h1>
-						<p>Indirizzo: {restaurant.address}</p>
-						<p>Città: {restaurant.city}</p>
-						<p>Cucina: {restaurant.cuisine}</p>
+						<h1 className="text-3xl font-bold">{data.name}</h1>
+						<p>Indirizzo: {data.address}</p>
+						<p>Città: {data.city}</p>
+						<p>Cucina: {data.cuisine}</p>
 					</div>
 				</div>
 				<span className="flex items-center mt-8">
 					<span className="h-px flex-1 bg-orange-950"></span>
 				</span>
-				<MenuTable menu={menu} setMenu={setMenu} updateHandler={update} />
+				<MenuTable menuData={data.menu} params={params}/>
 				<span className="flex items-center mt-8">
 					<span className="h-px flex-1 bg-orange-950"></span>
 				</span>
-				{
-					//<OrderCart />
-				}
 			</div>
 		</div>
 	)

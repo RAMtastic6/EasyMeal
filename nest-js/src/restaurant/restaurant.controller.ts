@@ -46,19 +46,14 @@ export class RestaurantController {
     return this.restaurantService.findOne(+id);
   }
 
-  @Get(':id/menu')
-  findMenuByRestaurantId(@Param('id') id: string) {
-    return this.restaurantService.findMenuByRestaurantId(+id);
-  }
-
   @Get(':id/booked-tables')
   getBookedTables(@Param('id') id: string, @Query('date') date: string) {
     return this.restaurantService.getBookedTables(+id, date);
   }
 
   @Get(':id/menu')
-  async getMenuByRestaurantId(@Param('id') id: string) {
-    const result = await this.restaurantService.getMenuByRestaurantId(+id);
+  async getRestaurantAndMenuByRestaurantId(@Param('id') id: string) {
+    const result = await this.restaurantService.getRestaurantAndMenuByReastaurantId(+id);
     if(result == null) {
       throw new NotFoundException('Reservation not found');
     }
