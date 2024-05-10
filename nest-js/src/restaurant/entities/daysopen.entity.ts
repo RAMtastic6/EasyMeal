@@ -12,17 +12,18 @@ export enum Days {
 }
 
 @Entity()
-export class Daysopen {
-    @PrimaryColumn({name: 'restaurant_id'})
+export class Day {
+
+    @PrimaryColumn({ name: 'restaurant_id' })
     restaurantId: number;
 
-    @PrimaryColumn({name: 'day_open', enum: Days, type: 'enum'})
+    @PrimaryColumn({ name: 'day_open', enum: Days, type: 'enum' })
     dayOpen: Days;
 
-    @PrimaryColumn({name: 'opening', type: 'time'})
+    @PrimaryColumn({ name: 'opening', type: 'time' })
     opening: string;
 
-    @Column({name: 'closing', type: 'time'})
+    @Column({ name: 'closing', type: 'time' })
     closing: string;
 
     @ManyToOne(() => Restaurant, ristorante => ristorante.daysOpen)

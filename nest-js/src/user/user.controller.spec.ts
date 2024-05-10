@@ -60,7 +60,6 @@ describe('UserController', () => {
       id: 1,
       role: UserRole.USER,
       orders: [],
-      reservation_group: [],
       reservations: []
     };
 
@@ -90,7 +89,6 @@ describe('UserController', () => {
       id: 1,
       role: UserRole.USER,
       orders: [],
-      reservation_group: [],
       reservations: []
     };
 
@@ -115,7 +113,6 @@ describe('UserController', () => {
       id: userId,
       role: UserRole.USER,
       orders: [],
-      reservation_group: [],
       reservations: []
     };
 

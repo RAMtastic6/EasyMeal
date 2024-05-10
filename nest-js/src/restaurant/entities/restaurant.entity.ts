@@ -1,5 +1,5 @@
-import { Daysopen } from "src/daysopen/entities/daysopen.entity";
-import { Menu } from "src/menu/entities/menu.entity";
+import { Day } from "src/restaurant/entities/daysopen.entity";
+import { Menu } from "src/restaurant/entities/menu.entity";
 import { Orders } from "src/orders/entities/order.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
@@ -33,12 +33,18 @@ export class Restaurant {
     @Column({type: "varchar", length: 256})
     email: string;
 
+    @Column({ type: "varchar", length: 255, nullable: true })
+    image: string
+
+    @Column({ type: "varchar", length: 255, nullable: true })
+    description: string;
+
     @OneToOne(() => Menu, menu => menu.restaurant, {cascade: true})
     @JoinColumn({name: "menu_id"})
     menu: Menu;
 
-    @OneToMany(() => Daysopen, daysopen => daysopen.restaurant)
-    daysOpen: Daysopen[];
+    @OneToMany(() => Day, daysopen => daysopen.restaurant)
+    daysOpen: Day[];
 
     @OneToMany(() => Reservation, reservation => reservation.restaurant)
     reservations: Reservation[];

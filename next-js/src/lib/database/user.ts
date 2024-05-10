@@ -1,4 +1,4 @@
-import 'server-only'
+import 'server-only';
 import { Endpoints } from "./endpoints";
 
 export async function getUserById(id: number) {
@@ -17,4 +17,25 @@ export async function createUser(data: any, role: string = "user") {
   });
   if (response.status == 400) return null;
   return await response.json();
+}
+
+export async function login(email: string, password: string) {
+  try {
+    const response = await fetch(Endpoints.user + "login", {
+      method: 'POST',
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email, password: password }),
+    });
+    if (response.status != 200) {
+      return null;
+    }
+    return (await response.json()).token;
+  } catch (error) {
+    //TODO: Handle error
+    console.log('Error:', error);
+    return null;
+  }
 }

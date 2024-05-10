@@ -99,7 +99,30 @@ export class RestaurantService {
     return result;
   }
 
-  async getRestaurantAndMenuByReastaurantId(id: number) {
+  async getNumberOfFilteredRestaurants(query: {
+    date?: string,
+    name?: string,
+    city?: string,
+    cuisine?: string
+  }) {
+    let queryBuilder = this.restaurantRepo.createQueryBuilder('restaurant');
+    if (query.date) {
+      const dayOfWeek = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][new Date(query.date).getDay()];
+      queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
+    }
+    if (query.name) {
+      queryBuilder = queryBuilder.andWhere('restaurant.name = :name', { name: query.name });
+    }
+    if (query.city) {
+      queryBuilder = queryBuilder.andWhere('restaurant.city = :city', { city: query.city });
+    }
+    if (query.cuisine) {
+      queryBuilder = queryBuilder.andWhere('restaurant.cuisine = :cuisine', { cuisine: query.cuisine.toLowerCase() });
+    }
+    return await queryBuilder.getCount();
+  }
+
+  async getRestaurantAndMenuByRestaurantId(id: number) {
     const result = await this.restaurantRepo.findOne({
       where: { id },
       relations: {

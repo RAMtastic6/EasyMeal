@@ -1,9 +1,9 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RestaurantController } from './restaurant.controller';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
-import { HttpException, NotFoundException } from '@nestjs/common';
 
 describe('RestaurantController', () => {
   let controller: RestaurantController;
@@ -24,6 +24,7 @@ describe('RestaurantController', () => {
             findOne: jest.fn(),
             getBookedTables: jest.fn(),
             getRestaurantAndMenuByRestaurantId: jest.fn(),
+            getNumberOfFilteredRestaurants: jest.fn()
           },
         },
       ],
@@ -33,12 +34,8 @@ describe('RestaurantController', () => {
     service = module.get<RestaurantService>(RestaurantService);
   });
 
-  it('controller should be defined', () => {
+  it('should be defined', () => {
     expect(controller).toBeDefined();
-  });
-
-  it('service should be defined', () => {
-    expect(service).toBeDefined();
   });
 
   describe('getFilteredRestaurants', () => {
@@ -50,7 +47,7 @@ describe('RestaurantController', () => {
         cuisine: 'Cuisine',
       };
       controller.getFilteredRestaurants(query, 1, 1);
-      expect(service.getFilteredRestaurants).toHaveBeenCalledWith(query);
+      expect(service.getFilteredRestaurants).toHaveBeenCalledWith(query, 1, 1);
     });
   });
 
@@ -64,7 +61,7 @@ describe('RestaurantController', () => {
         cuisine: '',
         daysOpen: '',
         phone_number: '',
-        email: ''
+        email: '',
       };
       controller.create(createRestaurantDto);
       expect(service.create).toHaveBeenCalledWith(createRestaurantDto);
@@ -92,6 +89,19 @@ describe('RestaurantController', () => {
     });
   });
 
+  describe('getNumberOfFilteredRestaurants', () => {
+    it('should call restaurantService.getNumberOfFilteredRestaurants with the provided query', async () => {
+      const query = {
+        date: '2022-01-01',
+        name: 'Restaurant',
+        city: 'City',
+        cuisine: 'Cuisine',
+      };
+      await controller.getNumberOfFilteredRestaurants(query);
+      expect(service.getNumberOfFilteredRestaurants).toHaveBeenCalledWith(query);
+    });
+  });
+
   describe('findOne', () => {
     it('should call restaurantService.findOne with the provided id', () => {
       const id = '1';
@@ -110,20 +120,19 @@ describe('RestaurantController', () => {
   });
 
   describe('getRestaurantAndMenuByRestaurantId', () => {
-    it('should call restaurantService.getRestaurantAndMenuByReastaurantId with the provided id', async () => {
+    it('should call restaurantService.getRestaurantAndMenuByRestaurantId with the provided id', async () => {
       const id = '1';
       const result = {} as Restaurant;
-      jest.spyOn(service, 'getRestaurantAndMenuByReastaurantId').mockResolvedValueOnce(result);
+      jest.spyOn(service, 'getRestaurantAndMenuByRestaurantId').mockResolvedValueOnce(result);
       await expect(controller.getRestaurantAndMenuByRestaurantId(id)).resolves.toBe(result);
-      expect(service.getRestaurantAndMenuByReastaurantId).toHaveBeenCalledWith(+id);
+      expect(service.getRestaurantAndMenuByRestaurantId).toHaveBeenCalledWith(+id);
     });
-  
+
     it('should throw NotFoundException if result is null', async () => {
       const id = '1';
-      jest.spyOn(service, 'getRestaurantAndMenuByReastaurantId').mockResolvedValue(null);
+      jest.spyOn(service, 'getRestaurantAndMenuByRestaurantId').mockResolvedValue(null);
       await expect(controller.getRestaurantAndMenuByRestaurantId(id)).rejects.toThrow(NotFoundException);
-      expect(service.getRestaurantAndMenuByReastaurantId).toHaveBeenCalledWith(+id);
+      expect(service.getRestaurantAndMenuByRestaurantId).toHaveBeenCalledWith(+id);
     });
   });
-  
 });
