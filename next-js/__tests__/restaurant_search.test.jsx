@@ -1,52 +1,61 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react'
-import RestaurantSearch from '../src/components/restaurant_search'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import RestaurantSearch from '../src/components/restaurant_search';
 
 jest.mock('next/navigation', () => ({
-    useRouter() {
-        return {}
-    },
-    useSearchParams() {
-        return {}
-    },
-    usePathname() {
-        return ('')
-    }
+    useRouter: () => ({
+        replace: jest.fn(),
+    }),
+    useSearchParams: () => ({
+        replace: jest.fn(),
+    }),
+    usePathname: () => ({
+        replace: jest.fn(),
+    })
 }));
 
 const cuisines = [
-    "Italiana", "Cinese", "Americana"
+    "Cucina_1", "Cucina_2", "Cucina_3"
+];
+
+const cities = [
+    "Città_1", "Città_2", "Città_3"
 ];
 
 describe('Verifica il funzionamento frontend del componente Restaurant Search', () => {
 
-    render(<RestaurantSearch cuisines={cuisines} cities={[]} />);
-
-    const inputNomeRistorante = screen.getByTestId('InputNomeRistorante');
-    const inputCittà = screen.getByTestId('InputCittà');
-    const inputData = screen.getByTestId('InputData');
-    const inputTipoCucina = screen.getByTestId('InputTipoCucina');
-    const inputResetFiltri = screen.getByTestId('InputResetFiltri');
-
     it('Verifica della visualizzazione', () => {
 
-        expect(inputNomeRistorante).toBeInTheDocument();
-        expect(inputCittà).toBeInTheDocument();
-        expect(inputData).toBeInTheDocument();
-        expect(inputTipoCucina).toBeInTheDocument();
-        expect(inputResetFiltri).toBeInTheDocument();
-    })
+        render(<RestaurantSearch cuisines={cuisines} cities={cities} />);
 
-    it('Verifica degli input', () => {
+        expect(screen.getByTestId('InputNomeRistorante')).toBeInTheDocument();
+        expect(screen.getByTestId('InputCittà')).toBeInTheDocument();
+        expect(screen.getByTestId('InputData')).toBeInTheDocument();
+        expect(screen.getByTestId('InputTipoCucina')).toBeInTheDocument();
+        expect(screen.getByTestId('InputResetFiltri')).toBeInTheDocument();
+    });
 
-        fireEvent.change(inputNomeRistorante, { target: { value: 'Nome del Ristorante' } });
-        fireEvent.change(inputCittà, { target: { value: 'Città del Ristorante' } });
-        fireEvent.change(inputData, { target: { value: '2024-05-09' } });
-        fireEvent.select(inputTipoCucina, { target: { value: cuisines[0] } });
+    it('Verifica degli input', async () => {
 
-        expect(inputNomeRistorante).toHaveValue('Nome del Ristorante');
-        expect(inputCittà).toHaveValue('Città del Ristorante');
-        expect(inputData).toHaveValue('2024-05-09');
-        expect(inputTipoCucina).toHaveDisplayValue('Italiana');
-    })
+        render(<RestaurantSearch cuisines={cuisines} cities={cities} />);
+
+        fireEvent.change(screen.getByTestId('InputNomeRistorante'), { target: { value: 'Ristorante_1' } });
+        fireEvent.change(screen.getByTestId('InputCittà'), { target: { value: cities[0] } });
+        fireEvent.change(screen.getByTestId('InputData'), { target: { value: '2024-05-09' } });
+        fireEvent.change(screen.getByTestId('InputTipoCucina'), { target: { value: cuisines[0] } });
+
+        expect(screen.getByTestId('InputNomeRistorante')).toHaveValue('Ristorante_1');
+        expect(screen.getByTestId('InputCittà')).toHaveValue(cities[0]);
+        expect(screen.getByTestId('InputData')).toHaveValue('2024-05-09');
+        expect(screen.getByTestId('InputTipoCucina')).toHaveDisplayValue(cuisines[0]);
+
+        fireEvent.click(screen.getByTestId('InputResetFiltri'));
+
+        await waitFor(() => {
+            expect(screen.getByTestId('InputNomeRistorante')).toHaveValue('');
+            expect(screen.getByTestId('InputCittà')).toHaveValue('');
+            expect(screen.getByTestId('InputData')).toHaveValue('');
+            expect(screen.getByTestId('InputTipoCucina')).toHaveValue('');
+        });
+    });
 });

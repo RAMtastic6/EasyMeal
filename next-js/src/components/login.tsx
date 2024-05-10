@@ -45,6 +45,7 @@ export default function login() {
 											//type="email"
 											autoComplete="email"
 											placeholder="Indirizzo email..."
+											data-testid={"InputEmail"}
 											required
 											onChange={(e) => setEmail(e.target.value)}
 											className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -70,6 +71,7 @@ export default function login() {
 											type="password"
 											autoComplete="current-password"
 											placeholder="Password..."
+											data-testid={"InputPassword"}
 											required
 											onChange={(e) => setPassword(e.target.value)}
 											className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -81,6 +83,7 @@ export default function login() {
 									<button
 										type="submit"
 										className="flex w-full justify-center rounded bg-orange-950 px-12 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring"
+										data-testid={"LoginButton"}
 									>
 										Login
 									</button>
@@ -90,7 +93,7 @@ export default function login() {
 							{error && <p className="mt-4 text-center text-red-500">{error}</p>}
 							<p className="mt-10 text-center text-sm text-gray-500">
 								Non sei ancora registrato?{' '}
-								<a href="../sign_up" className="font-semibold leading-6 text-red-950 hover:text-white underline">
+								<a href="../sign_up" className="font-semibold leading-6 text-red-950 hover:text-white underline" data-testid={"LinkRegister"}>
 									Registrati qui
 								</a>
 							</p>
