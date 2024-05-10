@@ -50,8 +50,9 @@ export class UserService {
     return createdUser;
   }
 
-  async create_admin(adminDto: AdminDto){
+  async create_admin(adminDto: AdminDto) {
     //check if the user can create an admin
+    const { email, name, surname, password, restaurant_name, restaurant_address, restaurant_city, restaurant_cuisine, restaurant_tables, restaurant_phone_number, restaurant_email, restaurant_daysOpen } = adminDto;
 
     // Check if email is already registered
     const existingAdmin = await this.userRepo.findOne({ where: { email: adminDto.email } });
@@ -60,20 +61,23 @@ export class UserService {
     }
 
     // Create and save the user with role admin
-    const user = await this.create_user(adminDto, UserRole.USER);
+    const user = await this.create_user(
+      { email, name, surname, password }
+      , UserRole.USER);
 
     // Create a restaurant for the admin
     const restaurant = await this.restaurantService.create({
-      name: adminDto.restaurant_name,
-      address: adminDto.restaurant_address,
-      city: adminDto.restaurant_city,
-      cuisine: adminDto.restaurant_cuisine,
-      phone_number: adminDto.restaurant_phone_number,
-      email: adminDto.restaurant_email
+      name: restaurant_name,
+      address: restaurant_address,
+      city: restaurant_city,
+      cuisine: restaurant_cuisine,
+      tables: restaurant_tables,
+      email: restaurant_email,
+      phone_number: restaurant_phone_number,
+      daysOpen: restaurant_daysOpen
     } as CreateRestaurantDto);
-
     // Assign the restaurant to the admin
-    
+
     await this.staffService.create({
       restaurant_id: restaurant.id,
       role: StaffRole.ADMIN,
@@ -94,12 +98,12 @@ export class UserService {
   async login(email: string, password: string) {
     const result = await this.userRepo.findOne({ where: { email } });
     if (!result || (await comparePasswords(password, result.password)) == false) {
-        throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
     }
-    const token = this.jwtService.sign({ 
-        id: result.id, 
-        role: result.role,
-      }, 
+    const token = this.jwtService.sign({
+      id: result.id,
+      role: result.role,
+    },
     );
     return { token: token, userName: result.name, role: result.role };
   }
