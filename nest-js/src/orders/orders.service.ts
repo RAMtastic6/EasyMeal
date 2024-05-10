@@ -129,7 +129,19 @@ export class OrdersService {
       where: {
         reservation_id: id
       },
-      relations: ['food']
+      relations: {
+        food: true,
+        ingredients: true
+      },
+      select: {
+        food: {
+          name: true
+        },
+        ingredients: {
+          id: true,
+          name: true
+        }
+      }
     });
     if (orders.length == 0) {
       throw new NotFoundException('No orders found for this reservation');

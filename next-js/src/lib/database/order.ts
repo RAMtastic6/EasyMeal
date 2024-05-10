@@ -17,3 +17,19 @@ export async function getRomanBill(id: number) {
     const data = await res.json();
     return data;
 }
+
+export async function saveOrders(data: {
+    customer_id: number,
+    reservation_id: number,
+    food_id: number,
+    quantity: number,
+}) {
+    const request = await fetch(Endpoints.order, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+    return await request.json();
+}

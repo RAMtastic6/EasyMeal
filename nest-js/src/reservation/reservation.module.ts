@@ -3,23 +3,19 @@ import { ReservationService } from './reservation.service';
 import { ReservationController } from './reservation.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
-import { ReservationGruop } from './entities/reservation_group.enity';
 import { RestaurantModule } from 'src/restaurant/restaurant.module';
-import { RestaurantService } from 'src/restaurant/restaurant.service';
-import { Food } from './entities/food.entity';
-import { FoodIngredient } from './entities/food_ingredient.entity';
-import { Menu } from '../restaurant/entities/menu.entity';
-import { Ingredient } from './entities/ingredient.entity';
+import { Food } from '../restaurant/entities/food.entity';
+import { FoodIngredient } from '../restaurant/entities/food_ingredient.entity';
+import { Ingredient } from '../restaurant/entities/ingredient.entity';
 
 @Module({
   controllers: [ReservationController],
   providers: [ReservationService],
   imports: [TypeOrmModule.forFeature([
     Reservation,
-    ReservationGruop,
     Food,
     FoodIngredient,
-    Ingredient
+    Ingredient,
   ]), RestaurantModule],
   exports: [TypeOrmModule, ReservationService]
 })

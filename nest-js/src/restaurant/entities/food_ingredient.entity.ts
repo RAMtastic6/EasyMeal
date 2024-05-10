@@ -5,10 +5,10 @@ import { Ingredient } from "./ingredient.entity";
 @Entity()
 export class FoodIngredient {
 
-  @PrimaryColumn({ name: "id_food"})
+  @PrimaryColumn({ name: "id_food" })
   foodId: number;
 
-  @PrimaryColumn({ name: "id_ingredient"})
+  @PrimaryColumn({ name: "id_ingredient" })
   ingredientId: number;
 
   @Column()

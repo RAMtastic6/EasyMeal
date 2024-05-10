@@ -1,7 +1,7 @@
 'use client';
 import MenuTable from '@/src/components/menu_table';
 import Header from '@/src/components/header';
-import { getMenuWithOrdersQuantityByIdReservation } from '../../../../lib/database/reservation';
+import { getMenuWithOrdersQuantityByIdReservation } from '../../../lib/database/reservation';
 import { useEffect, useState } from 'react';
 
 export default function Page({ params }: { params: { number: string } }) {
@@ -11,7 +11,6 @@ export default function Page({ params }: { params: { number: string } }) {
 	useEffect(() => {
 		getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)).then((data) => {
 			setData(data.restaurant);
-			console.log(data.restaurant.menu);
 		});
 	}, []);
 
@@ -21,7 +20,6 @@ export default function Page({ params }: { params: { number: string } }) {
 
 	return (
 		<div className="w-full">
-			<Header />
 			<div className="px-10 py-4 flex flex-col">
 				<div className="flex flex-row">
 					<div className="self-start py-1">
@@ -41,7 +39,7 @@ export default function Page({ params }: { params: { number: string } }) {
 				<span className="flex items-center mt-8">
 					<span className="h-px flex-1 bg-orange-950"></span>
 				</span>
-				<MenuTable menuData={data.menu} params={params}/>
+				<MenuTable menuData={data.menu} params={params} />
 				<span className="flex items-center mt-8">
 					<span className="h-px flex-1 bg-orange-950"></span>
 				</span>

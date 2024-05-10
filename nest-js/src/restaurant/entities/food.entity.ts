@@ -28,10 +28,10 @@ export class Food {
     @Column()
     menu_id: number;
 
-    @Column({type: "varchar", length: 255, default: ""})
+    @Column({ type: "varchar", length: 255, default: "" })
     path_image: string;
 
-    @Column({ type: "enum", enum: FoodType, default: FoodType.APPETIZER})
+    @Column({ type: "enum", enum: FoodType, default: FoodType.APPETIZER })
     type: FoodType;
 
     @ManyToOne(() => Menu, menu => menu.foods)

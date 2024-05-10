@@ -1,3 +1,4 @@
+'use server';
 import 'server-only';
 import { cookies } from 'next/headers'
 import { decryptToken } from './session';
@@ -12,5 +13,5 @@ export const verifySession = cache(async () => {
         redirect('/login');
     }
 
-    return { isAuth: true, userId: session?.userId}
+    return { isAuth: true, id: session.id as number}
 });

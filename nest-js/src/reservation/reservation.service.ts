@@ -4,7 +4,6 @@ import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
-import { ReservationGruop } from './entities/reservation_group.enity';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 
 @Injectable()
@@ -12,8 +11,6 @@ export class ReservationService {
   constructor(
     @InjectRepository(Reservation)
     private reservationRepository: Repository<Reservation>,
-    @InjectRepository(ReservationGruop)
-    private reservationGroupRepository: Repository<ReservationGruop>,
     private readonly restaurantService: RestaurantService,
   ) {}
   
@@ -33,13 +30,9 @@ export class ReservationService {
       date: new Date(createReservationDto.date),
       number_people: createReservationDto.number_people,
       restaurant_id: createReservationDto.restaurant_id,
+      customers: [{ id: createReservationDto.customer_id }],
     });
     await this.reservationRepository.save(reservation);
-    const group = this.reservationGroupRepository.create({
-      reservation_id: reservation.id,
-      customer_id: createReservationDto.customer_id,
-    });
-    await this.reservationGroupRepository.save(group);
     return reservation;
   }
 
@@ -48,11 +41,9 @@ export class ReservationService {
     if(reservation == null) {
       throw new NotFoundException('Reservation not found');
     }
-    const group = this.reservationGroupRepository.create({
-      reservation_id: params.reservation_id,
-      customer_id: params.customer_id,
+    await this.reservationRepository.update({ id: params.reservation_id }, {
+      customers: [...reservation.customers, { id: params.customer_id }],
     });
-    await this.reservationGroupRepository.save(group);
     return true;
   }
 
@@ -87,7 +78,6 @@ export class ReservationService {
         }
       },
     });
-    console.log(result);
     if(result == null) {
       throw new NotFoundException('Reservation not found');
     }
