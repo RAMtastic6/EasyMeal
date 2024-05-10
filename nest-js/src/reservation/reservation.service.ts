@@ -90,4 +90,9 @@ export class ReservationService {
     delete result.orders;
     return result;
   }
+
+  async getReservationsByRestaurantId(restaurantId: number) {
+    const reservations = await this.reservationRepository.find({ where: { restaurant_id: restaurantId } });
+    return reservations;
+  }
 }

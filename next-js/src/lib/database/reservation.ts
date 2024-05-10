@@ -20,17 +20,17 @@ export async function getReservationById(id: number): Promise<JSON> {
 
 //Get restaurant and menu from reservation id
 export async function getMenuWithOrdersQuantityByIdReservation(id: number) {
-  const response = await fetch(`${Endpoints.reservation}${id}/orders`, {
-    method: "GET",
-    headers: {
-      "Cache-Control": "no-cache",
-    },
-  });
-  if (!response.ok) {
-    throw new Error('Error fetching restaurant from the database');
-  }
-  const data = await response.json();
-  return data;
+	const response = await fetch(`${Endpoints.reservation}${id}/orders`, {
+		method: "GET",
+		headers: {
+			"Cache-Control": "no-cache",
+		},
+	});
+	if (!response.ok) {
+		throw new Error('Error fetching restaurant from the database');
+	}
+	const data = await response.json();
+	return data;
 }
 
 export async function createReservation(reservation: {}): Promise<any> {
@@ -45,4 +45,13 @@ export async function createReservation(reservation: {}): Promise<any> {
 		body: await response.json(),
 		status: response.ok,
 	};
+}
+
+export async function getReservationsByRestaurantId(restaurantId: number): Promise<[]> {
+	const response = await fetch(`${Endpoints.reservation}restaurant/${restaurantId}`);
+	if (!response.ok) {
+		throw new Error('Error fetching reservations from the database');
+	}
+	const data = await response.json();
+	return data;
 }
