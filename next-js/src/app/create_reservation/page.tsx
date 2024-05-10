@@ -2,13 +2,14 @@ import Header from "@/src/components/header";
 import Table from '@/src/components/restaurants_table';
 import RestaurantSearch from '@/src/components/restaurant_search';
 import Pagination from '@/src/components/pagination';
-import { getAllCities, getAllCuisines } from "@/src/lib/database/restaurant";
+import { getAllCities, getAllCuisines, getRestaurantsTotalPages } from "@/src/lib/database/restaurant";
+import { RestaurantFilter } from "@/src/lib/database/restaurant";
 
-export default async function Page() {
+export default async function Page({ restaurantFilter }: { restaurantFilter: RestaurantFilter }) {
   const ITEMS_PER_PAGE = 1;
   const cuisines = await getAllCuisines();
   const cities = await getAllCities();
-  const totalPages = 3;
+  const totalPages = await getRestaurantsTotalPages(restaurantFilter, ITEMS_PER_PAGE);
 
   return (
     <>

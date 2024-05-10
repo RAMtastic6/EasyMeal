@@ -120,7 +120,6 @@ describe('UserService', () => {
       role: UserRole.USER,
       surname: 'admin',
       orders: [],
-      reservation_group: [],
       reservations: []
     };
     describe('create_admin', () => {
