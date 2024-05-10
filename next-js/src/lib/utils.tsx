@@ -29,3 +29,11 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
       totalPages,
     ];
   };
+
+export const getFormData = (keys: string[], formData: FormData) => {
+  const formDataValues: any = {};
+  keys.forEach((key) => {
+    formDataValues[key] = formData.get(key);
+  });
+  return formDataValues;
+};
