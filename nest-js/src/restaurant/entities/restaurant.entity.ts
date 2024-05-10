@@ -1,5 +1,5 @@
 import { Day } from "src/restaurant/entities/daysopen.entity";
-import { Menu } from "src/restaurant/entities/menu.entity";
+import { Menu } from "src/menu/entities/menu.entity";
 import { Orders } from "src/orders/entities/order.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";

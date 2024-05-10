@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { OrdersModule } from './orders/orders.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { StaffModule } from './staff/staff.module';
+import { MenuModule } from './menu/menu.module';
 
 
 @Module({
@@ -19,7 +20,7 @@ import { StaffModule } from './staff/staff.module';
       database: 'easy-meal',
       autoLoadEntities: true,
       synchronize: true, //FIXME: NEVER USE THIS IN PRODUCTION
-    }), UserModule, OrdersModule, ReservationModule, StaffModule
+    }), UserModule, OrdersModule, ReservationModule, StaffModule, MenuModule
   ],
   controllers: [AppController],
   providers: [AppService],
