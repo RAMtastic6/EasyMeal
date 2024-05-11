@@ -98,3 +98,21 @@ export async function getRestaurantsTotalPages(params: RestaurantFilter, ITEMS_P
 	const data = await response.json()
 	return Math.ceil(data / ITEMS_PER_PAGE);
 }
+
+export async function createRestaurant(data: any) {
+	console.log(data);
+	console.log(Endpoints.restaurant);
+	const response = await fetch(Endpoints.restaurant, {
+		method: 'POST',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(data),
+	});
+	console.log(response.status+" "+response.statusText);
+	if(!response.ok) {
+		return null;
+	}
+	return await response.json();
+}

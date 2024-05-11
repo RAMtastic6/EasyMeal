@@ -74,8 +74,7 @@ export class UserService {
       tables: restaurant_tables,
       email: restaurant_email,
       phone_number: restaurant_phone_number,
-      daysOpen: restaurant_daysOpen,
-      menu_id: menu_id
+      menu_id: menu_id,
     } as CreateRestaurantDto);
     // Assign the restaurant to the admin
 
