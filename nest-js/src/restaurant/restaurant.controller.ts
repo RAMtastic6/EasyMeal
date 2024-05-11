@@ -5,16 +5,20 @@ import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 
 @Controller('restaurant')
 export class RestaurantController {
-  constructor(private readonly restaurantService: RestaurantService) {}
+  constructor(private readonly restaurantService: RestaurantService) { }
 
   @Get('filter')
-  getFilteredRestaurants(@Query() query: { 
-    date?: string,
-    name?: string,
-    city?: string, 
-    cuisine?: string }) 
-    {
-    return this.restaurantService.getFilteredRestaurants(query);
+  getFilteredRestaurants(
+    @Query() query: {
+      date?: string,
+      name?: string,
+      city?: string,
+      cuisine?: string
+    },
+    @Query('currentPage') currentPage: number,
+    @Query('ITEMS_PER_PAGE') ITEMS_PER_PAGE: number
+  ) {
+    return this.restaurantService.getFilteredRestaurants(query, currentPage, ITEMS_PER_PAGE);
   }
 
   @Post()
@@ -37,24 +41,19 @@ export class RestaurantController {
     return this.restaurantService.findAllCities();
   }
 
+  @Get('count')
+  async getNumberOfFilteredRestaurants(@Query() query: {
+    date?: string,
+    name?: string,
+    city?: string,
+    cuisine?: string
+  }) {
+    return await this.restaurantService.getNumberOfFilteredRestaurants(query);
+  }
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.restaurantService.findOne(+id);
-  }
-
-  @Get(':id/menu')
-  findMenuByRestaurantId(@Param('id') id: string) {
-    return this.restaurantService.findMenuByRestaurantId(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRestaurantDto: UpdateRestaurantDto) {
-    return this.restaurantService.update(+id, updateRestaurantDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.restaurantService.remove(+id);
   }
 
   @Get(':id/booked-tables')
@@ -63,9 +62,9 @@ export class RestaurantController {
   }
 
   @Get(':id/menu')
-  async getMenuByReservationId(@Param('id') id: string) {
-    const result = await this.restaurantService.getMenuByRestaurantId(+id);
-    if(result == null) {
+  async getRestaurantAndMenuByRestaurantId(@Param('id') id: string) {
+    const result = await this.restaurantService.getRestaurantAndMenuByRestaurantId(+id);
+    if (result == null) {
       throw new NotFoundException('Reservation not found');
     }
     return result;

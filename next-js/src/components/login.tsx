@@ -1,6 +1,5 @@
 'use client';
 import { createSession } from "../lib/session";
-import { sha256 } from "crypto-sha";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

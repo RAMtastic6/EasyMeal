@@ -4,7 +4,6 @@ import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
-import { ReservationGruop } from './entities/reservation_group.enity';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 
 @Injectable()
@@ -12,8 +11,6 @@ export class ReservationService {
   constructor(
     @InjectRepository(Reservation)
     private reservationRepository: Repository<Reservation>,
-    @InjectRepository(ReservationGruop)
-    private reservationGroupRepository: Repository<ReservationGruop>,
     private readonly restaurantService: RestaurantService,
   ) {}
   
@@ -33,13 +30,9 @@ export class ReservationService {
       date: new Date(createReservationDto.date),
       number_people: createReservationDto.number_people,
       restaurant_id: createReservationDto.restaurant_id,
+      customers: [{ id: createReservationDto.customer_id }],
     });
     await this.reservationRepository.save(reservation);
-    const group = this.reservationGroupRepository.create({
-      reservation_id: reservation.id,
-      customer_id: createReservationDto.customer_id,
-    });
-    await this.reservationGroupRepository.save(group);
     return reservation;
   }
 
@@ -48,11 +41,9 @@ export class ReservationService {
     if(reservation == null) {
       throw new NotFoundException('Reservation not found');
     }
-    const group = this.reservationGroupRepository.create({
-      reservation_id: params.reservation_id,
-      customer_id: params.customer_id,
+    await this.reservationRepository.update({ id: params.reservation_id }, {
+      customers: [...reservation.customers, { id: params.customer_id }],
     });
-    await this.reservationGroupRepository.save(group);
     return true;
   }
 
@@ -66,17 +57,7 @@ export class ReservationService {
     return reservation;
   }
 
-  update(id: number, updateReservationDto: UpdateReservationDto) {
-    //TODO: update reservation with this id
-    return `This action updates a #${id} reservation`;
-  }
-
-  remove(id: number) {
-    //TODO: remove all reservations with this id
-    return `This action removes a #${id} reservation`;
-  }
-
-  async getOrdersWithQuantityByIdReservation(id: number) {
+  async getMenuWithOrdersQuantityByIdReservation(id: number) {
     //otteniamo il menu e i cibi ordinati per una prenotazione
     const result = await this.reservationRepository.findOne({
       where: { 
@@ -85,47 +66,21 @@ export class ReservationService {
       relations: {
         restaurant: {
           menu: {
-            foods: true,
-          }
-        },
-        orders: {
-          customer: true,
-          food: true,
-        }
-      },
-      select: {
-        id: true,
-        restaurant: {
-          id: true,
-          address: true,
-          city: true,
-          cuisine: true,
-          name: true,
-          menu: {
-            id: true,
             foods: {
-              id: true,
-              name: true,
-              price: true,
+              foodIngredients: {
+                ingredient: true,
+              }
             }
           }
         },
         orders: {
-          quantity: true,
-          customer: {
-            id: true,
-          },
-          food: {
-            id: true,
-          }
+          food: true,
         }
       },
     });
-
     if(result == null) {
       throw new NotFoundException('Reservation not found');
     }
-
     //associamo la quantita del cibo direttamente al menu
     // e rimuoviamo l'array degli ordini
     result.restaurant.menu.foods.forEach((food: any) => {

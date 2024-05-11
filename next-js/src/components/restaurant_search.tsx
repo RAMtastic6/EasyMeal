@@ -10,6 +10,7 @@ export default function RestaurantSearch({ cuisines, cities }: { cuisines: strin
   const handleSearch = useDebouncedCallback((nameRestaurant: string, date: string, city: string, cuisine: string) => {
     console.log('Searching...', nameRestaurant, date, city, cuisine);
     const params = new URLSearchParams(searchParams);
+    params.set('page', '1');
     if (date) {
       params.set('date', date);
     } else {
