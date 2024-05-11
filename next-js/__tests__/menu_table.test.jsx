@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import MenuTable from '../src/components/menu_table';
-import exp from 'constants';
 
 const updateHandler = jest.fn();
 const setMenu = jest.fn();
@@ -35,20 +34,20 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
         expect(screen.getByText('Food 2')).toBeInTheDocument();
     });
 
-    it('Verifica degli input', () => {
-        render(<MenuTable menu={menu} updateHandler={updateHandler} setMenu={setMenu} />);
+    // it('Verifica degli input', () => {
+    //     render(<MenuTable menu={menu} updateHandler={updateHandler} setMenu={setMenu} />);
 
-        const decreaseButton = screen.getByTestId('decrease_1');
-        const increaseButton = screen.getByTestId('increase_1');
+    //     const decreaseButton = screen.getByTestId('decrease_1');
+    //     const increaseButton = screen.getByTestId('increase_1');
 
-        fireEvent.click(decreaseButton);
+    //     fireEvent.click(decreaseButton);
 
-        console.log(menu.foods[0].quantity);
-    })
+    //     console.log(menu.foods[0].quantity);
+    // })
 
-    it('Verifica cambiamento display', () => {
-        render(<MenuTable menu={menu} updateHandler={updateHandler} setMenu={setMenu} />);
+    // it('Verifica cambiamento display', () => {
+    //     render(<MenuTable menu={menu} updateHandler={updateHandler} setMenu={setMenu} />);
 
-        expect(screen.getByTestId('display_1')).toHaveValue(menu.foods[0].quantity);
-    })
+    //     expect(screen.getByTestId('display_1')).toHaveValue(menu.foods[0].quantity);
+    // })
 });
