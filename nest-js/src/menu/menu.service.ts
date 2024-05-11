@@ -12,6 +12,11 @@ export class MenuService {
   ) {}
   
   async create(createMenuDto: CreateMenuDto) {
-   
+    const menu = this.menuRepository.create({
+      name: createMenuDto.name,
+      foods: createMenuDto.foods,
+      restaurant: { id: createMenuDto.restaurant_id },
+    });
+    return this.menuRepository.save(menu);
   }
 }
