@@ -23,14 +23,15 @@ export default function MenuTable(
 	const [menu, setMenu] = useState(menuData);
 	const [price, setPrice] = useState(menuData.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 
-	const sendData = async (index: number, menu: any) => {
-		const user = await verifySession();
-		const data = await saveOrders({
-			customer_id: user.id,
+	const sendData = async (index: number, menu: any, amount: number) => {
+		// Al db inviamo l'aumento o la dimuzione di 1
+		await saveOrders({
 			reservation_id: parseInt(params.number),
 			food_id: menu.foods[index].id,
-			quantity: menu.foods[index].quantity,
+			quantity: amount,
+			ingredients: menu.foods[index].ingredients
 		});
+		// Al socket inviamo il dato aggiornato
 		socket.current?.emit('onMessage', {
 			id_prenotazione: params.number,
 			data: {
@@ -62,7 +63,7 @@ export default function MenuTable(
 		const newMenu = { ...menu };
 		if (menu.foods[index].quantity > 0) {
 			newMenu.foods[index].quantity -= 1;
-			sendData(index, newMenu);
+			sendData(index, newMenu, -1);
 			setMenu(newMenu);
 			setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 		}
@@ -71,7 +72,7 @@ export default function MenuTable(
 	const increaseQuantity = (index: number) => {
 		const newMenu = { ...menu };
 		newMenu.foods[index].quantity += 1;
-		sendData(index, newMenu);
+		sendData(index, newMenu, +1);
 		setMenu(newMenu);
 		setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 	};
@@ -113,8 +114,8 @@ export default function MenuTable(
 							<div className="mt-4">
 								<p className="text-gray-700 font-medium">Ingredienti:</p>
 								<ul className="list-disc list-inside">
-									{food.foodIngredients.map((element: any, index: number) => (
-										<li key={index} className="text-gray-700">{element.ingredient.name}</li>
+									{food.ingredients.map((ingredient: any, index: number) => (
+										<li key={index} className="text-gray-700">{ingredient.name}</li>
 									))}
 								</ul>
 							</div>

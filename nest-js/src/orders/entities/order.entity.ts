@@ -2,7 +2,7 @@ import { User } from "../../user/entities/user.entity";
 import { Food } from "src/restaurant/entities/food.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { AfterLoad, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Ingredient } from "../../restaurant/entities/ingredient.entity";
 
 @Entity({name: 'order_detail'})
@@ -34,7 +34,7 @@ export class Orders {
     @JoinColumn({ name: "food_id" })
     food: Food;
 
-    @ManyToMany(() => Ingredient, (ingredient) => ingredient.foodIngredients)
+    @ManyToMany(() => Ingredient, (ingredient) => ingredient.orders)
     @JoinTable()
     ingredients: Ingredient[];
 }

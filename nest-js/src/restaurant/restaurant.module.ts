@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { Menu } from './entities/menu.entity';
 import { Day } from './entities/daysopen.entity';
+import { Ingredient } from './entities/ingredient.entity';
+import { Food } from './entities/food.entity';
 
 @Module({
   controllers: [RestaurantController],
@@ -13,6 +15,8 @@ import { Day } from './entities/daysopen.entity';
     Restaurant,
     Menu,
     Day,
+    Food,
+    Ingredient,
   ])],
   exports: [TypeOrmModule, RestaurantService]
 })

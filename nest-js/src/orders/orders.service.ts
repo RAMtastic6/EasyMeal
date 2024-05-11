@@ -24,16 +24,12 @@ export class OrdersService {
         reservation_id: createOrderDto.reservation_id,
         food_id: createOrderDto.food_id
       }, {
-        quantity: createOrderDto.quantity
+        quantity: result.quantity + createOrderDto.quantity
       });
       return result;
     }
-    return await this.ordersRepository.save({
-      customer_id: createOrderDto.customer_id,
-      reservation_id: createOrderDto.reservation_id,
-      food_id: createOrderDto.food_id,
-      quantity: createOrderDto.quantity
-    });
+    const order = this.ordersRepository.create(createOrderDto);
+    return await this.ordersRepository.save(order);
   }
 
   async findAll() {
@@ -82,6 +78,22 @@ export class OrdersService {
     }, {
       quantity: updateOrder.quantity
     });
+  }
+
+  async updateIngredients(order: {
+    id: number,
+    ingredients: any[],
+  }) {
+    const result = await this.ordersRepository.findOne({
+      where: {
+        id: order.id
+      },
+      relations: {
+        ingredients: true
+      }
+    });
+    result.ingredients = order.ingredients;
+    return await this.ordersRepository.save(result);
   }
 
   async remove(order: {
@@ -135,7 +147,8 @@ export class OrdersService {
       },
       select: {
         food: {
-          name: true
+          name: true,
+          type: true,
         },
         ingredients: {
           id: true,

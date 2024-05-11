@@ -67,9 +67,7 @@ export class ReservationService {
         restaurant: {
           menu: {
             foods: {
-              foodIngredients: {
-                ingredient: true,
-              }
+              ingredients: true,
             }
           }
         },

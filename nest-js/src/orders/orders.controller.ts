@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -34,6 +34,14 @@ export class OrdersController {
     quantity: number
   }) {
     return await this.ordersService.update(updateOrder);
+  }
+
+  @Post('updateIngredients')
+  async updateIngredients(@Body() order: {
+    id: number,
+    ingredients: any[],
+  }) {
+    return await this.ordersService.updateIngredients(order);
   }
 
   @Post('remove')

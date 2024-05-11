@@ -1,7 +1,7 @@
 import { Menu } from "src/restaurant/entities/menu.entity";
 import { Orders } from "src/orders/entities/order.entity";
-import { Column, Entity, Generated, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-import { FoodIngredient } from "./food_ingredient.entity";
+import { Column, Entity, Generated, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Ingredient } from "./ingredient.entity";
 
 export enum FoodType {
     APPETIZER = 'apertivo',
@@ -41,6 +41,7 @@ export class Food {
     @OneToMany(() => Orders, order => order.food)
     orders: Orders[];
 
-    @OneToMany(() => FoodIngredient, foodIngredient => foodIngredient.food)
-    foodIngredients: FoodIngredient[];
+    @ManyToMany(() => Ingredient, ingredient => ingredient.id)
+    @JoinTable()
+    ingredients: Ingredient[]
 }
