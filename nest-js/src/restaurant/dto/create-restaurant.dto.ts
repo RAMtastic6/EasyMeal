@@ -38,9 +38,5 @@ export class CreateRestaurantDto {
             closing: string;
         }
     }
-    menu: {
-        id: number;
-        name: string;
-        foods: Food[];
-    }
+    menu_id: number;
 }

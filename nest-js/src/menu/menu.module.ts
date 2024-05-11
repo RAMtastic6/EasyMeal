@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { MenuController } from './menu.controller';
 import { MenuService } from './menu.service';
+import { MenuController } from './menu.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Menu } from './entities/menu.entity';
 
 @Module({
   controllers: [MenuController],
-  providers: [MenuService]
+  providers: [MenuService],
+  imports: [TypeOrmModule.forFeature([Menu])], 
+  exports: [MenuService, TypeOrmModule]
 })
 export class MenuModule {}

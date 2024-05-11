@@ -39,5 +39,6 @@ export class AdminDto {
       opening: string;
       closing: string;
     }
-  }
+  };
+  menu_id: number;
 }

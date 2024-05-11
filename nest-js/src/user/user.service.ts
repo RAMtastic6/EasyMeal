@@ -52,7 +52,7 @@ export class UserService {
 
   async create_admin(adminDto: AdminDto) {
     //check if the user can create an admin
-    const { email, name, surname, password, restaurant_name, restaurant_address, restaurant_city, restaurant_cuisine, restaurant_tables, restaurant_phone_number, restaurant_email, restaurant_daysOpen } = adminDto;
+    const { email, name, surname, password, restaurant_name, restaurant_address, restaurant_city, restaurant_cuisine, restaurant_tables, restaurant_phone_number, restaurant_email, restaurant_daysOpen, menu_id } = adminDto;
 
     // Check if email is already registered
     const existingAdmin = await this.userRepo.findOne({ where: { email: adminDto.email } });
@@ -74,7 +74,8 @@ export class UserService {
       tables: restaurant_tables,
       email: restaurant_email,
       phone_number: restaurant_phone_number,
-      daysOpen: restaurant_daysOpen
+      daysOpen: restaurant_daysOpen,
+      menu_id: menu_id
     } as CreateRestaurantDto);
     // Assign the restaurant to the admin
 
