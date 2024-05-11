@@ -1,3 +1,4 @@
+import { Food } from 'src/menu/entities/food.entity'
 export class CreateRestaurantDto {
     id: number;
     name: string;
@@ -36,5 +37,10 @@ export class CreateRestaurantDto {
             opening: string;
             closing: string;
         }
+    }
+    menu: {
+        id: number;
+        name: string;
+        foods: Food[];
     }
 }

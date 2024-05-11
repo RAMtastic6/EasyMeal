@@ -43,14 +43,14 @@ export class RestaurantService {
   }
 
   async create(createRestaurantDto: RestaurantDto) {
-    const { id, name, address, city, cuisine, tables, email, phone_number, daysOpen } = createRestaurantDto;
+    const { id, name, address, city, cuisine, tables, email, phone_number, daysOpen, menu } = createRestaurantDto;
     // Check if the restaurant already exists
     const existingRestaurant = await this.restaurantRepo.findOne({ where: { name: createRestaurantDto.name } });
     if (existingRestaurant) {
       throw new HttpException('Restaurant already exists', HttpStatus.CONFLICT);
     }
 
-    if (!id || !name || !address || !city || !cuisine || !tables || !email || !phone_number || !daysOpen) {
+    if (!id || !name || !address || !city || !cuisine || !tables || !email || !phone_number || !daysOpen || !menu) {
       throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
     }
     
@@ -64,7 +64,8 @@ export class RestaurantService {
       phone_number: phone_number,
       daysOpen: Object.values(daysOpen).map(day => {
         return this.restaurantRepo.manager.create(Day, day);
-      })
+      }),
+      menu: menu
     });
     return await this.restaurantRepo.save(restaurant);
   }
