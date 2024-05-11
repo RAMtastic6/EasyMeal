@@ -18,17 +18,20 @@ export default function MenuTable(
 ) {
 	const decreaseQuantity = (index: number) => {
 		console.log(index);
-		if (menu.foods[index].quantity > 0) {
-			menu.foods[index].quantity -= 1;
-			setMenu(menu);
-			updateHandler('decrement', menu);
+		const newMenu = {...menu};
+		if (newMenu.foods[index].quantity > 0) {
+			newMenu.foods[index].quantity -= 1;
+			setMenu(newMenu);
+			updateHandler('decrement', newMenu);
+			console.log(newMenu.foods[index].quantity);
 		}
 	};
 
 	const increaseQuantity = (index: number) => {
-		menu.foods[index].quantity += 1;
-		setMenu(menu);
-		updateHandler('increment', menu);
+		const newMenu = {...menu};
+		newMenu.foods[index].quantity += 1;
+		setMenu(newMenu);
+		updateHandler('increment', newMenu);
 	};
 
 	const [selectedOption, setSelectedOption] = useState('AllaRomana');
@@ -68,19 +71,20 @@ export default function MenuTable(
 										<label htmlFor={`${food.id}`} className="sr-only">Quantity</label>
 
 										<div className="inline-block items-center rounded border border-gray-200">
-											<button type="button" className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => decreaseQuantity(menu.foods.indexOf(food))}>
+											<button type="button" data-testid={`decrease_${food.id}`} className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => decreaseQuantity(menu.foods.indexOf(food))}>
 												-
 											</button>
 
 											<input
 												type="number"
 												id={`${food.id}`}
+												data-testid={`display_${food.id}`}
 												value={food.quantity}
 												className="h-10 w-8 border-transparent text-center [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
 												readOnly
 											/>
 
-											<button type="button" className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => increaseQuantity(menu.foods.indexOf(food))}>
+											<button type="button" data-testid={`increase_${food.id}`} className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => increaseQuantity(menu.foods.indexOf(food))}>
 												+
 											</button>
 										</div>
