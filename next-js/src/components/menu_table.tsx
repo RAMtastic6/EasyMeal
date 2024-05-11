@@ -97,16 +97,17 @@ export default function MenuTable(
 								<p className="text-gray-700">{food.description}</p>
 							</div>
 							<div className="flex justify-center mt-4">
-								<button type="button" className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => decreaseQuantity(index)}>
+								<button type="button" data-testid={`decrease_${food.id}`} className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => decreaseQuantity(index)}>
 									-
 								</button>
 								<input
 									type="text"
 									value={food.quantity}
 									className="h-10 w-8 border-transparent text-center sm:text-sm"
+									data-testid={`display_${food.id}`}
 									readOnly
 								/>
-								<button type="button" className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => increaseQuantity(index)}>
+								<button type="button" data-testid={`increase_${food.id}`} className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => increaseQuantity(index)}>
 									+
 								</button>
 							</div>
