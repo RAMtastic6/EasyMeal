@@ -53,6 +53,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
             {orders[key].map((order: any, dishIndex: number) => (
               <div key={dishIndex} className="bg-white shadow-md rounded p-4">
                 <h2 className="text-xl font-semibold mb-2">{order.food.name}</h2>
+                <img src={order.food.image ?? '/caprese.png'} alt={order.food.name} className="w-full h-32 object-cover mb-2" />
                 <ul>
                   {order.ingredients.map((ingredient: any, ingredientIndex: number) => (
                     <li key={ingredientIndex} className="flex justify-between items-center mb-2">
