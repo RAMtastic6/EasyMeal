@@ -80,7 +80,7 @@ export class ReservationService {
       throw new NotFoundException('Reservation not found');
     }
     //associamo la quantita del cibo direttamente al menu
-    // e rimuoviamo l'array degli ordini
+    // e rimuoviamo l'array degli ordinati
     result.restaurant.menu.foods.forEach((food: any) => {
       const orders = result.orders.filter(order => order.food.id === food.id);
       food.quantity = orders.reduce((total, order) => total + order.quantity, 0);

@@ -25,11 +25,10 @@ export default function MenuTable(
 
 	const sendData = async (index: number, menu: any, amount: number) => {
 		// Al db inviamo l'aumento o la dimuzione di 1
-		await saveOrders({
+		const result = await saveOrders({
 			reservation_id: parseInt(params.number),
 			food_id: menu.foods[index].id,
 			quantity: amount,
-			ingredients: menu.foods[index].ingredients
 		});
 		// Al socket inviamo il dato aggiornato
 		socket.current?.emit('onMessage', {
@@ -181,7 +180,7 @@ export default function MenuTable(
 
 								<div className="flex justify-end">
 									<div className="sm:flex sm:gap-4">
-										<Link className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" href="#"> Checkout </Link>
+										<Link className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" href={`${params.number}/checkout/`}> Checkout </Link>
 									</div>
 								</div>
 							</div>

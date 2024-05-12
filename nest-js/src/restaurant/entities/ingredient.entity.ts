@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-import { Food } from "./food.entity";
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Food } from "../../food/entities/food.entity";
 import { Orders } from "../../orders/entities/order.entity";
+import { OrderIngredients } from "../../orders/entities/order_ingredients";
 
 @Entity()
 export class Ingredient {
@@ -14,6 +15,6 @@ export class Ingredient {
   @ManyToMany(() => Food, food => food.ingredients)
   foods: Food[];
 
-  @ManyToMany(() => Orders, order => order.ingredients)
-  orders: Orders[];
+  @OneToMany(() => OrderIngredients, orderIngredients => orderIngredients.ingredient)
+  orders: OrderIngredients[];
 }

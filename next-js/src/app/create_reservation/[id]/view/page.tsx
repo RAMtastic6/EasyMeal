@@ -27,7 +27,6 @@ export default function Page({ params }: { params: { id: string } }) {
 
     return (
         <div className="w-full">
-            <Header />
             <div className="px-10 py-4 flex flex-col">
                 <div className="flex flex-row">
                     <div className="self-start py-1">

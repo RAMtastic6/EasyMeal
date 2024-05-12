@@ -9,7 +9,16 @@ export class OrdersController {
 
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto) {
-    return await this.ordersService.create(createOrderDto);
+    const result = await this.ordersService.create(createOrderDto);
+    if (result == null) {
+      throw new NotFoundException('Order already exists');
+    }
+    return result;
+  }
+
+  @Post('createOrUpdate')
+  async createOrUpdate(@Body() createOrderDto: CreateOrderDto) {
+    return await this.ordersService.createOrUpdate(createOrderDto);
   }
 
   @Get()
@@ -26,14 +35,14 @@ export class OrdersController {
     return await this.ordersService.findOne(order);
   }
 
-  @Post('update')
+  @Post('addQuantity')
   async update(@Body() updateOrder: {
     customer_id: number,
     reservation_id: number,
     food_id: number,
     quantity: number
   }) {
-    return await this.ordersService.update(updateOrder);
+    return await this.ordersService.addQuantity(updateOrder);
   }
 
   @Post('updateIngredients')
@@ -67,6 +76,15 @@ export class OrdersController {
     reservation_id: number,
   }) {
     return await this.ordersService.getTotalBill(order);
+  }
+
+  @Post('updateListOrders')
+  async updateListOrders(@Body() order: {
+    customer_id: number,
+    reservation_id: number,
+    orders: any[],
+  }) {
+    return await this.ordersService.updateListOrders(order);
   }
 
   @Get('reservation/:id')

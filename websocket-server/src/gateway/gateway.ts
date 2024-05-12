@@ -25,4 +25,10 @@ export class MyGateway implements OnModuleInit {
     const id_prenotazione: string = body["id_prenotazione"];
     this.server.to(id_prenotazione).emit('onMessage', body.data);
   }
+
+  @SubscribeMessage('onIngredient')
+  async onIngredient(@MessageBody() body: any) {
+    const id_prenotazione: string = body["id_prenotazione"];
+    this.server.to(id_prenotazione).emit('onIngredient', body.data);
+  }
 }

@@ -6,7 +6,7 @@ import { Restaurant } from './entities/restaurant.entity';
 import { Menu } from './entities/menu.entity';
 import { Day } from './entities/daysopen.entity';
 import { Ingredient } from './entities/ingredient.entity';
-import { Food } from './entities/food.entity';
+import { Food } from '../food/entities/food.entity';
 
 @Module({
   controllers: [RestaurantController],

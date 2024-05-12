@@ -1,9 +1,10 @@
 import { User } from "../../user/entities/user.entity";
-import { Food } from "src/restaurant/entities/food.entity";
+import { Food } from "src/food/entities/food.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
 import { AfterLoad, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Ingredient } from "../../restaurant/entities/ingredient.entity";
+import { OrderIngredients as OrderIngredient } from "./order_ingredients";
 
 @Entity({name: 'order_detail'})
 export class Orders {
@@ -34,7 +35,6 @@ export class Orders {
     @JoinColumn({ name: "food_id" })
     food: Food;
 
-    @ManyToMany(() => Ingredient, (ingredient) => ingredient.orders)
-    @JoinTable()
-    ingredients: Ingredient[];
+    @OneToMany(() => OrderIngredient, orderIngredient => orderIngredient.order)
+    ingredients: OrderIngredient[];
 }

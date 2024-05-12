@@ -37,7 +37,7 @@ export default function ReservationForm({
     };*/
 
     const handleCopy = () => {
-        const linkText = `/order/${reservationNumber}/view`;
+        const linkText = `${window.location.origin}/order/${reservationNumber}/`;
         navigator.clipboard.writeText(linkText)
             .then(() => {
                 setCopySuccess(true);
@@ -47,16 +47,28 @@ export default function ReservationForm({
             });
     };
 
+    const link = () => (
+        <Link href={`/order/${reservationNumber}`}>{
+            `${window.location.origin}/order/${reservationNumber}`
+        }</Link>
+    );
+
     const confirmationPage = (
         <div className="rounded-lg bg-white shadow-lg p-12 space-y-4">
             <h2 className="text-2xl font-bold text-orange-950 text-center">Prenotazione confermata!</h2>
             <p className="text-center">Il tuo numero di prenotazione è: {reservationNumber}</p>
             <p className="text-center">Utilizza il seguente link per fare l'ordinazione:</p>
             <div className="flex justify-center">
-                <p className="text-center w-1/2 rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600"><Link href={`/order/${reservationNumber}/view`}>{`/order/${reservationNumber}/view`}</Link></p>
+                <p className="text-center w-1/2 rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600">{link()}</p>
                 <button onClick={handleCopy} className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white">
                     {copySuccess ? 'Copied!' : 'Copy Link'}
                 </button>
+            </div>
+            <div className="flex justify-center">
+                <Link href={`/order/${reservationNumber}`}
+                    className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white text-center"
+                >
+                    Continua</Link>
             </div>
         </div>
     );
