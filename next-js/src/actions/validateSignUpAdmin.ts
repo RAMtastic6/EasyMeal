@@ -1,10 +1,11 @@
 'use server'
 import { createUser } from "../lib/database/user"
+import { createRestaurant } from "../lib/database/restaurant"
+import { createStaff } from "../lib/database/staff"
 
 export async function validateSignUpAdmin(prevState: any, formData: FormData) {
 
   //TODO: validate the form data
-
   // Check if email is valid
   const email = formData.get('email')
   if (!email) {
@@ -36,7 +37,7 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   if (String(password) !== String(confirmPassword)) {
     return { message: 'Passwords do not match' }
   }
-
+  /* OLD CODE
   // Create the customer
   const response = await createUser({ 
     role: 'admin',
@@ -51,7 +52,34 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     restaurant_email: formData.get('restaurant_email'),
     restaurant_cuisine: formData.get('restaurant_cuisine'),
   })
-  if (!response) {
+  */  
+
+  // Create the user
+  const user = await createUser({ 
+    email: email,
+    name: firstName,
+    surname: lastName,
+    password: password
+  })
+  
+  // Create the restaurant
+  const restaurant = await createRestaurant({
+    name: formData.get('Nome-Ristorante'),
+    address: formData.get('indirizzo'),
+    city: formData.get('città'),
+    cuisine: formData.get('cucina'),
+    tables: formData.get('coperti'),
+    phone_number: formData.get('numero'),
+    email: formData.get('mail'),
+  })
+  // Create the staff
+  const staff = await createStaff({
+    restaurant_id: restaurant.id,
+    role: 'admin',
+    user_id: 1
+  })
+
+  if (!user || !restaurant || !staff) {
     return { message: 'Registration failed' }
   }
   return { message: 'Registration successful' }

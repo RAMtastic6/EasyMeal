@@ -12,7 +12,7 @@ export enum Days {
 }
 
 @Entity()
-export class Day {
+export class Daysopen {
 
     @PrimaryColumn({ name: 'restaurant_id' })
     restaurantId: number;

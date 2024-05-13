@@ -1,4 +1,4 @@
-import { Day } from "src/restaurant/entities/daysopen.entity";
+import { Daysopen } from "src/restaurant/entities/daysopen.entity";
 import { Menu } from "src/menu/entities/menu.entity";
 import { Orders } from "src/orders/entities/order.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
@@ -21,7 +21,7 @@ export class Restaurant {
     @Column({type: "varchar", length: 100})
     cuisine: string;
 
-    @Column()
+    @Column({nullable: true})
     menu_id: number;
 
     @Column()
@@ -39,12 +39,12 @@ export class Restaurant {
     @Column({ type: "varchar", length: 255, nullable: true })
     description: string;
 
-    @OneToOne(() => Menu, menu => menu.restaurant, {cascade: true})
+    @OneToOne(() => Menu, menu => menu.restaurant, {cascade: true, nullable: true})
     @JoinColumn({name: "menu_id"})
     menu: Menu;
 
-    @OneToMany(() => Day, daysopen => daysopen.restaurant)
-    daysOpen: Day[];
+    @OneToMany(() => Daysopen, daysopen => daysopen.restaurant)
+    daysOpen: Daysopen[];
 
     @OneToMany(() => Reservation, reservation => reservation.restaurant)
     reservations: Reservation[];

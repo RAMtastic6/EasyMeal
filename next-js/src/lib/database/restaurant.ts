@@ -100,19 +100,15 @@ export async function getRestaurantsTotalPages(params: RestaurantFilter, ITEMS_P
 }
 
 export async function createRestaurant(data: any) {
-	console.log(data);
-	console.log(Endpoints.restaurant);
-	const response = await fetch(Endpoints.restaurant, {
+	const response = await fetch(`${Endpoints.restaurant}`, {
 		method: 'POST',
-		cache: 'no-cache',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(data),
-	});
-	console.log(response.status+" "+response.statusText);
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
 	if(!response.ok) {
-		return null;
+		throw new Error('Error creating restaurant');
 	}
 	return await response.json();
 }
