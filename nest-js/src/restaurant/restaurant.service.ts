@@ -41,22 +41,25 @@ export class RestaurantService {
   }
 
   async create(createRestaurantDto: RestaurantDto) {
+    const { name, address, city, cuisine, tables, email, phone_number } = createRestaurantDto;
     // Check if the restaurant already exists
     const existingRestaurant = await this.restaurantRepo.findOne({ where: { name: createRestaurantDto.name } });
     if (existingRestaurant) {
       throw new HttpException('Restaurant already exists', HttpStatus.CONFLICT);
     }
-    // Check if inputs are valid 
-    if (!createRestaurantDto.name || !createRestaurantDto.address || !createRestaurantDto.city || !createRestaurantDto.cuisine || !createRestaurantDto.email || !createRestaurantDto.phone_number) {
+
+    if (!name || !address || !city || !cuisine || !tables || !email || !phone_number) {
       throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
     }
+    
     const restaurant = this.restaurantRepo.create({
-      address: createRestaurantDto.address,
-      city: createRestaurantDto.city,
-      cuisine: createRestaurantDto.cuisine,
-      email: createRestaurantDto.email,
-      name: createRestaurantDto.name,
-      phone_number: createRestaurantDto.phone_number,
+      name: name,
+      address: address,
+      city: city,
+      cuisine: cuisine,
+      tables: tables,
+      email: email,
+      phone_number: phone_number
     });
     return await this.restaurantRepo.save(restaurant);
   }
