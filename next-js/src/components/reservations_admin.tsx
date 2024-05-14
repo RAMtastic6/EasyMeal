@@ -37,7 +37,7 @@ export default function ReservationsAdmin() {
               <td className="px-4 py-2">{reservation.number_people}</td>
               <td className="px-4 py-2">{reservation.state}</td>
               <td className="px-4 py-2">{(new Date(reservation.date)).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</td>
-              <td className="px-4 py-2"><Link href={`/reservations_admin/${reservation.id}/view`} className="text-orange-500 hover:text-orange-700">Visualizza</Link></td>
+              <td className="px-4 py-2"><Link href={`/admin/reservations_list/${reservation.id}/view`} className="text-orange-500 hover:text-orange-700">Visualizza</Link></td>
             </tr>
           ))}
         </tbody>
