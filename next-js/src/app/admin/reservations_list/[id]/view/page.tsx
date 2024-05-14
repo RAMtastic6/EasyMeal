@@ -18,13 +18,17 @@ export default function ReservationAdmin({ params }: { params: { id: string } })
     // TO DO: implement the accept reservation logic
   };
 
+  const handleReject = async () => {
+    // TO DO: implement the reject reservation logic
+  };
+
   if (loading)
     return <div>Loading...</div>;
 
   return (
     <div className="w-full">
       <div className="w-full">
-        <button onClick={() => window.history.back()}>Torna alla pagina precedente</button>
+        <button onClick={() => window.history.back()} className="bg-grey-500 text-black px-4 py-2 rounded">Torna alla pagina precedente</button>
         <div className="container mx-auto mt-4 space-y-4">
           <h1>Consulta la prenotazione {params.id}</h1>
           <div>Numero persone: {reservation.number_people}</div>
@@ -38,7 +42,7 @@ export default function ReservationAdmin({ params }: { params: { id: string } })
                 La prenotazione è in attesa di conferma.
                 <div className="flex space-x-4">
                   <button onClick={handleAccept} className="bg-orange-500 text-black px-4 py-2 rounded">Accetta</button>
-                  <button className="bg-orange-500 text-black px-4 py-2 rounded">Rifiuta</button>
+                  <button onClick={handleReject} className="bg-orange-500 text-black px-4 py-2 rounded">Rifiuta</button>
                 </div>
               </div>
             </div>
