@@ -36,4 +36,14 @@ export class ReservationController {
   async getReservationsByRestaurantId(@Param('restaurantId') restaurantId: number) {
     return await this.reservationService.getReservationsByRestaurantId(restaurantId);
   }
+
+  @Post(':id/accept')
+  async acceptReservation(@Param('id') id: number) {
+    return await this.reservationService.acceptReservation(id);
+  }
+
+  @Post(':id/reject')
+  async rejectReservation(@Param('id') id: number) {
+    return await this.reservationService.rejectReservation(id);
+  }
 }

@@ -55,3 +55,31 @@ export async function getReservationsByRestaurantId(restaurantId: number): Promi
 	const data = await response.json();
 	return data;
 }
+
+/* FUNZIONI ADMIN */
+
+export async function acceptReservation(id: number): Promise<any> {
+	const response = await fetch(`${Endpoints.reservation}${id}/accept`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+	return {
+		body: await response.json(),
+		status: response.ok,
+	};
+}
+
+export async function rejectReservation(id: number): Promise<any> {
+	const response = await fetch(`${Endpoints.reservation}${id}/reject`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+	return {
+		body: await response.json(),
+		status: response.ok,
+	};
+}

@@ -2,7 +2,7 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Reservation } from './entities/reservation.entity';
+import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 
@@ -94,5 +94,21 @@ export class ReservationService {
   async getReservationsByRestaurantId(restaurantId: number) {
     const reservations = await this.reservationRepository.find({ where: { restaurant_id: restaurantId } });
     return reservations;
+  }
+
+  async acceptReservation(id: number) {
+    if(await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.ACCEPTED } }) || await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.REJECTED } })) {
+      throw new HttpException('Reservation already accepted or rejected', 400);
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.ACCEPTED });
+    return true;
+  }
+
+  async rejectReservation(id: number) {
+    if(await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.ACCEPTED } }) || await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.REJECTED } })) {
+      throw new HttpException('Reservation already accepted or rejected', 400);
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
+    return true;
   }
 }

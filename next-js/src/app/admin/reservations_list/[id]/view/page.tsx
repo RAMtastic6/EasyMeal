@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from "react";
-import { getReservationById } from "@/src/lib/database/reservation";
+import { acceptReservation, getReservationById, rejectReservation } from "@/src/lib/database/reservation";
 
 export default function ReservationAdmin({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
@@ -15,12 +15,18 @@ export default function ReservationAdmin({ params }: { params: { id: string } })
   }, []);
 
   const handleAccept = async () => {
-    // TO DO: implement the accept reservation logic
-  };
+    const response = await acceptReservation(parseInt(params.id));
+    if (!response.status || response.body == null) {
+      alert("Errore nella modifica della prenotazione");
+    };
+  }
 
   const handleReject = async () => {
-    // TO DO: implement the reject reservation logic
-  };
+    const response = await rejectReservation(parseInt(params.id));
+    if (!response.status || response.body == null) {
+      alert("Errore nella modifica della prenotazione");
+    }
+  }
 
   if (loading)
     return <div>Loading...</div>;
@@ -55,9 +61,8 @@ export default function ReservationAdmin({ params }: { params: { id: string } })
               <div className="bg-red-200 p-4">
                 Le ordinazioni:
                 <ul>
-                  {reservation.orders.map((order: any) => (
-                    <li key={order.id}>{order.name}</li>
-                  ))}
+                  <li>1 x Pizza Margherita</li>
+                  <li>2 x Spaghetti alla carbonara</li>
                 </ul>
               </div>
             </div>
