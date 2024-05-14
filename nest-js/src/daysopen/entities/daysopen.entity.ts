@@ -1,7 +1,7 @@
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
 import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 
-export enum Days {
+export enum Day {
     SUNDAY = 'domenica',
     MONDAY = 'lunedì',
     TUESDAY = 'martedì',
@@ -17,8 +17,8 @@ export class Daysopen {
     @PrimaryColumn({ name: 'restaurant_id' })
     restaurantId: number;
 
-    @PrimaryColumn({ name: 'day_open', enum: Days, type: 'enum' })
-    dayOpen: Days;
+    @PrimaryColumn({ name: 'day_open', enum: Day, type: 'enum' })
+    dayOpen: Day;
 
     @PrimaryColumn({ name: 'opening', type: 'time' })
     opening: string;

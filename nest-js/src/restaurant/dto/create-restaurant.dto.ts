@@ -8,5 +8,4 @@ export class CreateRestaurantDto {
     tables: number;
     email: string;
     phone_number: string;
-    menu_id: number;
 }
