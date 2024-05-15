@@ -39,10 +39,9 @@ export async function getRomanBill(id: number) {
 export async function saveOrders(data: {
 	reservation_id: number,
 	food_id: number,
-	quantity: number,
 }) {
 	const user = await verifySession();
-	const request = await fetch(Endpoints.order + "createOrUpdate", {
+	const request = await fetch(Endpoints.order + "create", {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -55,6 +54,26 @@ export async function saveOrders(data: {
 	const response = await request.json();
 	return response;
 }
+
+export async function deleteOrders(data: {
+	reservation_id: number,
+	food_id: number,
+}) {
+	const user = await verifySession();
+	const request = await fetch(Endpoints.order + "remove", {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			...data,
+			customer_id: user.id,
+		}),
+	});
+	const response = await request.json();
+	return response;
+}
+
 
 export async function updateIngredientsOrder(data: {
 	id: number
@@ -78,7 +97,7 @@ export async function updateIngredientsOrder(data: {
 export async function updateListOrders(data: any) {
 	const user = await verifySession();
 	// Togliamo la categoria dagli ordini
-	const orders = Object.values(data).reduce((acc: any[], category: any) => {
+	const orders = Object.values(data.orders).reduce((acc: any[], category: any) => {
 		acc.push(...category);
 		return acc;
 	}, []);
@@ -90,9 +109,13 @@ export async function updateListOrders(data: any) {
 			},
 			body: JSON.stringify({
 					orders,
+					reservation_id: data.reservation_id,
 					customer_id: user.id,
 			}),
 	});
+	if(request.status !== 200) {
+		return false; 
+	}
 	const result = await request.json();
 	return result;
 }

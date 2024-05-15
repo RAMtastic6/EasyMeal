@@ -2,7 +2,7 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Reservation } from './entities/reservation.entity';
+import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 
@@ -83,9 +83,18 @@ export class ReservationService {
     // e rimuoviamo l'array degli ordinati
     result.restaurant.menu.foods.forEach((food: any) => {
       const orders = result.orders.filter(order => order.food.id === food.id);
-      food.quantity = orders.reduce((total, order) => total + order.quantity, 0);
+      food.quantity = orders.length;
     });
     delete result.orders;
     return result;
+  }
+
+  async updateStatus(id: number, state: ReservationStatus) {
+    const reservation = await this.reservationRepository.findOne({ where: { id } });
+    if(reservation == null) {
+      return false;
+    }
+    await this.reservationRepository.update({ id }, { state });
+    return true;
   }
 }

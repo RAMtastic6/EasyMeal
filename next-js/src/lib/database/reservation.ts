@@ -1,3 +1,4 @@
+"use server";
 import { Endpoints } from "./endpoints";
 
 export async function getReservation(): Promise<JSON> {

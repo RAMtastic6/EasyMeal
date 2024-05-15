@@ -42,6 +42,6 @@ export class Food {
     orders: Orders[];
 
     @ManyToMany(() => Ingredient, ingredient => ingredient.id)
-    @JoinTable()
+    @JoinTable({name: "food_ingredients_ingredient"})
     ingredients: Ingredient[]
 }

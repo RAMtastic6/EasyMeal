@@ -13,7 +13,9 @@ export class OrderIngredients {
   @Column({default: false})
   removed: boolean;
 
-  @ManyToOne(() => Orders, order => order.ingredients)
+  @ManyToOne(() => Orders, order => order.ingredients, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'order_id' })
   order: Orders;
 

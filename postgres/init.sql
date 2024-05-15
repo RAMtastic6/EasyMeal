@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2024-05-12 15:18:14
+-- Started on 2024-05-14 09:53:44
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -605,7 +605,7 @@ INSERT INTO public.food_ingredient (id_food, id_ingredient, quantity) VALUES (9,
 
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 10);
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 20);
-INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 21);
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 72);
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (2, 10);
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (2, 20);
@@ -1403,7 +1403,7 @@ ALTER TABLE ONLY public.food_ingredient
     ADD CONSTRAINT "FK_f9553e6a77da903d8c6915a336a" FOREIGN KEY (id_food) REFERENCES public.food(id);
 
 
--- Completed on 2024-05-12 15:18:14
+-- Completed on 2024-05-14 09:53:44
 
 --
 -- PostgreSQL database dump complete

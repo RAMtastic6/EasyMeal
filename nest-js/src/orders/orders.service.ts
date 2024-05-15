@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderIngredients } from './entities/order_ingredients';
 import { FoodService } from '../food/food.service';
+import { ReservationService } from '../reservation/reservation.service';
+import { ReservationStatus } from '../reservation/entities/reservation.entity';
 
 @Injectable()
 export class OrdersService {
@@ -15,24 +17,45 @@ export class OrdersService {
     private ordersRepository: Repository<Orders>,
     @InjectRepository(OrderIngredients)
     private orderIngredientsRepository: Repository<OrderIngredients>,
-    private readonly foodService: FoodService
+    private readonly foodService: FoodService,
+    private readonly reservationService: ReservationService
   ) {}
   
   async create(createOrderDto: CreateOrderDto) {
-    if (await this.ordersRepository.findOne({
-      where: {
-        customer_id: createOrderDto.customer_id,
-        reservation_id: createOrderDto.reservation_id,
-        food_id: createOrderDto.food_id
-      }
-    }) != null) {
-      return null;
-    }
     const order = this.ordersRepository.create(createOrderDto);
-    return await this.ordersRepository.save(order);
+    await this.ordersRepository.save(order);
+    const food = await this.foodService.findOne(createOrderDto.food_id);
+    for (const ingredient of food.ingredients) {
+      const orderIngredient = this.orderIngredientsRepository.create({
+        order_id: order.id,
+        ingredient_id: ingredient.id,
+        removed: false
+      });
+      await this.orderIngredientsRepository.save(orderIngredient);
+    }
+    return order;
   }
 
-  async createOrUpdate(createOrderDto: CreateOrderDto) {
+  async remove(order: {
+    reservation_id: number,
+    food_id: number,
+    customer_id: number
+  }) {
+    const result = await this.ordersRepository.findOne({
+      where: {
+        reservation_id: order.reservation_id,
+        food_id: order.food_id,
+        customer_id: order.customer_id
+      }
+    });
+    if (result == null) {
+      return null;
+    }
+    await this.ordersRepository.remove(result);
+    return result;
+  }
+
+  /*async createOrUpdate(createOrderDto: CreateOrderDto) {
     const order = await this.ordersRepository.findOne({
       where: {
         customer_id: createOrderDto.customer_id,
@@ -58,14 +81,19 @@ export class OrdersService {
       }
       return await this.ordersRepository.save(created);
     }
+    const newQuantity = order.quantity + createOrderDto.quantity;
+    if(newQuantity == 0) {
+      await this.ordersRepository.remove(order);
+      return order;
+    }
     return await this.ordersRepository.update({
       customer_id: createOrderDto.customer_id,
       reservation_id: createOrderDto.reservation_id,
       food_id: createOrderDto.food_id
     }, {
-      quantity: order.quantity + createOrderDto.quantity
+      quantity: newQuantity
     })
-  }
+  }*/
 
   async findAll() {
     const result = await this.ordersRepository.find();
@@ -130,14 +158,6 @@ export class OrdersService {
     });
     result.ingredients = order.ingredients;
     return await this.ordersRepository.save(result);
-  }
-
-  async remove(order: {
-    customer_id: number,
-    reservation_id: number,
-    food_id: number,
-  }) {
-    return await this.ordersRepository.delete([order.customer_id, order.reservation_id, order.food_id]);
   }
 
   async getPartialBill(order: {
@@ -205,6 +225,10 @@ export class OrdersService {
 
   async updateListOrders(order: { customer_id: number; reservation_id: number; orders: any[]; }) {
     const { customer_id, reservation_id, orders } = order;
+    const reservation = await this.reservationService.findOne(reservation_id);
+    if ( reservation == null || reservation.state != ReservationStatus.ACCEPTED) {
+      return null;
+    }
     for (const orderItem of orders) {
       for (const ingredient of orderItem.ingredients) {
         await this.orderIngredientsRepository.save({
@@ -214,6 +238,7 @@ export class OrdersService {
         });
       }
     };
+    await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY);
     return true;
   }
 

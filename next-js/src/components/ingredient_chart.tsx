@@ -14,6 +14,10 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
     setOrders(newOrders);
   }
 
+  function onConfirm() {
+    alert('Ordine confermato da un altro utente!');
+  }
+
   function changeIngredient(key: string, index: number, ingredientIndex: number) {
     const ingredients = [...orders[key][index].ingredients];
     const newOrders = { ...orders };
@@ -34,14 +38,28 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
   useEffect(() => {
     socket.current = io(Endpoints.socket + "?id_prenotazione=" + reservationId);
     socket.current.on('onIngredient', onIngredient);
+    socket.current.on('onConfirm', onConfirm);
     return () => {
       socket.current?.off('onIngredient', onIngredient);
+      socket.current?.off('onConfirm', onConfirm);
       socket.current?.disconnect();
     };
   }, []);
 
   async function submit() {
-    await updateListOrders(orders);
+    const result = await updateListOrders({
+      reservation_id: reservationId,
+      orders: orders,
+    });
+    if(result == false) {
+      alert('Ordine già confermato!');
+      return;
+    }
+    socket.current?.emit('onConfirm', {
+      id_prenotazione: reservationId,
+    });
+    alert('Ordine aggiornato');
+    //TODO: riepilogo ordine? pagina apposta?
   }
 
   return (

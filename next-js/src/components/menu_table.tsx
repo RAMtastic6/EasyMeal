@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Endpoints } from '../lib/database/endpoints';
 import { Socket, io } from 'socket.io-client';
 import { verifySession } from '../lib/dal';
-import { saveOrders } from '../lib/database/order';
+import { deleteOrders, saveOrders } from '../lib/database/order';
 
 export default function MenuTable(
 	{ menuData, params }: {
@@ -23,13 +23,19 @@ export default function MenuTable(
 	const [menu, setMenu] = useState(menuData);
 	const [price, setPrice] = useState(menuData.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 
-	const sendData = async (index: number, menu: any, amount: number) => {
+	const sendData = async (index: number, menu: any, add: boolean) => {
 		// Al db inviamo l'aumento o la dimuzione di 1
-		const result = await saveOrders({
-			reservation_id: parseInt(params.number),
-			food_id: menu.foods[index].id,
-			quantity: amount,
-		});
+		if (add) {
+			await saveOrders({
+				reservation_id: parseInt(params.number),
+				food_id: menu.foods[index].id,
+			});
+		} else {
+			await deleteOrders({
+				reservation_id: parseInt(params.number),
+				food_id: menu.foods[index].id,
+			});
+		}
 		// Al socket inviamo il dato aggiornato
 		socket.current?.emit('onMessage', {
 			id_prenotazione: params.number,
@@ -62,7 +68,7 @@ export default function MenuTable(
 		const newMenu = { ...menu };
 		if (menu.foods[index].quantity > 0) {
 			newMenu.foods[index].quantity -= 1;
-			sendData(index, newMenu, -1);
+			sendData(index, newMenu, false);
 			setMenu(newMenu);
 			setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 		}
@@ -71,7 +77,7 @@ export default function MenuTable(
 	const increaseQuantity = (index: number) => {
 		const newMenu = { ...menu };
 		newMenu.foods[index].quantity += 1;
-		sendData(index, newMenu, +1);
+		sendData(index, newMenu, true);
 		setMenu(newMenu);
 		setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 	};

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, HttpCode } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -7,7 +7,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Post()
+  @Post('create')
   async create(@Body() createOrderDto: CreateOrderDto) {
     const result = await this.ordersService.create(createOrderDto);
     if (result == null) {
@@ -16,10 +16,10 @@ export class OrdersController {
     return result;
   }
 
-  @Post('createOrUpdate')
+  /*@Post('createOrUpdate')
   async createOrUpdate(@Body() createOrderDto: CreateOrderDto) {
     return await this.ordersService.createOrUpdate(createOrderDto);
-  }
+  }*/
 
   @Get()
   async findAll() {
@@ -55,9 +55,9 @@ export class OrdersController {
 
   @Post('remove')
   async remove(@Body() order: {
-    customer_id: number,
     reservation_id: number,
     food_id: number,
+    customer_id: number,
   }) {
     return await this.ordersService.remove(order);
   }
@@ -79,12 +79,16 @@ export class OrdersController {
   }
 
   @Post('updateListOrders')
+  @HttpCode(200)
   async updateListOrders(@Body() order: {
     customer_id: number,
     reservation_id: number,
     orders: any[],
   }) {
-    return await this.ordersService.updateListOrders(order);
+    const result = await this.ordersService.updateListOrders(order);
+    if(result === null) 
+      throw new BadRequestException('Error updating orders');
+    return result;
   }
 
   @Get('reservation/:id')
