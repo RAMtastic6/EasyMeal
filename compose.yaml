@@ -49,8 +49,6 @@ services:
     ports:
       - "8000:8000"
     command: npm run start:dev
-    depends_on:
-      - postgres
     environment:
       - BACKEND_HOST=backend
     develop:

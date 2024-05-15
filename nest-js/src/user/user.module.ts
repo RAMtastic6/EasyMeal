@@ -4,9 +4,6 @@ import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
-import { RestaurantService } from '../restaurant/restaurant.service';
-import { RestaurantModule } from '../restaurant/restaurant.module';
-import { StaffModule } from '../staff/staff.module';
 
 @Module({
   controllers: [UserController],
@@ -22,9 +19,7 @@ import { StaffModule } from '../staff/staff.module';
         expiresIn: '1h', 
         algorithm: 'HS256'
       },
-    }),
-    RestaurantModule,
-    StaffModule,
+    })
   ],
   exports: [TypeOrmModule, UserService]
 })

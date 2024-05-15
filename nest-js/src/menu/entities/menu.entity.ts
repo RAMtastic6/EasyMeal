@@ -1,4 +1,4 @@
-import { Food } from "src/restaurant/entities/food.entity";
+import { Food } from "src/menu/entities/food.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 

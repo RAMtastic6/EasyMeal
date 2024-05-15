@@ -1,8 +1,12 @@
 'use server'
 import { createUser } from "../lib/database/user"
+import { createRestaurant } from "../lib/database/restaurant"
+import { createStaff } from "../lib/database/staff"
+import { createDaysOpen } from "../lib/database/daysopen"
 import { getFormData } from "@/src/lib/utils"
 
 export async function validateSignUpAdmin(prevState: any, formData: FormData) {
+  //TODO: validate the form data
   const days = ['lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato', 'domenica']
 
   // Get the form data
@@ -105,21 +109,37 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   if (String(password) !== String(confirmPassword)) {
     return { message: 'Passwords do not match' }
   }
-
-  // Create the customer
-  const response = await createUser({
-    name: data['nome'],
-    surname: data['cognome'],
-    email: data['email'],
-    password: data['password'],
-    restaurant_name: formData.get('nome-ristorante'),
-    restaurant_address: data['città'],
-    restaurant_city: formData.get('città'),
-    restaurant_cuisine: formData.get('restaurant_cuisine'),
-    restaurant_tables: data['coperti'],
-    restaurant_phone_number: formData.get('numero'),
-    restaurant_email: formData.get('restaurant_email'),
-    restaurant_opening_hours: {
+  */
+  // Create the user
+  
+  const user = await createUser({
+    email: 'giga@chad',
+    name: 'Giga',
+    surname: 'Chad',
+    password: 'password',
+  })
+  
+  // Create the restaurant
+  const restaurant = await createRestaurant({
+    name: 'Ristorante gigachad',
+    address: 'Via di prova 1',
+    city: 'Roma',
+    cuisine: 'Italiana',
+    tables: 10,
+    email: 'r@e',
+    phone_number: '1234567890'
+  })
+  // Create the staff
+  const staff = await createStaff({
+    restaurant_id: restaurant.id,
+    role: 'admin',
+    user_id: user.id
+  })
+  //create days open
+  const daysOpen = await createDaysOpen({
+    restaurant_id: restaurant.id,
+    days: [
+      restaurant_opening_hours: {
       lunedì: {
         apertura: data['lunedì-apertura'],
         chiusura: data['lunedì-chiusura'],
@@ -148,8 +168,39 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
         apertura: data['domenica-apertura'],
         chiusura: data['domenica-chiusura'],
       },
+    ]
+  })
+
+  restaurant_opening_hours: {
+    lunedì: {
+      apertura: data['lunedì-apertura'],
+      chiusura: data['lunedì-chiusura'],
     },
-  }, 'admin')
+    martedì: {
+      apertura: data['martedì-apertura'],
+      chiusura: data['martedì-chiusura'],
+    },
+    mercoledì: {
+      apertura: data['mercoledì-apertura'],
+      chiusura: data['mercoledì-chiusura'],
+    },
+    giovedì: {
+      apertura: data['giovedì-apertura'],
+      chiusura: data['giovedì-chiusura'],
+    },
+    venerdì: {
+      apertura: data['venerdì-apertura'],
+      chiusura: data['venerdì-chiusura'],
+    },
+    sabato: {
+      apertura: data['sabato-apertura'],
+      chiusura: data['sabato-chiusura'],
+    },
+    domenica: {
+      apertura: data['domenica-apertura'],
+      chiusura: data['domenica-chiusura'],
+    },
+
   if (!response) {
     return { message: 'Registration failed' }
   }
