@@ -1,5 +1,6 @@
 /*import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { Food } from "./food.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Food } from "../../menu/entities/food.entity";
 import { Ingredient } from "./ingredient.entity";
 
 @Entity()

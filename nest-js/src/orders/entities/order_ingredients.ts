@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Orders } from "./order.entity";
-import { Ingredient } from "../../restaurant/entities/ingredient.entity";
+import { Ingredient } from "../../food/entities/ingredient.entity";
 
 @Entity({name: 'order_ingredients'})
 export class OrderIngredients {

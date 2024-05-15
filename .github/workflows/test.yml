@@ -9,6 +9,8 @@ on:
 jobs:
   backend-test:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     defaults:
       run:
         working-directory: nest-js
@@ -26,7 +28,6 @@ jobs:
         run: npm ci
           
       - name: Run tests
-        continue-on-error: true
         run: npm run test:cov
 
       - name: Install Coveralls

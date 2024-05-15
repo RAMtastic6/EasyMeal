@@ -427,7 +427,7 @@ CREATE TABLE public.restaurant (
     address character varying(100) NOT NULL,
     city character varying(100) NOT NULL,
     cuisine character varying(100) NOT NULL,
-    menu_id integer NOT NULL,
+    menu_id integer,
     tables integer NOT NULL,
     email character varying(256) NOT NULL,
     phone_number character varying(20) NOT NULL,

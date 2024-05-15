@@ -1,7 +1,7 @@
-import { Menu } from "src/restaurant/entities/menu.entity";
 import { Orders } from "src/orders/entities/order.entity";
 import { Column, Entity, Generated, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-import { Ingredient } from "../../restaurant/entities/ingredient.entity";
+import { Ingredient } from "./ingredient.entity";
+import { Menu } from "../../menu/entities/menu.entity";
 
 export enum FoodType {
     APPETIZER = 'apertivo',

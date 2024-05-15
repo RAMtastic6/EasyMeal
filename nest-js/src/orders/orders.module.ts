@@ -4,7 +4,6 @@ import { OrdersController } from './orders.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Orders } from './entities/order.entity';
 import { OrderIngredients } from './entities/order_ingredients';
-import { Ingredient } from '../restaurant/entities/ingredient.entity';
 import { FoodModule } from '../food/food.module';
 import { ReservationModule } from '../reservation/reservation.module';
 

@@ -1,4 +1,4 @@
-import { Ingredient } from "../../restaurant/entities/ingredient.entity";
+import { Ingredient } from "../../food/entities/ingredient.entity";
 import { OrderIngredients } from "../entities/order_ingredients";
 
 export class CreateOrderDto {
