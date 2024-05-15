@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2024-05-14 09:53:44
+-- Started on 2024-05-15 12:21:44
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -342,7 +342,7 @@ CREATE TABLE public.reservation (
     date timestamp without time zone NOT NULL,
     number_people integer NOT NULL,
     restaurant_id integer NOT NULL,
-    state character varying DEFAULT 'pending'::character varying NOT NULL
+    state character varying DEFAULT 'accept'::character varying NOT NULL
 );
 
 
@@ -605,7 +605,7 @@ INSERT INTO public.food_ingredient (id_food, id_ingredient, quantity) VALUES (9,
 
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 10);
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 20);
-INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 21);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 30);
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 72);
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (2, 10);
 INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (2, 20);
@@ -773,8 +773,35 @@ INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id,
 INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 22, 2, 60);
 INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (3, 4, 13, 3, 52);
 INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (4, 4, 18, 2, 61);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 23, 2, 62);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 23, 2, 63);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 23, 2, 64);
 INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (3, 4, 13, 1, 53);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 23, 2, 65);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 24, 2, 66);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 24, 2, 67);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 24, 2, 68);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 24, 2, 69);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 25, 4, 70);
 INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (8, 4, 13, 2, 51);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 25, 4, 71);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 25, 4, 72);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 25, 4, 73);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 25, 4, 74);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 26, 2, 75);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 26, 2, 76);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 26, 2, 77);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 26, 2, 78);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 26, 2, 79);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 27, 2, 80);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 27, 2, 81);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 27, 2, 82);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 27, 2, 83);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 27, 2, 84);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 28, 2, 85);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 28, 2, 86);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 29, 2, 87);
+INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id, id) VALUES (1, 4, 29, 2, 88);
 
 
 --
@@ -835,8 +862,12 @@ INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (57, 30, false);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (57, 72, false);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (58, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (88, 20, false);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (58, 30, false);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (58, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (88, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (88, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (88, 10, true);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (59, 72, false);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (58, 20, false);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (59, 10, true);
@@ -850,6 +881,110 @@ INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (61, 20, false);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (61, 30, false);
 INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (61, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (62, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (62, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (62, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (62, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (63, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (63, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (63, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (63, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (64, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (64, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (64, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (64, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (65, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (65, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (65, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (65, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (66, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (66, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (66, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (66, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (67, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (67, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (67, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (67, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (68, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (68, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (68, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (68, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (69, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (69, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (69, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (69, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (70, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (70, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (70, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (70, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (71, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (71, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (71, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (71, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (72, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (72, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (72, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (72, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (73, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (73, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (73, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (73, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (74, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (74, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (74, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (74, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (75, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (75, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (75, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (75, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (76, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (76, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (76, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (76, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (77, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (77, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (77, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (77, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (78, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (78, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (78, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (78, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (79, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (79, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (79, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (79, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (80, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (80, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (80, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (80, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (81, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (81, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (81, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (81, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (82, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (82, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (82, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (82, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (83, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (83, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (83, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (83, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (84, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (84, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (84, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (84, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (85, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (85, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (85, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (85, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (86, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (86, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (86, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (86, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (87, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (87, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (87, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (87, 72, false);
 
 
 --
@@ -880,6 +1015,13 @@ INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) O
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (20, '2222-02-20 20:20:00', 222, 1, 'pending');
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (21, '2222-02-20 22:22:00', 20000, 1, 'pending');
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (22, '2222-02-20 20:20:00', 222222, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (23, '2222-02-20 20:20:00', 2222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (24, '2222-02-20 20:20:00', 222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (25, '2222-02-20 20:20:00', 22222, 2, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (26, '2222-02-20 20:20:00', 222222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (27, '2222-02-20 20:20:00', 22222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (28, '2222-02-20 20:20:00', 222, 1, 'to_pay');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (29, '2222-02-20 20:20:00', 222, 1, 'to_pay');
 
 
 --
@@ -899,6 +1041,13 @@ INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES
 INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (20, 1);
 INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (21, 1);
 INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (22, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (23, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (24, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (25, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (26, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (27, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (28, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (29, 1);
 
 
 --
@@ -983,7 +1132,7 @@ SELECT pg_catalog.setval('public.menu_id_seq', 3, true);
 -- Name: order_detail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.order_detail_id_seq', 61, true);
+SELECT pg_catalog.setval('public.order_detail_id_seq', 88, true);
 
 
 --
@@ -1001,7 +1150,7 @@ SELECT pg_catalog.setval('public.reservation_food_id_seq', 1, false);
 -- Name: reservation_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.reservation_id_seq', 22, true);
+SELECT pg_catalog.setval('public.reservation_id_seq', 29, true);
 
 
 --
@@ -1386,12 +1535,12 @@ ALTER TABLE ONLY public.reservation_customers_user
 
 
 --
--- TOC entry 3318 (class 2606 OID 20079)
+-- TOC entry 3318 (class 2606 OID 20095)
 -- Name: order_ingredients FK_f8b1304cce6d30e5bcb7abcc08c; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.order_ingredients
-    ADD CONSTRAINT "FK_f8b1304cce6d30e5bcb7abcc08c" FOREIGN KEY (order_id) REFERENCES public.order_detail(id);
+    ADD CONSTRAINT "FK_f8b1304cce6d30e5bcb7abcc08c" FOREIGN KEY (order_id) REFERENCES public.order_detail(id) ON DELETE CASCADE;
 
 
 --
@@ -1403,7 +1552,7 @@ ALTER TABLE ONLY public.food_ingredient
     ADD CONSTRAINT "FK_f9553e6a77da903d8c6915a336a" FOREIGN KEY (id_food) REFERENCES public.food(id);
 
 
--- Completed on 2024-05-14 09:53:44
+-- Completed on 2024-05-15 12:21:44
 
 --
 -- PostgreSQL database dump complete
