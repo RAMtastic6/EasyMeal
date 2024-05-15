@@ -88,6 +88,27 @@ export default function SignupAdmin() {
                   />
                 </div>
                 <div className="mt-2">
+                  <label htmlFor="indirizzo" className='block text-sm font-medium leading-6 text-gray-900'>Indirizzo *</label>
+                  <input
+                    id="indirizzo"
+                    name="indirizzo"
+                    type="text"
+                    placeholder="Indirizzo..."
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="mt-2">
+                  <label htmlFor="descrizione" className='block text-sm font-medium leading-6 text-gray-900'>Descrizione *</label>
+                  <textarea
+                    id="descrizione"
+                    name="descrizione"
+                    placeholder="Descrizione..."
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div className="mt-2">
                   <label htmlFor="orari" className='block text-sm font-medium leading-6 text-gray-900'>Orari *</label>
                   <div className="grid grid-cols-2 gap-4">
                     <div>

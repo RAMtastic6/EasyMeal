@@ -16,6 +16,8 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     'cognome',
     'nome-ristorante',
     'città',
+    'indirizzo',
+    'descrizione', 
     ...days.map(day => `${day}-apertura`),
     ...days.map(day => `${day}-chiusura`),
     'coperti',
@@ -109,25 +111,23 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   if (String(password) !== String(confirmPassword)) {
     return { message: 'Passwords do not match' }
   }
-  */
   // Create the user
-  
   const user = await createUser({
-    email: 'giga@chad',
-    name: 'Giga',
-    surname: 'Chad',
-    password: 'password',
+    email: data['email'],
+    name: data['nome'],
+    surname: data['cognome'],
+    password: data['password'],
   })
-  
+
   // Create the restaurant
   const restaurant = await createRestaurant({
-    name: 'Ristorante gigachad',
-    address: 'Via di prova 1',
-    city: 'Roma',
-    cuisine: 'Italiana',
-    tables: 10,
-    email: 'r@e',
-    phone_number: '1234567890'
+    name: data['nome-ristorante'],
+    address: data['indirizzo'],
+    city: data['città'],
+    cuisine: data['cucina'],
+    tables: data['coperti'],
+    email: data['email-ristorante'],
+    phone_number: data['numero'],
   })
   // Create the staff
   const staff = await createStaff({
@@ -138,8 +138,7 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   //create days open
   const daysOpen = await createDaysOpen({
     restaurant_id: restaurant.id,
-    days: [
-      restaurant_opening_hours: {
+    days: {
       lunedì: {
         apertura: data['lunedì-apertura'],
         chiusura: data['lunedì-chiusura'],
@@ -168,40 +167,9 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
         apertura: data['domenica-apertura'],
         chiusura: data['domenica-chiusura'],
       },
-    ]
+    }
   })
-
-  restaurant_opening_hours: {
-    lunedì: {
-      apertura: data['lunedì-apertura'],
-      chiusura: data['lunedì-chiusura'],
-    },
-    martedì: {
-      apertura: data['martedì-apertura'],
-      chiusura: data['martedì-chiusura'],
-    },
-    mercoledì: {
-      apertura: data['mercoledì-apertura'],
-      chiusura: data['mercoledì-chiusura'],
-    },
-    giovedì: {
-      apertura: data['giovedì-apertura'],
-      chiusura: data['giovedì-chiusura'],
-    },
-    venerdì: {
-      apertura: data['venerdì-apertura'],
-      chiusura: data['venerdì-chiusura'],
-    },
-    sabato: {
-      apertura: data['sabato-apertura'],
-      chiusura: data['sabato-chiusura'],
-    },
-    domenica: {
-      apertura: data['domenica-apertura'],
-      chiusura: data['domenica-chiusura'],
-    },
-
-  if (!response) {
+  if (!user || !restaurant || !staff || !daysOpen) {
     return { message: 'Registration failed' }
   }
   return { message: 'Registration successful' }
