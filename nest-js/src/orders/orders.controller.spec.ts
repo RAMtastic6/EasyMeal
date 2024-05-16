@@ -76,7 +76,7 @@ describe('OrdersController', () => {
       };
       jest.spyOn(service, 'update').mockResolvedValueOnce(updateOrder as any);
       expect(await controller.update(updateOrder)).toEqual(updateOrder);
-      expect(service.update).toHaveBeenCalledWith(updateOrder);
+      expect(service.addQuantity).toHaveBeenCalledWith(updateOrder);
     });
   });
 

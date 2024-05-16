@@ -75,7 +75,7 @@ describe('OrdersService', () => {
       };
       jest.spyOn(ordersRepo, 'findOne').mockResolvedValue({} as any);
       jest.spyOn(ordersRepo, 'update').mockResolvedValue({} as any);
-      await service.update(updateOrder);
+      await service.addQuantity(updateOrder);
       expect(ordersRepo.update).toHaveBeenCalled();
     });
 
@@ -87,7 +87,7 @@ describe('OrdersService', () => {
         quantity: 2,
       };
       jest.spyOn(ordersRepo, 'findOne').mockResolvedValueOnce(null);
-      expect(service.update(updateOrder)).rejects.toThrow(NotFoundException);
+      expect(service.addQuantity(updateOrder)).rejects.toThrow(NotFoundException);
     });
   });
 

@@ -1,3 +1,4 @@
+"use server";
 import { Endpoints } from "./endpoints";
 
 export async function getReservation(): Promise<JSON> {
@@ -22,9 +23,7 @@ export async function getReservationById(id: number): Promise<JSON> {
 export async function getMenuWithOrdersQuantityByIdReservation(id: number) {
   const response = await fetch(`${Endpoints.reservation}${id}/orders`, {
     method: "GET",
-    headers: {
-      "Cache-Control": "no-cache",
-    },
+    cache: "no-cache",
   });
   if (!response.ok) {
     throw new Error('Error fetching restaurant from the database');

@@ -14,7 +14,6 @@ export default async function Page({ restaurantFilter }: { restaurantFilter: Res
   return (
     <>
       <div className="w-full">
-        <Header />
         <div className="container mx-auto mt-4 space-y-4">
           <h1 className="text-lg font-bold text-center text-red-950"> Effettua una prenotazione se sei un chad </h1>
           <RestaurantSearch cuisines={cuisines} cities={cities} />
