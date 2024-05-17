@@ -22,11 +22,9 @@ export default function ReservationForm({
 				restaurant_id: restaurant_id,
 				customer_id: 1,
 		};
-		console.log(json);
 
 		// Create reservation
 		const response = await createReservation(json);
-		console.log(response);
 		if (response != null && response.status) {
 				setReservationNumber(response.body.id.toString());
 		}
