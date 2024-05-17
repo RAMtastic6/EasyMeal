@@ -12,6 +12,7 @@ const config = {
   testEnvironment: 'jsdom',
   // Add more setup options before each test is run
   setupFilesAfterEnv: ['./jest.setup.ts'],
+  "coverageReporters": ["lcov", ["text", { "file": "coverage.txt", "path": "./" }]]
 }
  
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
