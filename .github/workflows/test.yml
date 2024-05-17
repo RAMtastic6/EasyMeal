@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'develop'
+      - 'feature/P1-354-github-actions-test-frontend'
 
 
 jobs:
