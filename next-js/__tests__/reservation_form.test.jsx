@@ -38,9 +38,9 @@ describe('Verifica il funzionamento frontend del componente Reservation Form', (
         fireEvent.click(screen.getByTestId('ButtonPrenota'));
 
         await waitFor(() => expect(screen.getByText('Prenotazione confermata!')).toBeInTheDocument());
-
+        const time = new Date('2024-05-12T16:00:00.000Z')
         expect(createReservation).toHaveBeenCalledWith({
-            date: '2024-05-12T16:00:00.000Z', // Expect Two hours less, don't know exactly why
+            date: time.toISOString(),
             number_people: 4,
             restaurant_id: 1,
             customer_id: 1,
