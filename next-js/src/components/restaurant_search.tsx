@@ -48,6 +48,7 @@ export default function RestaurantSearch({ cuisines, cities }: { cuisines: strin
           <input
             type="text"
             id="Search"
+            data-testid={"InputNomeRistorante"}
             placeholder="Inserisci il nome di un ristorante..."
             className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-10 shadow-sm sm:text-sm pl-[14px]"
             value={nameRestaurant}
@@ -83,6 +84,7 @@ export default function RestaurantSearch({ cuisines, cities }: { cuisines: strin
             type="text"
             id="Search"
             placeholder="Inserisci una città..."
+            data-testid={"InputCittà"}
             list='citySuggestions'
             className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-10 shadow-sm sm:text-sm pl-[14px]"
             value={city}
@@ -93,7 +95,7 @@ export default function RestaurantSearch({ cuisines, cities }: { cuisines: strin
           />
           <datalist id="citySuggestions">
             {cities.map((city) => (
-              <option key={city} value={city} />
+              <option key={city} value={city}/>
             ))}
           </datalist>
 
@@ -122,6 +124,7 @@ export default function RestaurantSearch({ cuisines, cities }: { cuisines: strin
           <input
             type="date"
             className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600"
+            data-testid={"InputData"}
             value={date}
             onChange={(e) => {
               setDate(e.target.value);
@@ -133,9 +136,10 @@ export default function RestaurantSearch({ cuisines, cities }: { cuisines: strin
 
         <div className="relative">
           <select
-            name="HeadlineAct"
-            id="HeadlineAct"
+            // name="HeadlineAct"
+            // id="HeadlineAct"
             className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600"
+            data-testid={"InputTipoCucina"}
             value={cuisine}
             onChange={(e) => {
               setCuisine(e.target.value);
@@ -151,6 +155,7 @@ export default function RestaurantSearch({ cuisines, cities }: { cuisines: strin
         <div>
           <a
             className="underline text-blue-500 hover:text-blue-700 transition-colors cursor-pointer"
+            data-testid={"InputResetFiltri"}
             onClick={() => {
               setNameRestaurant('');
               setDate('');

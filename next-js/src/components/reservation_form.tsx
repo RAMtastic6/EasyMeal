@@ -87,6 +87,7 @@ export default function ReservationForm({
                                 name="date"
                                 type="date"
                                 className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600"
+                                data-testid={"InputData"}
                             />
                         </div>
 
@@ -96,6 +97,7 @@ export default function ReservationForm({
                                 name="time"
                                 type="time"
                                 className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600"
+                                data-testid={"InputOra"}
                             />
                         </div>
 
@@ -105,12 +107,14 @@ export default function ReservationForm({
                                 name="number_people"
                                 type="number"
                                 className="w-full rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600"
+                                data-testid={"InputPersone"}
                             />
                         </div>
                         <div className="mt-4 flex justify-center">
                             <button
                                 type="submit"
                                 className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white"
+                                data-testid={"ButtonPrenota"}
                             >
                                 Prenota
                             </button>
