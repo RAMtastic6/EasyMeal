@@ -13,21 +13,25 @@ export default function ReservationForm({
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const formData = new FormData(e.target as HTMLFormElement);
-		const datetime = new Date(formData.get("date") as string + ' ' + formData.get("time") as string);
+		const date = new Date(`${formData.get("date")}T${formData.get("time")}:00`);
+		const options = { timeZone: 'Europe/Rome' };
+		const isoString = date.toLocaleString('en-US', options);
 		const json = {
-			date: datetime.toISOString(),
-			number_people: parseInt(formData.get("number_people") as string),
-			restaurant_id: restaurant_id,
-			customer_id: 1,
+				date: isoString,
+				number_people: parseInt(formData.get("number_people") as string),
+				restaurant_id: restaurant_id,
+				customer_id: 1,
 		};
+		console.log(json);
 
 		// Create reservation
 		const response = await createReservation(json);
+		console.log(response);
 		if (response != null && response.status) {
-			setReservationNumber(response.body.id.toString());
+				setReservationNumber(response.body.id.toString());
 		}
 		else {
-			alert("Errore nella prenotazione");
+				alert("Errore nella prenotazione");
 		}
 	}
 
