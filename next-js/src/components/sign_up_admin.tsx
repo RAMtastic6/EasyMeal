@@ -54,34 +54,32 @@ export default function SignupAdmin() {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    placeholder="Indirizzo email..."
+                    placeholder="Email personale..."
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="nome" className="block text-sm font-medium text-gray-700">Nome *</label>
-                    <input
-                      id="nome"
-                      name="nome"
-                      type="text"
-                      placeholder="Nome..."
-                      required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="cognome" className="block text-sm font-medium text-gray-700">Cognome *</label>
-                    <input
-                      id="cognome"
-                      name="cognome"
-                      type="text"
-                      placeholder="Cognome..."
-                      required
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    />
-                  </div>
+                <div>
+                  <label htmlFor="nome" className="block text-sm font-medium text-gray-700">Nome *</label>
+                  <input
+                    id="nome"
+                    name="nome"
+                    type="text"
+                    placeholder="Nome..."
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="cognome" className="block text-sm font-medium text-gray-700">Cognome *</label>
+                  <input
+                    id="cognome"
+                    name="cognome"
+                    type="text"
+                    placeholder="Cognome..."
+                    required
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  />
                 </div>
                 <div>
                   <label htmlFor="nome-ristorante" className="block text-sm font-medium text-gray-700">Nome Ristorante *</label>
