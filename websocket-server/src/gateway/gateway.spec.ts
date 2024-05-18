@@ -3,10 +3,15 @@ import { MyGateway } from './gateway';
 import e from 'express';
 import { emit } from 'process';
 import { on } from 'events';
-import { Socket } from 'dgram';
+
+import { Socket } from 'socket.io';
+import { Server } from 'socket.io';
 
 describe('MyGateway', () => {
   let gateway: MyGateway;
+  let mockServer: Server;
+  let mockSocket: jest.Mocked<Socket>;
+  let mockClient: jest.Mocked<Socket>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,6 +19,28 @@ describe('MyGateway', () => {
     }).compile();
 
     gateway = module.get<MyGateway>(MyGateway);
+
+    // Mock Server e Sockets
+    mockServer = {
+      sockets: {
+        sockets: new Map<string, jest.Mocked<Socket>>(),
+      },
+    } as unknown as Server;
+
+    gateway.server = mockServer;
+
+    mockSocket = {
+      id: 'mockSocketId',
+      rooms: new Set<string>(),
+      emit: jest.fn(),
+    } as unknown as jest.Mocked<Socket>;
+
+    mockClient = {
+      id: 'mockClientId',
+    } as unknown as jest.Mocked<Socket>;
+
+    // Aggiungi mockSocket alla lista di sockets
+    mockServer.sockets.sockets.set(mockSocket.id, mockSocket);
   });
 
   it('should be defined', () => {
@@ -75,24 +102,37 @@ describe('MyGateway', () => {
     });
   });
 
-  it.skip('should emit ingredient to room', () => {
-    const onIngredient = jest.fn();
-    const to = jest.fn().mockReturnThis();
-    gateway.server = {
-      to: to,
-      emit: onIngredient,
-    } as any;
+  describe('onConfirm', () => {
+    
+    it('should emit onConfirm to other sockets in the same room', async () => {
+    
+      const body = { id_prenotazione: 'testRoomId' };
 
-    // const client_socket = {} as unknown as Socket;
+      // Aggiungi mockSocket alla stanza
+      mockSocket.rooms.add(body.id_prenotazione);
 
-    // gateway.onConfirm({
-    //     key: 0,
-    //     index: 0,
-    //     ingredientIndex: 0,
-    //     removed: false,
-    //   },
-    //   client_socket
-    // );
+      await gateway.onConfirm(body, mockClient);
 
-  });
+      expect(mockSocket.emit).toHaveBeenCalledWith('onConfirm');
+    });
+
+    // it('should not emit onConfirm to the same socket', async () => {
+    //   const body = { id_prenotazione: 'testRoomId' };
+  
+    //   // Aggiungi mockClient alla stanza
+    //   mockClient.rooms = new Set<string>().add(body.id_prenotazione);
+  
+    //   await gateway.onConfirm(body, mockClient);
+  
+    //   expect(mockSocket.emit).not.toHaveBeenCalled();
+    // });
+
+    it('should not emit onConfirm if socket is not in the room', async () => {
+      const body = { id_prenotazione: 'testRoomId' };
+
+      await gateway.onConfirm(body, mockClient);
+
+      expect(mockSocket.emit).not.toHaveBeenCalled();
+    });
+  }); 
 });
