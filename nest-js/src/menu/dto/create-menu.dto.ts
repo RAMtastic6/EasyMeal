@@ -1,4 +1,4 @@
-import { Food } from "src/menu/entities/food.entity";
+import { Food } from "src/food/entities/food.entity";
 
 export class CreateMenuDto {
   name: string;

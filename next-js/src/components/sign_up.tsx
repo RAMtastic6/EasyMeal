@@ -1,6 +1,6 @@
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormState } from 'react-dom'
 import { validateSignUp } from '@/src/actions/validateSignUp'
 
 const initialState = {
@@ -8,7 +8,10 @@ const initialState = {
 }
 
 export default function Signup() {
-  const [state, formAction] = useFormState(validateSignUp, initialState)
+  const [state, formAction] = useFormState(validateSignUp, initialState);
+  
+  const actionUrl = typeof formAction === 'string' ? formAction : '';
+  
   return (
     <>
       <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8 bg-color-white">
@@ -21,7 +24,7 @@ export default function Signup() {
               Registrati
             </h2>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action={formAction}>
+              <form action={actionUrl}>
                 <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email</label>
                 <div className="mt-2">
                   <input
@@ -30,28 +33,31 @@ export default function Signup() {
                     //type="email"
                     autoComplete="email"
                     placeholder="Indirizzo email..."
+                    data-testid={"InputEmail"}
                     required
                     className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
-                <label htmlFor="password" className='block text-sm font-medium leading-6 text-gray-900'>Nome</label>
+                <label className='block text-sm font-medium leading-6 text-gray-900'>Nome</label>
                 <div className="mt-2">
                   <input
                     id="nome"
                     name="nome"
                     type="text"
                     placeholder="Nome..."
+                    data-testid={"InputNome"}
                     required
                     className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
-                <label htmlFor="password" className='block text-sm font-medium leading-6 text-gray-900'>Cognome</label>
+                <label className='block text-sm font-medium leading-6 text-gray-900'>Cognome</label>
                 <div className="mt-2">
                   <input
                     id="cognome"
                     name="cognome"
                     type="text"
                     placeholder="Cognome..."
+                    data-testid={"InputCognome"}
                     required
                     className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -64,6 +70,7 @@ export default function Signup() {
                     type="password"
                     autoComplete="current-password"
                     placeholder="Password..."
+                    data-testid={"InputPassword"}
                     required
                     className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -76,6 +83,7 @@ export default function Signup() {
                     type="password"
                     autoComplete="current-password"
                     placeholder="Password..."
+                    data-testid={"InputConfirmPassword"}
                     required
                     className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />

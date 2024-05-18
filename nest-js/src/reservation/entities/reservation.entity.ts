@@ -7,6 +7,8 @@ export enum ReservationStatus {
     PENDING = 'pending',
     ACCEPTED = 'accept',
     REJECTED = 'reject',
+    COMPLETED = 'completed',
+    TO_PAY = 'to_pay',
 }
 
 @Entity()
@@ -23,7 +25,8 @@ export class Reservation {
     @Column()
     restaurant_id: number;
 
-    @Column({ default: ReservationStatus.PENDING })
+    //TODO: change state
+    @Column({ default: ReservationStatus.ACCEPTED })
     state: ReservationStatus;
 
     @OneToMany(() => Orders, order => order.reservation)
