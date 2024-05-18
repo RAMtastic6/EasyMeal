@@ -15,17 +15,24 @@ export interface DaySchedule {
 // Definition of the types used to call the API
 
 // DAYS OPEN
-export interface DaysOpen {
+export interface CreateDaysOpen {
   restaurant_id: number;
   days: {
     [key in Day]: DaySchedule;
   };
 }
 
+export interface DaysOpen {
+  restaurant_id: number;
+  day_open: Day;
+  opening: string;
+  closing: string;
+}
+
 // STAFF
 export interface Staff {
-  restaurant_id: number;
   role: string;
+  restaurant_id: number;
   user_id: number;
 }
 
@@ -35,15 +42,18 @@ export interface Restaurant {
   address: string;
   city: string;
   cuisine: string;
+  menu_id: number | null;
   tables: number;
-  email: string;
   phone_number: string;
+  email: string;
+  image: string | null;
+  description: string | null;
 }
 
 // USER
 export interface User {
-  email: string;
   name: string;
   surname: string;
+  email: string;
   password: string;
 }
