@@ -2,7 +2,6 @@
 
 import { useFormState } from 'react-dom';
 import { validateSignUpAdmin } from '../actions/validateSignUpAdmin';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Day, daysOfWeek, DaySchedule } from '@/src/lib/types/definitions';
 
@@ -11,8 +10,8 @@ const initialState = {
 }
 
 export default function SignupAdmin() {
-  const router = useRouter();
   const [state, formAction] = useFormState(validateSignUpAdmin, initialState)
+  const actionUrl = typeof formAction === 'string' ? formAction : '';
   const [schedule, setSchedule] = useState<Record<Day, DaySchedule>>(
     daysOfWeek.reduce((acc, day) => {
       acc[day] = { isOpen: false, hours: { open: '', close: '' } };
@@ -46,7 +45,7 @@ export default function SignupAdmin() {
               Registrati come ristoratore
             </h2>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action={formAction} className="max-w-md mx-auto space-y-6" method="POST">
+              <form action={actionUrl} className="max-w-md mx-auto space-y-6" method="POST">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email personale *</label>
                   <input
@@ -55,6 +54,7 @@ export default function SignupAdmin() {
                     type="email"
                     autoComplete="email"
                     placeholder="Email personale..."
+                    data-testid={"InputEmail"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -66,6 +66,7 @@ export default function SignupAdmin() {
                     name="nome"
                     type="text"
                     placeholder="Nome..."
+                    data-testid={"InputNome"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -77,6 +78,7 @@ export default function SignupAdmin() {
                     name="cognome"
                     type="text"
                     placeholder="Cognome..."
+                    data-testid={"InputCognome"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -88,6 +90,7 @@ export default function SignupAdmin() {
                     name="nome-ristorante"
                     type="text"
                     placeholder="Nome Ristorante..."
+                    data-testid={"InputNomeRistorante"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -99,6 +102,7 @@ export default function SignupAdmin() {
                     name="città"
                     type="text"
                     placeholder="Città..."
+                    data-testid={"InputCittà"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -110,6 +114,7 @@ export default function SignupAdmin() {
                     name="indirizzo"
                     type="text"
                     placeholder="Indirizzo..."
+                    data-testid={"InputIndirizzo"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -120,6 +125,7 @@ export default function SignupAdmin() {
                     id="descrizione"
                     name="descrizione"
                     placeholder="Descrizione..."
+                    data-testid={"InputDescrizione"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -133,6 +139,7 @@ export default function SignupAdmin() {
                           type="checkbox"
                           checked={schedule[day].isOpen}
                           onChange={e => handleDayChange(day, e.target.checked)}
+                          data-testid={`InputOrari-${day}`}
                         />
                         {day}
                       </label>
@@ -146,6 +153,7 @@ export default function SignupAdmin() {
                                 name={day + '-apertura'}
                                 type="time"
                                 value={schedule[day].hours.open}
+                                data-testid={`InputOrari-${day}-apertura`}
                                 onChange={e => handleTimeChange(day, 'open', e.target.value)}
                                 className='pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"'
                               />
@@ -159,6 +167,7 @@ export default function SignupAdmin() {
                                 name={day + '-chiusura'}
                                 type="time"
                                 value={schedule[day].hours.close}
+                                data-testid={`InputOrari-${day}-chiusura`}
                                 onChange={e => handleTimeChange(day, 'close', e.target.value)}
                                 className='pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
                               />
@@ -176,6 +185,7 @@ export default function SignupAdmin() {
                     name="coperti"
                     type="number"
                     placeholder="Coperti..."
+                    data-testid={"InputCoperti"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -187,6 +197,7 @@ export default function SignupAdmin() {
                     name="numero"
                     type="text"
                     placeholder="Numero..."
+                    data-testid={"InputNumero"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -198,6 +209,7 @@ export default function SignupAdmin() {
                     name="email"
                     type="email"
                     placeholder="Email del ristorante..."
+                    data-testid={"InputEmailRistorante"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -209,6 +221,7 @@ export default function SignupAdmin() {
                     name="cucina"
                     type="text"
                     placeholder="Cucina..."
+                    data-testid={"InputCucina"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -221,6 +234,7 @@ export default function SignupAdmin() {
                     type="password"
                     autoComplete="current-password"
                     placeholder="Password..."
+                    data-testid={"InputPassword"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
@@ -233,6 +247,7 @@ export default function SignupAdmin() {
                     type="password"
                     autoComplete="current-password"
                     placeholder="Password..."
+                    data-testid={"InputConfirmPassword"}
                     required
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   />
