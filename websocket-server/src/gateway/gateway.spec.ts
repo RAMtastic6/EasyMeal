@@ -3,6 +3,7 @@ import { MyGateway } from './gateway';
 import e from 'express';
 import { emit } from 'process';
 import { on } from 'events';
+import { Socket } from 'dgram';
 
 describe('MyGateway', () => {
   let gateway: MyGateway;
@@ -18,7 +19,7 @@ describe('MyGateway', () => {
   it('should be defined', () => {
     expect(gateway).toBeDefined();
   });
-    
+
   it('should emit message to room', () => {
     const onMessage = jest.fn();
     const to = jest.fn().mockReturnThis();
@@ -26,7 +27,7 @@ describe('MyGateway', () => {
       to: to,
       emit: onMessage,
     } as any;
-    
+
     // chiama la funzione
     gateway.onIncrement({
       id_prenotazione: '123',
@@ -42,7 +43,6 @@ describe('MyGateway', () => {
       index: 0,
       quantity: 1,
     });
-
   });
 
   it('should emit ingredient to room', () => {
@@ -73,5 +73,26 @@ describe('MyGateway', () => {
       ingredientIndex: 0,
       removed: false,
     });
+  });
+
+  it.skip('should emit ingredient to room', () => {
+    const onIngredient = jest.fn();
+    const to = jest.fn().mockReturnThis();
+    gateway.server = {
+      to: to,
+      emit: onIngredient,
+    } as any;
+
+    // const client_socket = {} as unknown as Socket;
+
+    // gateway.onConfirm({
+    //     key: 0,
+    //     index: 0,
+    //     ingredientIndex: 0,
+    //     removed: false,
+    //   },
+    //   client_socket
+    // );
+
   });
 });
