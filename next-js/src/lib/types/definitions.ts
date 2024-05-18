@@ -1,8 +1,8 @@
 // Definition of the types used in the application
 
-export type Day = 'Lunedì' | 'Martedì' | 'Mercoledì' | 'Giovedì' | 'Venerdì' | 'Sabato' | 'Domenica';
+export type Day = 'lunedi' | 'martedi' | 'mercoledi' | 'giovedi' | 'venerdi' | 'sabato' | 'domenica';
 
-export const daysOfWeek: Day[] = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+export const daysOfWeek: Day[] = ['domenica', 'lunedi', 'martedi', 'mercoledi', 'giovedi', 'venerdi', 'sabato'];
 
 export interface DaySchedule {
   isOpen: boolean;
@@ -17,9 +17,11 @@ export interface DaySchedule {
 // DAYS OPEN
 export interface CreateDaysOpen {
   restaurant_id: number;
-  days: {
-    [key in Day]: DaySchedule;
-  };
+  days_open: {
+    day_open: Day;
+    opening: string;
+    closing: string;
+  }[];
 }
 
 export interface DaysOpen {

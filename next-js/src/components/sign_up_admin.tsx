@@ -45,7 +45,7 @@ export default function SignupAdmin() {
               Registrati come ristoratore
             </h2>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action={actionUrl} className="max-w-md mx-auto space-y-6" method="POST">
+              <form action={formAction} className="max-w-md mx-auto space-y-6" method="POST">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email personale *</label>
                   <input
@@ -96,10 +96,10 @@ export default function SignupAdmin() {
                   />
                 </div>
                 <div className="mt-2">
-                  <label htmlFor="città" className='block text-sm font-medium leading-6 text-gray-900'>Città *</label>
+                  <label htmlFor="city" className='block text-sm font-medium leading-6 text-gray-900'>Città *</label>
                   <input
-                    id="città"
-                    name="città"
+                    id="city"
+                    name="city"
                     type="text"
                     placeholder="Città..."
                     data-testid={"InputCittà"}
@@ -205,8 +205,8 @@ export default function SignupAdmin() {
                 <div className="mt-2">
                   <label htmlFor="email-ristorante" className='block text-sm font-medium leading-6 text-gray-900'>Email del ristorante *</label>
                   <input
-                    id="email"
-                    name="email"
+                    id="email-ristorante"
+                    name="email-ristorante"
                     type="email"
                     placeholder="Email del ristorante..."
                     data-testid={"InputEmailRistorante"}

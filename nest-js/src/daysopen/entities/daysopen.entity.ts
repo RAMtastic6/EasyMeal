@@ -2,13 +2,13 @@ import { Restaurant } from "src/restaurant/entities/restaurant.entity";
 import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 
 export enum Day {
-    SUNDAY = 'domenica',
-    MONDAY = 'lunedì',
-    TUESDAY = 'martedì',
-    WEDNESDAY = 'mercoledì',
-    THURSDAY = 'giovedì',
-    FRIDAY = 'venerdì',
-    SATURDAY = 'sabato',
+    SUNDAY = 0,
+    MONDAY = 1,
+    TUESDAY = 2,
+    WEDNESDAY = 3,
+    THURSDAY = 4,
+    FRIDAY = 5,
+    SATURDAY = 6
 }
 
 @Entity()

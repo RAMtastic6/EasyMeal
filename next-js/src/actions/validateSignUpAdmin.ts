@@ -4,22 +4,23 @@ import { createRestaurant } from "../lib/database/restaurant"
 import { createStaff } from "../lib/database/staff"
 import { createDaysOpen } from "../lib/database/daysopen"
 import { getFormData } from "@/src/lib/utils"
+import { Day, DaySchedule, daysOfWeek } from "@/src/lib/types/definitions"
 
 export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   //TODO: validate the form data
-  const days = ['lunedì', 'martedì', 'mercoledì', 'giovedì', 'venerdì', 'sabato', 'domenica']
-
+  console.log('validateSignUpAdmin', formData);
   // Get the form data
   const data = getFormData([
     'email',
     'nome',
     'cognome',
     'nome-ristorante',
-    'città',
+    'city',
     'indirizzo',
-    'descrizione', 
-    ...days.map(day => `${day}-apertura`),
-    ...days.map(day => `${day}-chiusura`),
+    'descrizione',
+    ...daysOfWeek.map(day => `${day}-isOpen`),
+    ...daysOfWeek.map(day => `${day}-apertura`),
+    ...daysOfWeek.map(day => `${day}-chiusura`),
     'coperti',
     'numero',
     'email-ristorante',
@@ -27,90 +28,44 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     'password',
     'password_confirmation',
   ], formData);
+  console.log('data', data);
+  
+  if (!data['email'] || !String(data['email']).includes('@')) return { message: 'Email must be valid' };
+  if (!data['nome']) return { message: 'First name is required' };
+  if (!data['cognome']) return { message: 'Last name is required' };
+  if (!data['nome-ristorante']) return { message: 'Restaurant name is required' };
+  if (!data['city']) return { message: 'City is required' };
+  if (!data['indirizzo']) return { message: 'Address is required' };
+  if (!data['coperti']) return { message: 'Number of seats is required' };
+  if (!data['numero']) return { message: 'Phone number is required' };
+  if (!data['email-ristorante']) return { message: 'Restaurant email is required' };
+  if (!data['cucina']) return { message: 'Cuisine is required' };
+  if (!data['password']) return { message: 'Password is required' };
+  if (!data['password_confirmation']) return { message: 'Password confirmation is required' };
+  if (String(data['password']) !== String(data['password_confirmation'])) return { message: 'Passwords do not match' };
+  
+  // Get the days open
+  const daysOpenData = daysOfWeek.map((day: Day, index: number) => {
+    console.log('day', day);
+    const isOpen = data[`${day}-isOpen`] === 'on';
+    console.log('day', data[`${day}-isOpen`]);
+    console.log('day', data[`${day}-apertura`]);
+    console.log('day', data[`${day}-chiusura`]);
 
-  // Check if email is valid
-  if (!data['email']) {
-    return { message: 'Email is required' }
-  }
-  if (!String(data['email']).includes('@')) {
-    return { message: 'Email must be valid' }
-  }
-
-  // Check if first name and last name are valid
-  if (!data['nome']) {
-    return { message: 'First name is required' }
-  }
-  if (!data['cognome']) {
-    return { message: 'Last name is required' }
-  }
-
-  //Check if restaurant name is valid
-  if (!data['nome-ristorante']) {
-    return { message: 'Restaurant name is required' }
-  }
-
-  // Check if city is valid
-  if (!data['città']) {
-    return { message: 'City is required' }
-  }
-
-  // Check if opening and closing hours are valid
-  for (const day of days) {
-    const openingHour = data[`${day}-apertura`]
-    const closingHour = data[`${day}-chiusura`]
-    if (!openingHour) {
-      return { message: `${day} opening hour is required` }
+    console.log('isOpen', day, isOpen);
+    const opening = data[`${day}-apertura`];
+    const closing = data[`${day}-chiusura`];
+    if (isOpen ) {
+      return {
+        day_open: index,
+        opening: isOpen ? opening : null,
+        closing: isOpen ? closing : null,
+      }
     }
-    if (!closingHour) {
-      return { message: `${day} closing hour is required` }
-    }
-    if (openingHour >= closingHour) {
-      return { message: `${day} opening hour must be before closing hour` }
-    }
-  }
-
-  // Check if number of seats is valid
-  if (!data['coperti']) {
-    return { message: 'Number of seats is required' }
-  }
-
-  // Check if phone number is valid
-  if (!data['numero']) {
-    return { message: 'Phone number is required' }
-  }
-
-  // Check if restaurant email is valid
-  if (!data['email-ristorante']) {
-    return { message: 'Restaurant email is required' }
-  }
-
-  // Check if cuisine is valid
-  if (!data['cucina']) {
-    return { message: 'Cuisine is required' }
-  }
-
-  // Check if password is valid
-  if (!data['password']) {
-    return { message: 'Password is required' }
-  }
-
-  // Check if password confirmation is valid
-  if (!data['password_confirmation']) {
-    return { message: 'Password confirmation is required' }
-  }
-
-  // Check if password and password confirmation match
-  const password = formData.get('password')
-  const confirmPassword = formData.get('password_confirmation')
-  if (!password) {
-    return { message: 'Password is required' }
-  }
-  if (!confirmPassword) {
-    return { message: 'Password confirmation is required' }
-  }
-  if (String(password) !== String(confirmPassword)) {
-    return { message: 'Passwords do not match' }
-  }
+    return null;
+  });
+  console.log('daysOpenData', daysOpenData);
+  
   // Create the user
   const user = await createUser({
     email: data['email'],
@@ -123,11 +78,12 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   const restaurant = await createRestaurant({
     name: data['nome-ristorante'],
     address: data['indirizzo'],
-    city: data['città'],
+    city: data['city'],
     cuisine: data['cucina'],
-    tables: data['coperti'],
-    email: data['email-ristorante'],
+    tables: parseInt(data['coperti']),
     phone_number: data['numero'],
+    email: data['email-ristorante'],
+    description: data['descrizione'],
   })
   // Create the staff
   const staff = await createStaff({
@@ -135,42 +91,16 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     role: 'admin',
     user_id: user.id
   })
+  
   //create days open
   const daysOpen = await createDaysOpen({
     restaurant_id: restaurant.id,
-    days: {
-      lunedì: {
-        apertura: data['lunedì-apertura'],
-        chiusura: data['lunedì-chiusura'],
-      },
-      martedì: {
-        apertura: data['martedì-apertura'],
-        chiusura: data['martedì-chiusura'],
-      },
-      mercoledì: {
-        apertura: data['mercoledì-apertura'],
-        chiusura: data['mercoledì-chiusura'],
-      },
-      giovedì: {
-        apertura: data['giovedì-apertura'],
-        chiusura: data['giovedì-chiusura'],
-      },
-      venerdì: {
-        apertura: data['venerdì-apertura'],
-        chiusura: data['venerdì-chiusura'],
-      },
-      sabato: {
-        apertura: data['sabato-apertura'],
-        chiusura: data['sabato-chiusura'],
-      },
-      domenica: {
-        apertura: data['domenica-apertura'],
-        chiusura: data['domenica-chiusura'],
-      },
-    }
+    days_open: daysOpenData.filter(day => day !== null)
   })
+  
   if (!user || !restaurant || !staff || !daysOpen) {
     return { message: 'Registration failed' }
   }
   return { message: 'Registration successful' }
+  
 }
