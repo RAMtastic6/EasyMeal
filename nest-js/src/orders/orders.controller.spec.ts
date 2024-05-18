@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { OrderDto } from './dto/create-order.dto';
 import { Orders } from './entities/order.entity';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
@@ -37,7 +37,7 @@ describe('OrdersController', () => {
 
   describe('create', () => {
     it('should create an order', async () => {
-      const createOrderDto: CreateOrderDto = {} as CreateOrderDto;
+      const createOrderDto: OrderDto = {} as OrderDto;
       jest.spyOn(service, 'create').mockResolvedValueOnce({} as any);
       expect(await controller.create(createOrderDto)).toEqual({});
       expect(service.create).toHaveBeenCalledWith(createOrderDto);
@@ -56,7 +56,7 @@ describe('OrdersController', () => {
   describe('findOne', () => {
     it('should find an order', async () => {
       const order = {
-        customer_id: 1,
+        user_id: 1,
         reservation_id: 1,
         food_id: 1,
       } as Orders;
@@ -124,7 +124,7 @@ describe('OrdersController', () => {
       const id = '1';
       const orders = [
         {
-          customer_id: 1,
+          user_id: 1,
           reservation_id: 1,
           food_id: 1,
           quantity: 1,

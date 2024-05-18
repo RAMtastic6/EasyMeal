@@ -84,7 +84,9 @@ export class RestaurantService {
   }
 
   async findOne(id: number) {
-    const restaurant = await this.restaurantRepo.findOne({ where: { id } });
+    const restaurant = await this.restaurantRepo.findOne({ 
+      where: { id },
+    });
     return restaurant;
   }
 

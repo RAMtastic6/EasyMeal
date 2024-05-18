@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Orders } from './entities/order.entity';
 import { Repository } from 'typeorm';
 import { Controller, NotFoundException } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { OrderDto } from './dto/create-order.dto';
 
 describe('OrdersService', () => {
   let service: OrdersService;
@@ -43,7 +43,7 @@ describe('OrdersService', () => {
 
   describe('create', () => {
     it('should create an order', async () => {
-      const createOrderDto = {} as CreateOrderDto;
+      const createOrderDto = {} as OrderDto;
       const expectedOrder = {} as Orders;
       jest.spyOn(ordersRepo, 'save').mockResolvedValue(expectedOrder);
       const result = await service.create(createOrderDto);
@@ -99,7 +99,7 @@ describe('OrdersService', () => {
         food_id: 1,
       };
       const expectedOrder = {
-        customer_id: 1,
+        user_id: 1,
         reservation_id: 1,
         food_id: 1,
       } as Orders;
