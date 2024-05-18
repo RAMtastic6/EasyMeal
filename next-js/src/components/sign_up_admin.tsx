@@ -3,6 +3,8 @@
 import { useFormState } from 'react-dom';
 import { validateSignUpAdmin } from '../actions/validateSignUpAdmin';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Day, daysOfWeek, DaySchedule } from '@/src/lib/types/definitions';
 
 const initialState = {
   message: '',
@@ -11,10 +13,26 @@ const initialState = {
 export default function SignupAdmin() {
   const router = useRouter();
   const [state, formAction] = useFormState(validateSignUpAdmin, initialState)
-  const handleSignUpAdmin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    router.push('/login');
-  }
+  const [schedule, setSchedule] = useState<Record<Day, DaySchedule>>(
+    daysOfWeek.reduce((acc, day) => {
+      acc[day] = { isOpen: false, hours: { open: '', close: '' } };
+      return acc;
+    }, {} as Record<Day, DaySchedule>)
+  );
+
+  const handleDayChange = (day: Day, isOpen: boolean) => {
+    setSchedule(prev => ({
+      ...prev,
+      [day]: { ...prev[day], isOpen }
+    }));
+  };
+
+  const handleTimeChange = (day: Day, field: 'open' | 'close', value: string) => {
+    setSchedule(prev => ({
+      ...prev,
+      [day]: { ...prev[day], hours: { ...prev[day].hours, [field]: value } }
+    }));
+  };
 
   return (
     <>
@@ -28,7 +46,7 @@ export default function SignupAdmin() {
               Registrati come ristoratore
             </h2>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action={formAction} className="max-w-md mx-auto space-y-6" method="POST" onSubmit={handleSignUpAdmin}>
+              <form action={formAction} className="max-w-md mx-auto space-y-6" method="POST">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email personale *</label>
                   <input
@@ -99,7 +117,7 @@ export default function SignupAdmin() {
                   />
                 </div>
                 <div className="mt-2">
-                  <label htmlFor="descrizione" className='block text-sm font-medium leading-6 text-gray-900'>Descrizione *</label>
+                  <label htmlFor="descrizione" className='block text-sm font-medium leading-6 text-gray-900'>Descrizione </label>
                   <textarea
                     id="descrizione"
                     name="descrizione"
@@ -109,163 +127,49 @@ export default function SignupAdmin() {
                   />
                 </div>
                 <div className="mt-2">
-                  <label htmlFor="orari" className='block text-sm font-medium leading-6 text-gray-900'>Orari *</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="lunedi-apertura" className='block text-sm font-medium leading-6 text-gray-900'>Lunedì Apertura *</label>
-                      <input
-                        id="lunedi-apertura"
-                        name="lunedi-apertura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
+                  <label htmlFor="orari" className='block text-sm font-medium leading-6 text-gray-900'>Orari</label>
+                  {daysOfWeek.map(day => (
+                    <div key={day}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={schedule[day].isOpen}
+                          onChange={e => handleDayChange(day, e.target.checked)}
+                        />
+                        {day}
+                      </label>
+                      {schedule[day].isOpen && (
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label htmlFor={day + '-apertura'} className='block text-sm font-medium leading-6 text-gray-900'>
+                              Apertura:
+                              <input
+                                id={day + '-apertura'}
+                                name={day + '-apertura'}
+                                type="time"
+                                value={schedule[day].hours.open}
+                                onChange={e => handleTimeChange(day, 'open', e.target.value)}
+                                className='pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"'
+                              />
+                            </label>
+                          </div>
+                          <div>
+                            <label htmlFor={day + '-chiusura'} className='block text-sm font-medium leading-6 text-gray-900'>
+                              Chiusura:
+                              <input
+                                id={day + '-chiusura'}
+                                name={day + '-chiusura'}
+                                type="time"
+                                value={schedule[day].hours.close}
+                                onChange={e => handleTimeChange(day, 'close', e.target.value)}
+                                className='pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6'
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div>
-                      <label htmlFor="lunedi-chiusura" className='block text-sm font-medium leading-6 text-gray-900'>Lunedì Chiusura *</label>
-                      <input
-                        id="lunedi-chiusura"
-                        name="lunedi-chiusura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="martedi-apertura" className='block text-sm font-medium leading-6 text-gray-900'>Martedì Apertura *</label>
-                      <input
-                        id="martedi-apertura"
-                        name="martedi-apertura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="martedi-chiusura" className='block text-sm font-medium leading-6 text-gray-900'>Martedì Chiusura *</label>
-                      <input
-                        id="martedi-chiusura"
-                        name="martedi-chiusura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="mercoledi-apertura" className='block text-sm font-medium leading-6 text-gray-900'>Mercoledì Apertura *</label>
-                      <input
-                        id="mercoledi-apertura"
-                        name="mercoledi-apertura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="mercoledi-chiusura" className='block text-sm font-medium leading-6 text-gray-900'>Mercoledì Chiusura *</label>
-                      <input
-                        id="mercoledi-chiusura"
-                        name="mercoledi-chiusura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="giovedi-apertura" className='block text-sm font-medium leading-6 text-gray-900'>Giovedì Apertura *</label>
-                      <input
-                        id="giovedi-apertura"
-                        name="giovedi-apertura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="giovedi-chiusura" className='block text-sm font-medium leading-6 text-gray-900'>Giovedì Chiusura *</label>
-                      <input
-                        id="giovedi-chiusura"
-                        name="giovedi-chiusura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="venerdi-apertura" className='block text-sm font-medium leading-6 text-gray-900'>Venerdì Apertura *</label>
-                      <input
-                        id="venerdi-apertura"
-                        name="venerdi-apertura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="venerdi-chiusura" className='block text-sm font-medium leading-6 text-gray-900'>Venerdì Chiusura *</label>
-                      <input
-                        id="venerdi-chiusura"
-                        name="venerdi-chiusura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="sabato-apertura" className='block text-sm font-medium leading-6 text-gray-900'>Sabato Apertura *</label>
-                      <input
-                        id="sabato-apertura"
-                        name="sabato-apertura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="sabato-chiusura" className='block text-sm font-medium leading-6 text-gray-900'>Sabato Chiusura *</label>
-                      <input
-                        id="sabato-chiusura"
-                        name="sabato-chiusura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="domenica-apertura" className='block text-sm font-medium leading-6 text-gray-900'>Domenica Apertura *</label>
-                      <input
-                        id="domenica-apertura"
-                        name="domenica-apertura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="domenica-chiusura" className='block text-sm font-medium leading-6 text-gray-900'>Domenica Chiusura *</label>
-                      <input
-                        id="domenica-chiusura"
-                        name="domenica-chiusura"
-                        type="time"
-                        placeholder="Orario..."
-                        required
-                        className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
+                  ))}
                 </div>
                 <div className="mt-2">
                   <label htmlFor="coperti" className='block text-sm font-medium leading-6 text-gray-900'>Coperti *</label>
@@ -356,3 +260,25 @@ export default function SignupAdmin() {
     </>
   );
 }
+/*
+<label htmlFor="lunedi-apertura" className='block text-sm font-medium leading-6 text-gray-900'>Lunedì Apertura *</label>
+<input
+  id="lunedi-apertura"
+  name="lunedi-apertura"
+  type="time"
+  placeholder="Orario..."
+  required
+  className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+/>
+<div>
+  <label htmlFor="lunedi-chiusura" className='block text-sm font-medium leading-6 text-gray-900'>Lunedì Chiusura *</label>
+  <input
+    id="lunedi-chiusura"
+    name="lunedi-chiusura"
+    type="time"
+    placeholder="Orario..."
+    required
+    className="pl-[14px] block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+  />
+</div>
+*/
