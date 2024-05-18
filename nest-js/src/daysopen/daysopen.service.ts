@@ -17,10 +17,11 @@ export class DaysopenService {
     //Create the entries
     if (days_open && days_open.length > 0) {
       for (const day of days_open) {
-      const existingDay = await this.daysopenRepository.findOne({ where: { restaurantId: restaurant_id, dayOpen: day.day_open } });
+      /*const existingDay = await this.daysopenRepository.findOne({ where: { restaurantId: restaurant_id, dayOpen: day.day_open } });
       if (existingDay) {
         throw new Error('Days open already set');
       }
+      */
       const daysopen = this.daysopenRepository.create({
         restaurantId: restaurant_id,
         dayOpen: day.day_open,
