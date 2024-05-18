@@ -37,6 +37,7 @@ describe('MyGateway', () => {
 
     mockClient = {
       id: 'mockClientId',
+      rooms: new Set<string>().add('testroomid')
     } as unknown as jest.Mocked<Socket>;
 
     // Aggiungi mockSocket alla lista di sockets
@@ -116,16 +117,16 @@ describe('MyGateway', () => {
       expect(mockSocket.emit).toHaveBeenCalledWith('onConfirm');
     });
 
-    // it('should not emit onConfirm to the same socket', async () => {
-    //   const body = { id_prenotazione: 'testRoomId' };
+    it('should not emit onConfirm to the same socket', async () => {
+      const body = { id_prenotazione: 'testroomid' };
   
-    //   // Aggiungi mockClient alla stanza
-    //   mockClient.rooms = new Set<string>().add(body.id_prenotazione);
+      // Aggiungi mockClient alla stanza
+      // mockClient.rooms = new Set<string>().add(body.id_prenotazione);
   
-    //   await gateway.onConfirm(body, mockClient);
+      await gateway.onConfirm(body, mockClient);
   
-    //   expect(mockSocket.emit).not.toHaveBeenCalled();
-    // });
+      expect(mockSocket.emit).not.toHaveBeenCalled();
+    });
 
     it('should not emit onConfirm if socket is not in the room', async () => {
       const body = { id_prenotazione: 'testRoomId' };
