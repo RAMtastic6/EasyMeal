@@ -7,6 +7,7 @@ import Link from 'next/link';
 export default function ReservationsAdmin() {
   const restaurantId = 1; // TO DO: get restaurant id from user
   const [reservations, setReservations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function fetchReservations() {
       try {
@@ -15,16 +16,25 @@ export default function ReservationsAdmin() {
       } catch (error) {
         console.error("Error fetching reservations", error);
       }
+      finally {
+        setLoading(false);
+      }
     }
+    setLoading(true);
     fetchReservations();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200 table-auto">
         <thead className="bg-gray-50">
           <tr>
             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Numero persone</th>
+            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Numero partecipanti</th>
             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stato</th>
             <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giorno e ora</th>
             <th className="px-4 py-2"></th>
