@@ -7,6 +7,7 @@ export default function ReservationAdmin({ params }: { params: { id: string } })
   const [loading, setLoading] = useState(true);
   const [reservation, setReservation] = useState<any>({}); // TO DO: define the type of the reservation object
   const [orders, setOrders] = useState<any[]>([]); // TO DO: define the type of the orders object
+  // fetch reservation by id
   useEffect(() => {
     async function fetchReservation() {
       try {
@@ -19,22 +20,28 @@ export default function ReservationAdmin({ params }: { params: { id: string } })
         setLoading(false);
       }
     }
-    async function fetchOrders() {
-      try {
-        const result = await getOrderByReservationId(parseInt(params.id));
-        setOrders(result);
-      }
-      catch (error) {
-        console.error("Error fetching orders", error);
-      }
-      finally {
-        setLoading(false);
-      }
-    }
     setLoading(true);
     fetchReservation();
-    fetchOrders();
-  }, []);
+  }, [params.id]);
+
+  // fetch orders by reservation id if the reservation is accepted or to_pay
+  useEffect(() => {
+    if (reservation.state === 'accepted' || reservation.state === 'to_pay') {
+      const fetchOrders = async () => {
+        try {
+          const result = await getOrderByReservationId(parseInt(params.id));
+          setOrders(result);
+        } catch (error) {
+          console.error("Error fetching orders", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+      setLoading(true);
+      fetchOrders();
+    }
+  }, [reservation, params.id]);
+
   const handleAccept = async () => {
     const response = await acceptReservation(parseInt(params.id));
     if (!response.status || response.body == null) {
@@ -102,6 +109,7 @@ export default function ReservationAdmin({ params }: { params: { id: string } })
               <div>
                 <div className="bg-white p-4">
                   <h2 className="text-2xl font-bold mb-4">Le ordinazioni</h2>
+                  {orders.length === 0 && <p>Non ci sono ancora ordini per questa prenotazione</p>}
                   <ul>
                     {Object.keys(orders).map((key: string) => (
                       <div key={orders[key as keyof typeof orders]} className="container mx-auto">
