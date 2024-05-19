@@ -38,6 +38,9 @@ export default function ReservationsAdmin() {
     return <div>Non è stata effettuata nessuna prenotazione</div>;
   }
 
+  // Sort reservations by date in ascending order
+  reservations.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200 table-auto">
