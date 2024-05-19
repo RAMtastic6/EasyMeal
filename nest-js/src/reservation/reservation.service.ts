@@ -3,7 +3,6 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation, ReservationStatus } from './entities/reservation.entity';
-import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 
@@ -108,6 +107,15 @@ export class ReservationService {
       throw new HttpException('Reservation already accepted or rejected', 400);
     }
     await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
+    return true;
+  }
+
+  async updateStatus(id: number, state: ReservationStatus) {
+    const reservation = await this.reservationRepository.findOne({ where: { id } });
+    if(reservation == null) {
+      return false;
+    }
+    await this.reservationRepository.update({ id }, { state });
     return true;
   }
 }
