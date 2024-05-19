@@ -26,7 +26,7 @@ export class Reservation {
     restaurant_id: number;
 
     //TODO: change state
-    @Column({ default: ReservationStatus.ACCEPTED })
+    @Column({ default: ReservationStatus.PENDING })
     state: ReservationStatus;
 
     @OneToMany(() => Orders, order => order.reservation)

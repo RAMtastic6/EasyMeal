@@ -47,18 +47,25 @@ export default function ReservationDetails({ params }: { params: { id: string } 
     const response = await acceptReservation(parseInt(params.id));
     if (!response.status || response.body == null) {
       alert("Errore nella modifica della prenotazione");
-    };
+    } else {
+      window.location.reload();
+    }
   }
 
   const handleReject = async () => {
     const response = await rejectReservation(parseInt(params.id));
     if (!response.status || response.body == null) {
       alert("Errore nella modifica della prenotazione");
+    } else {
+      window.location.reload();
     }
   }
 
   if (loading)
     return <div>Loading...</div>;
+  console.log(reservation);
+
+  // TO DO: define getAvailableSeats
   return (
     <>
       <div className="w-full">
@@ -75,7 +82,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
               </li>
               <li>
                 <span className="font-bold">Giorno:</span>
-                <span> {(new Date(reservation.date)).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric'})}</span>
+                <span> {(new Date(reservation.date)).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
               </li>
               <li>
                 <span className="font-bold">Ora:</span>

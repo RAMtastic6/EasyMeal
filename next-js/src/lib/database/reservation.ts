@@ -54,7 +54,12 @@ export async function createReservation(reservation: {}): Promise<any> {
 }
 
 export async function getReservationsByRestaurantId(restaurantId: number): Promise<[]> {
-	const response = await fetch(`${Endpoints.reservation}restaurant/${restaurantId}`);
+	const response = await fetch(`${Endpoints.reservation}restaurant/${restaurantId}`, {
+		method: "GET",
+		headers: {
+			"Cache-Control": "no-cache",
+		},
+	});
 	if (!response.ok) {
 		throw new Error('Error fetching reservations from the database');
 	}
