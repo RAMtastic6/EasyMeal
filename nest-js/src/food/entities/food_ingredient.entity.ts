@@ -1,5 +1,6 @@
+/*import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { Food } from "./food.entity";
+import { Food } from "../../menu/entities/food.entity";
 import { Ingredient } from "./ingredient.entity";
 
 @Entity()
@@ -21,4 +22,4 @@ export class FoodIngredient {
   @ManyToOne(() => Ingredient, ingredient => ingredient.foodIngredients)
   @JoinColumn({ name: "id_ingredient" })
   ingredient: Ingredient;
-}
+}*/

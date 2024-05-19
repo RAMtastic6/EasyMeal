@@ -5,10 +5,11 @@ on:
     branches:
       - 'develop'
 
-
 jobs:
   backend-test:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     defaults:
       run:
         working-directory: nest-js
@@ -26,7 +27,6 @@ jobs:
         run: npm ci
           
       - name: Run tests
-        continue-on-error: true
         run: npm run test:cov
 
       - name: Install Coveralls
@@ -42,7 +42,7 @@ jobs:
         id: coverage
         run: |
           echo 'MD_REPORT<<EOF' >> $GITHUB_OUTPUT
-          echo "### Code Coverage" >> $GITHUB_OUTPUT
+          echo "### Backend Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
       
@@ -57,6 +57,8 @@ jobs:
 
   frontend-test:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     defaults:
       run:
         working-directory: next-js
@@ -73,6 +75,84 @@ jobs:
 
       - name:  Install NPM dependencies
         run: npm ci
+
+      - name: Run tests
+        run: npm run test:cov
+
+      - name: Install Coveralls
+        run: |
+          curl -L https://coveralls.io/coveralls-linux.tar.gz | tar -xz -C /usr/local/bin
+          chmod +x /usr/local/bin/coveralls
+          coveralls --version
+
+      - name: Send coverage to Coveralls
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+      - name: Convert coverage to MD
+        id: coverage
+        run: |
+          echo 'MD_REPORT<<EOF' >> $GITHUB_OUTPUT
+          echo "### Frontend Code Coverage" >> $GITHUB_OUTPUT
+          cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+      
+      - name: Add coverage report to the PR
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: ${{ steps.coverage.outputs.MD_REPORT }}
+
+      - name: Add coverage report to the job summary
+        run: |
+          echo "${{ steps.coverage.outputs.MD_REPORT }}" >> $GITHUB_STEP_SUMMARY
+
+  websocket-test:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    defaults:
+      run:
+        working-directory: websocket-server
+          
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 21
+
+      - name: Install NPM dependencies
+        run: npm ci
+          
+      - name: Run tests
+        run: npm run test:cov
+
+      - name: Install Coveralls
+        run: |
+          curl -L https://coveralls.io/coveralls-linux.tar.gz | tar -xz -C /usr/local/bin
+          chmod +x /usr/local/bin/coveralls
+          coveralls --version
+
+      - name: Send coverage to Coveralls
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+      - name: Convert coverage to MD
+        id: coverage
+        run: |
+          echo 'MD_REPORT<<EOF' >> $GITHUB_OUTPUT
+          echo "### Backend Code Coverage" >> $GITHUB_OUTPUT
+          cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+      
+      - name: Add coverage report to the PR
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: ${{ steps.coverage.outputs.MD_REPORT }}
+
+      - name: Add coverage report to the job summary
+        run: |
+          echo "${{ steps.coverage.outputs.MD_REPORT }}" >> $GITHUB_STEP_SUMMARY
 
 
           
