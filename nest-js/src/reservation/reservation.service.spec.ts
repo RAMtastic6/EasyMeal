@@ -64,7 +64,7 @@ describe('ReservationService', () => {
       restaurant_id: 1,
       number_people: 2,
       date: '2030-01-01',
-      customer_id: 1,
+      user_id: 1,
     } as CreateReservationDto;
 
     const restaurant = {
@@ -134,7 +134,7 @@ describe('ReservationService', () => {
 
     const reservation = {
       id: 1,
-      customers: [],
+      users: [],
     } as Reservation;
 
     it('should add a customer to a reservation', async () => {
@@ -146,7 +146,7 @@ describe('ReservationService', () => {
       expect(reservationRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
       expect(reservationRepo.update).toHaveBeenCalledWith(
         { id: 1 },
-        { customers: [...reservation.customers, { id: 1 }] },
+        { customers: [...reservation.users, { id: 1 }] },
       );
       expect(result).toEqual(true);
     });

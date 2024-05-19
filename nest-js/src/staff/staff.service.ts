@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Staff } from './enities/staff.entity';
+import { Staff, StaffRole } from './enities/staff.entity';
 import { Repository } from 'typeorm';
 import { StaffDto } from './dto/create-staff.dto';
 
@@ -20,13 +20,22 @@ export class StaffService {
       } 
     });
     if (existingStaff) {
-      throw new HttpException('Staff already exists', HttpStatus.CONFLICT);
+      return null;
     }
     //Check if inputs are valid
     if (!staffDto.restaurant_id || !staffDto.user_id || !staffDto.role) {
-      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+      return null;
     }
     const staff = this.staffRepo.create({...staffDto});
     return await this.staffRepo.save(staff);
+  }
+
+  async getAdminByRestaurantId(restaurant_id: number) {
+    return await this.staffRepo.findOne({
+      where: {
+        restaurant_id: restaurant_id,
+        role: StaffRole.ADMIN
+      }
+    });
   }
 }

@@ -10,7 +10,7 @@ export class Orders {
 	id: number;
 
 	@Column()
-	customer_id: number;
+	user_id: number;
 
 	@Column()
 	reservation_id: number;

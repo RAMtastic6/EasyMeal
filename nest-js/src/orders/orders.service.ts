@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { OrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Orders } from './entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,10 +21,19 @@ export class OrdersService {
     private readonly reservationService: ReservationService
   ) {}
   
-  async create(createOrderDto: CreateOrderDto) {
-    const order = this.ordersRepository.create(createOrderDto);
+  async create(data: {
+    reservation_id: number,
+    food_id: number,
+    user_id: number
+  }) {
+    const order = this.ordersRepository.create({
+      reservation_id: data.reservation_id,
+      food_id: data.food_id,
+      user_id: data.user_id,
+      quantity: 1
+    });
     await this.ordersRepository.save(order);
-    const food = await this.foodService.findOne(createOrderDto.food_id);
+    const food = await this.foodService.findOne(data.food_id);
     for (const ingredient of food.ingredients) {
       const orderIngredient = this.orderIngredientsRepository.create({
         order_id: order.id,
@@ -39,13 +48,13 @@ export class OrdersService {
   async remove(order: {
     reservation_id: number,
     food_id: number,
-    customer_id: number
+    user_id: number
   }) {
     const result = await this.ordersRepository.findOne({
       where: {
         reservation_id: order.reservation_id,
         food_id: order.food_id,
-        customer_id: order.customer_id
+        user_id: order.user_id
       }
     });
     if (result == null) {
@@ -55,74 +64,33 @@ export class OrdersService {
     return result;
   }
 
-  /*async createOrUpdate(createOrderDto: CreateOrderDto) {
-    const order = await this.ordersRepository.findOne({
-      where: {
-        customer_id: createOrderDto.customer_id,
-        reservation_id: createOrderDto.reservation_id,
-        food_id: createOrderDto.food_id
-      },
-      relations: {
-        ingredients: {
-          ingredient: true
-        }
-      }
-    });
-    if (order == null) {
-      const created = await this.ordersRepository.save(createOrderDto);
-      const food = await this.foodService.findOne(createOrderDto.food_id);
-      for (const ingredient of food.ingredients) {
-        const orderIngredient = this.orderIngredientsRepository.create({
-          order_id: created.id,
-          ingredient_id: ingredient.id,
-          removed: false
-        });
-        await this.orderIngredientsRepository.save(orderIngredient);
-      }
-      return await this.ordersRepository.save(created);
-    }
-    const newQuantity = order.quantity + createOrderDto.quantity;
-    if(newQuantity == 0) {
-      await this.ordersRepository.remove(order);
-      return order;
-    }
-    return await this.ordersRepository.update({
-      customer_id: createOrderDto.customer_id,
-      reservation_id: createOrderDto.reservation_id,
-      food_id: createOrderDto.food_id
-    }, {
-      quantity: newQuantity
-    })
-  }*/
-
   async findAll() {
     return await this.ordersRepository.find();
   }
 
   async findOne(order: {
-    customer_id: number,
+    user_id: number,
     reservation_id: number,
     food_id: number,
   }) {
-    const result = await this.ordersRepository.findOne({
+    return await this.ordersRepository.findOne({
       where: {
-        customer_id: order.customer_id,
+        user_id: order.user_id,
         reservation_id: order.reservation_id,
         food_id: order.food_id
       }
     });
-    return result;
   }
 
   async addQuantity(updateOrder: {
-    customer_id: number,
     reservation_id: number,
     food_id: number,
-    quantity: number
+    quantity: number,
+    user_id: number
   }) {
     const result = await this.ordersRepository.findOne({
       where: {
-        customer_id: updateOrder.customer_id,
+        user_id: updateOrder.user_id,
         reservation_id: updateOrder.reservation_id,
         food_id: updateOrder.food_id
       }
@@ -131,7 +99,7 @@ export class OrdersService {
       return null;
     }
     await this.ordersRepository.update({
-      customer_id: updateOrder.customer_id,
+      user_id: updateOrder.user_id,
       reservation_id: updateOrder.reservation_id,
       food_id: updateOrder.food_id
     }, {
@@ -152,6 +120,9 @@ export class OrdersService {
         ingredients: true
       }
     });
+    if(result == null) {
+      return null;
+    }
     result.ingredients = order.ingredients;
     return await this.ordersRepository.save(result);
   }
@@ -162,14 +133,11 @@ export class OrdersService {
   }) {
     const orders = await this.ordersRepository.find({
       where: {
-        customer_id: order.customer_id,
+        user_id: order.customer_id,
         reservation_id: order.reservation_id,
       },
       relations: {food: true}
     });
-    if (orders.length == 0) {
-      throw new NotFoundException('No orders found for this reservation');
-    }
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
   }
 
@@ -182,9 +150,6 @@ export class OrdersService {
       },
       relations: { food: true}
     });
-    if (orders.length == 0) {
-      throw new NotFoundException('No orders found for this reservation');
-    }
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
   }
 
@@ -213,14 +178,11 @@ export class OrdersService {
         }
       }
     });
-    if (orders.length == 0) {
-      throw new NotFoundException('No orders found for this reservation');
-    }
     return orders;
   }
 
-  async updateListOrders(order: { customer_id: number; reservation_id: number; orders: any[]; }) {
-    const { customer_id, reservation_id, orders } = order;
+  async updateListOrders(order: { user_id: number; reservation_id: number; orders: any[]; }) {
+    const { reservation_id, orders } = order;
     const reservation = await this.reservationService.findOne(reservation_id);
     if ( reservation == null || reservation.state != ReservationStatus.ACCEPTED) {
       return null;
@@ -234,22 +196,7 @@ export class OrdersService {
         });
       }
     };
-    await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY);
+    await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY, order.user_id);
     return true;
   }
-
-  /*async getRomanBill(order: {
-    reservation_id: number,
-  }) {
-    const orders = await this.ordersRepository.find({
-      where: {
-        reservation_id: order.reservation_id,
-      },
-      relations: ['food']
-    });
-    if (orders.length == 0) {
-      throw new NotFoundException('No orders found for this reservation');
-    }
-    return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
-  }*/
 }

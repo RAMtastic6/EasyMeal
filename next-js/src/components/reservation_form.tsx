@@ -20,7 +20,6 @@ export default function ReservationForm({
 				date: isoString,
 				number_people: parseInt(formData.get("number_people") as string),
 				restaurant_id: restaurant_id,
-				customer_id: 1,
 		};
 
 		// Create reservation

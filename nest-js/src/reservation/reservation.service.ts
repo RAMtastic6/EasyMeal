@@ -5,44 +5,75 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
+import { NotificationService } from '../notification/notification.service';
+import { StaffService } from '../staff/staff.service';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Injectable()
 export class ReservationService {
   constructor(
     @InjectRepository(Reservation)
-    private reservationRepository: Repository<Reservation>,
+    private readonly reservationRepository: Repository<Reservation>,
     private readonly restaurantService: RestaurantService,
+    private readonly notificationService: NotificationService,
+    private readonly staffService: StaffService,
   ) {}
   
-  async create(createReservationDto: CreateReservationDto) {
-    const restaurant = await this.restaurantService.findOne(createReservationDto.restaurant_id);
+  async create(
+    restaurant_id: number,
+    date: string,
+    number_people: number,
+    user_id: number,
+  ) {
+    const restaurant = await this.restaurantService.findOne(restaurant_id);
     if(restaurant == null) {
-      throw new NotFoundException('Restaurant not found');
+      return null;
     }
-    const booked = await this.restaurantService.getBookedTables(createReservationDto.restaurant_id, createReservationDto.date);
+    const booked = await this.restaurantService.getBookedTables(restaurant_id, date);
     if(booked >= restaurant.tables) {
-      throw new HttpException('No tables available', 400);
+      return { status: false, message: 'Restaurant is full' };
     }
-    if(Date.now() > new Date(createReservationDto.date).getTime()) {
-      throw new HttpException('Invalid date', 400);
+    if(Date.now() > new Date(date).getTime()) {
+      return null;
     }
     const reservation = this.reservationRepository.create({
-      date: new Date(createReservationDto.date),
-      number_people: createReservationDto.number_people,
-      restaurant_id: createReservationDto.restaurant_id,
-      customers: [{ id: createReservationDto.customer_id }],
+      date: new Date(date),
+      number_people: number_people,
+      restaurant_id: restaurant_id,
+      
+      users: [{ id: user_id }],
     });
     await this.reservationRepository.save(reservation);
-    return reservation;
+
+    // Notifiy the amministrator of the restaurant
+    const admin = await this.staffService.getAdminByRestaurantId(restaurant_id);
+    await this.notificationService.create({
+      message: `Nuova prenotazione per ${number_people} persone`,
+      title: 'Nuova prenotazione con id: ' + reservation.id,
+      id_receiver: admin.id,
+    });
+
+    return {
+      status: true,
+      id: reservation.id,
+      data: reservation
+    };
   }
 
   async addCustomer(params: {customer_id: number, reservation_id: number}) {
     const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
     if(reservation == null) {
-      throw new NotFoundException('Reservation not found');
+      return null
     }
     await this.reservationRepository.update({ id: params.reservation_id }, {
-      customers: [...reservation.customers, { id: params.customer_id }],
+      users: [...reservation.users, { id: params.customer_id }],
+    });
+
+    // Notifiy the user of the restaurant
+    await this.notificationService.create({
+      message: `Partecipa alla prenotazione con id: ${params.reservation_id}`,
+      title: 'Sei stato invitato ad una prenotazione',
+      id_receiver: params.customer_id,
     });
     return true;
   }
@@ -77,7 +108,7 @@ export class ReservationService {
       },
     });
     if(result == null) {
-      throw new NotFoundException('Reservation not found');
+      return null;
     }
     //associamo la quantita del cibo direttamente al menu
     // e rimuoviamo l'array degli ordinati
@@ -89,12 +120,27 @@ export class ReservationService {
     return result;
   }
 
-  async updateStatus(id: number, state: ReservationStatus) {
-    const reservation = await this.reservationRepository.findOne({ where: { id } });
+  async updateStatus(id: number, state: ReservationStatus, user_id: number) {
+    const reservation = await this.reservationRepository.findOne({ 
+      where: { id },
+      relations: { users: true  },
+    });
     if(reservation == null) {
       return false;
     }
     await this.reservationRepository.update({ id }, { state });
+    //Notify all the users of the reservation changed status
+
+    for(const user of reservation.users) {
+      if(user.id === user_id) {
+        continue;
+      }
+      await this.notificationService.create({
+        message: `La tua prenotazione con id: ${id} è stata ${state}`,
+        title: 'Aggiornamento prenotazione',
+        id_receiver: user.id,
+      });
+    }
     return true;
   }
 }

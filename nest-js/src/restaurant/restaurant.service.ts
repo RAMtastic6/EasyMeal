@@ -45,11 +45,11 @@ export class RestaurantService {
     // Check if the restaurant already exists
     const existingRestaurant = await this.restaurantRepo.findOne({ where: { name: createRestaurantDto.name } });
     if (existingRestaurant) {
-      throw new HttpException('Restaurant already exists', HttpStatus.CONFLICT);
+      return null;
     }
 
     if (!name || !address || !city || !cuisine || !tables || !email || !phone_number) {
-      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+      return null;
     }
     
     const restaurant = this.restaurantRepo.create({
@@ -84,7 +84,9 @@ export class RestaurantService {
   }
 
   async findOne(id: number) {
-    const restaurant = await this.restaurantRepo.findOne({ where: { id } });
+    const restaurant = await this.restaurantRepo.findOne({ 
+      where: { id },
+    });
     return restaurant;
   }
 

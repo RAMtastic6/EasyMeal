@@ -6,6 +6,7 @@ import { Orders } from './entities/order.entity';
 import { OrderIngredients } from './entities/order_ingredients';
 import { FoodModule } from '../food/food.module';
 import { ReservationModule } from '../reservation/reservation.module';
+import { AuthenticationModule } from '../authentication/authentication.module';
 
 @Module({
   controllers: [OrdersController],
@@ -13,8 +14,9 @@ import { ReservationModule } from '../reservation/reservation.module';
   imports: [
     TypeOrmModule.forFeature([Orders, OrderIngredients]),
     FoodModule,
-    ReservationModule
+    ReservationModule,
+    AuthenticationModule
   ],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule, OrdersService]
 })
 export class OrdersModule {}

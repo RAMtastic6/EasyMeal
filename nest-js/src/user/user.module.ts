@@ -12,14 +12,6 @@ import { JwtModule } from '@nestjs/jwt';
     TypeOrmModule.forFeature([
       User
     ]),
-    //TODO: definire la firma del token
-    JwtModule.register({
-      secret: 'sgroi',
-      signOptions: { 
-        expiresIn: '1h', 
-        algorithm: 'HS256'
-      },
-    })
   ],
   exports: [TypeOrmModule, UserService]
 })

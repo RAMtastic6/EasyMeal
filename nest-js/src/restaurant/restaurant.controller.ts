@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, NotFoundException, BadRequestException } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto as RestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
@@ -23,7 +23,11 @@ export class RestaurantController {
 
   @Post()
   create(@Body() createRestaurantDto: RestaurantDto) {
-    return this.restaurantService.create(createRestaurantDto);
+    const result = this.restaurantService.create(createRestaurantDto);
+    if (result == null) {
+      throw new BadRequestException('Invalid restaurant');
+    }
+    return result;
   }
 
   @Get()

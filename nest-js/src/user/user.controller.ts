@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, HttpCode, BadRequestException, NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/create-user.dto';
 
@@ -9,24 +9,17 @@ export class UserController {
   @Post('user')
   async create(@Body() createCustomerDto: UserDto) {
     const result = await this.userService.create_user(createCustomerDto);
+    if (result == null) {
+      throw new BadRequestException('Invalid user');
+    }
     return result;
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const result = await this.userService.findOne(+id);
-    return result;
-  }
-
-  @Post('login')
-  @HttpCode(200)
-  async login(@Body() body: {
-    email: string,
-    password: string
-  }) {
-    const result = await this.userService.login(body.email, body.password);
-    if (!result) {
-      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    if (result == null) {
+      throw new NotFoundException('User not found with id: ' + id);
     }
     return result;
   }
