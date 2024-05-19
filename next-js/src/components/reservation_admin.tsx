@@ -12,6 +12,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
   useEffect(() => {
     async function fetchReservation() {
       try {
+        console.log("Fetching reservation data...");
         const result = await getReservationById(parseInt(params.id));
         setReservation(result);
       } catch (error) {
@@ -30,6 +31,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
     if (reservation.state === 'accepted' || reservation.state === 'to_pay') {
       const fetchOrders = async () => {
         try {
+          console.log("Fetching orders data...");
           const result = await getOrderByReservationId(parseInt(params.id));
           setOrders(result);
         } catch (error) {
@@ -63,7 +65,6 @@ export default function ReservationDetails({ params }: { params: { id: string } 
 
   if (loading)
     return <div>Loading...</div>;
-  console.log(reservation);
 
   // TO DO: define getAvailableSeats
   return (
