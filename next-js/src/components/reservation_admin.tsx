@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { acceptReservation, getReservationById, rejectReservation } from "@/src/lib/database/reservation";
 import { getOrderByReservationId } from "@/src/lib/database/order";
+import { stateMessage } from "@/src/lib/types/definitions";
 
 export default function ReservationDetails({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
@@ -63,13 +64,32 @@ export default function ReservationDetails({ params }: { params: { id: string } 
       <div className="w-full">
         <div className="w-full">
           <div className="container mx-auto mt-4 space-y-4">
-            <div>Numero persone: {reservation.number_people}</div>
-            <div>Stato: {reservation.state}</div>
-            <div>Giorno e ora: {(new Date(reservation.date)).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: 'numeric', minute: 'numeric' })}</div>
-
+            <ul className="space-y-4">
+              <li>
+                <span className="font-bold">Numero persone:</span>
+                <span> {reservation.number_people}</span>
+              </li>
+              <li>
+                <span className="font-bold">Stato:</span>
+                <span> {stateMessage[reservation.state as keyof typeof stateMessage]}</span>
+              </li>
+              <li>
+                <span className="font-bold">Giorno:</span>
+                <span> {(new Date(reservation.date)).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric'})}</span>
+              </li>
+              <li>
+                <span className="font-bold">Ora:</span>
+                <span> {(new Date(reservation.date)).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</span>
+              </li>
+            </ul>
             {reservation.state === "pending" && (
-              <div>
-                <div>Posti disponibili: 10</div>
+              <>
+                <ul className="space-y-4">
+                  <li>
+                    <span className="font-bold">Posti disponibili:</span>
+                    <span> 10</span>
+                  </li>
+                </ul>
                 <div className="bg-yellow-200 p-4">
                   La prenotazione è in attesa di conferma.
                   <div className="flex space-x-4">
@@ -77,7 +97,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                     <button onClick={handleReject} className="bg-orange-500 text-black px-4 py-2 rounded">Rifiuta</button>
                   </div>
                 </div>
-              </div>
+              </>
             )}
             {(reservation.state === "accept") && (
               <div>

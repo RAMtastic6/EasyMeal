@@ -3,18 +3,12 @@ import { getReservationsByRestaurantId } from "@/src/lib/database/reservation";
 import { join } from "path";
 import { useEffect, useState } from "react";
 import Link from 'next/link';
+import { stateMessage } from "@/src/lib/types/definitions";
 
 export default function ReservationsAdmin() {
   const restaurantId = 1; // TO DO: get restaurant id from user
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const stateMessage = {
-    'pending': 'In attesa di conferma',
-    'accept': 'Accettata',
-    'reject': 'Rifiutata',
-    'to_pay': 'Da pagare',
-    'completed': 'Completa',
-  }
   useEffect(() => {
     async function fetchReservations() {
       try {
