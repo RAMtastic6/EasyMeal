@@ -10,6 +10,8 @@ import { StaffModule } from './staff/staff.module';
 import { FoodModule } from './food/food.module';
 import { MenuModule } from './menu/menu.module';
 import { DaysopenModule } from './daysopen/daysopen.module';
+import { AuthenticationModule } from './authentication/authentication.module';
+import { NotificationModule } from './notification/notification.module';
 
 
 @Module({
@@ -22,7 +24,7 @@ import { DaysopenModule } from './daysopen/daysopen.module';
       database: 'easy-meal',
       autoLoadEntities: true,
       synchronize: true, //FIXME: NEVER USE THIS IN PRODUCTION
-    }), UserModule, OrdersModule, ReservationModule, StaffModule, FoodModule, DaysopenModule, MenuModule
+    }), UserModule, OrdersModule, ReservationModule, StaffModule, FoodModule, DaysopenModule, MenuModule, AuthenticationModule, NotificationModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,11 +1,8 @@
 import { Orders } from "../../orders/entities/order.entity";
 import { Reservation } from "../../reservation/entities/reservation.entity";
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-
-export enum UserRole {
-    ADMIN = 'admin',
-    USER = 'user',
-}
+import { Column, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Staff } from "../../staff/enities/staff.entity";
+import { Notification } from "../../notification/entities/notification.entity";
 
 @Entity()
 export class User {
@@ -24,12 +21,15 @@ export class User {
     @Column({ type: 'varchar', length: 256 })
     password: string;
 
-    @Column({ default: UserRole.USER })
-    role: UserRole;
-
     @OneToMany(() => Orders, order => order.customer)
     orders: Orders[];
 
-    @ManyToMany(() => Reservation, reservation => reservation.customers)
+    @ManyToMany(() => Reservation, reservation => reservation.users)
     reservations: Reservation[];
+
+    @OneToOne(() => Staff, staff => staff.user)
+    staff: Staff;
+
+    @OneToOne(() => Notification, notification => notification.user)
+    notification: Notification;
 }

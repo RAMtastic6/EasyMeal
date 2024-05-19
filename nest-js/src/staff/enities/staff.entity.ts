@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Restaurant } from "../../restaurant/entities/restaurant.entity";
 import { User } from "../../user/entities/user.entity";
 
@@ -25,7 +25,7 @@ export class Staff {
   @JoinColumn({name: 'restaurant_id'})
   restaurant: Restaurant;
 
-  @ManyToOne(() => User , user => user.id)
+  @OneToOne(() => User , user => user.staff)
   @JoinColumn({name: 'user_id'})
   user: User;
 }

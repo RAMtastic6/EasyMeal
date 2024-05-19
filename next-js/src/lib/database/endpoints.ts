@@ -12,4 +12,7 @@ export class Endpoints {
     static readonly socket = "http://" + socket +":8000/";
     static readonly staff = Endpoints.host + "staff/";
     static readonly daysopen = Endpoints.host + "daysopen/";
+    static readonly menu = Endpoints.host + "menu/";
+    static readonly notification = Endpoints.host + "notification/";
+    static readonly authentication = Endpoints.host + "authentication/";
 }

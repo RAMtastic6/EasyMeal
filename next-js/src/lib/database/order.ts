@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { Endpoints } from "./endpoints";
 import { verifySession } from "../dal";
 import exp from "constants";
+import { redirect } from "next/dist/server/api-utils";
 
 export async function getOrderByReservationId(id: number) {
 	const res = await fetch(Endpoints.order + 'reservation/' + id, {
@@ -40,7 +41,10 @@ export async function saveOrders(data: {
 	reservation_id: number,
 	food_id: number,
 }) {
-	const user = await verifySession();
+	const token = cookies().get('session')?.value;
+	if(!token) {
+		return false;
+	}
 	const request = await fetch(Endpoints.order + "create", {
 		method: 'POST',
 		headers: {
@@ -48,7 +52,7 @@ export async function saveOrders(data: {
 		},
 		body: JSON.stringify({
 			...data,
-			customer_id: user.id,
+			token: token,
 		}),
 	});
 	const response = await request.json();
@@ -59,7 +63,10 @@ export async function deleteOrders(data: {
 	reservation_id: number,
 	food_id: number,
 }) {
-	const user = await verifySession();
+	const token = cookies().get('session')?.value;
+	if(!token) {
+		return false;
+	}
 	const request = await fetch(Endpoints.order + "remove", {
 		method: 'POST',
 		headers: {
@@ -67,7 +74,7 @@ export async function deleteOrders(data: {
 		},
 		body: JSON.stringify({
 			...data,
-			customer_id: user.id,
+			token: token,
 		}),
 	});
 	const response = await request.json();
@@ -79,7 +86,10 @@ export async function updateIngredientsOrder(data: {
 	id: number
 	ingredients: any[],
 }) {
-	const user = await verifySession();
+	const token = cookies().get('session')?.value;
+	if(!token) {
+		return false;
+	}
 	const request = await fetch(Endpoints.order + 'updateIngredients', {
 		method: 'POST',
 		cache: 'no-cache',
@@ -88,14 +98,17 @@ export async function updateIngredientsOrder(data: {
 		},
 		body: JSON.stringify({
 			...data,
-			customer_id: user.id,
+			token: token,
 		}),
 	});
 	return await request.json();
 }
 
 export async function updateListOrders(data: any) {
-	const user = await verifySession();
+	const token = cookies().get('session')?.value;
+	if(!token) {
+		return false;
+	}
 	// Togliamo la categoria dagli ordini
 	const orders = Object.values(data.orders).reduce((acc: any[], category: any) => {
 		acc.push(...category);
@@ -110,7 +123,7 @@ export async function updateListOrders(data: any) {
 			body: JSON.stringify({
 					orders,
 					reservation_id: data.reservation_id,
-					customer_id: user.id,
+					token: token,
 			}),
 	});
 	if(request.status !== 200) {

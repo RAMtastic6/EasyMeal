@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { UserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserRole } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { comparePasswords, hashPassword } from '../utils';
@@ -12,11 +12,9 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepo: Repository<User>,
-    @Inject(JwtService)
-    private jwtService: JwtService,
   ) { }
 
-  async create_user(userDto: UserDto, role: UserRole = UserRole.USER) {
+  async create_user(userDto: UserDto) {
     const { email, name, surname, password } = userDto;
     // Check if email is already registered
     const existingCustomer = await this.userRepo.findOne({ where: { email } });
@@ -35,7 +33,6 @@ export class UserService {
     const user = this.userRepo.create({
       ...userDto,
       password: hashedPassword,
-      role
     });
 
     // Save the customer entity to the database
@@ -51,17 +48,15 @@ export class UserService {
     return user
   }
 
-  async login(email: string, password: string) {
-    const result = await this.userRepo.findOne({ where: { email } });
-    if (!result || (await comparePasswords(password, result.password)) == false) {
-      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
-    }
-    const token = this.jwtService.sign({
-      id: result.id,
-      role: result.role,
-    },
-    );
-    return { token: token, userName: result.name, role: result.role };
+  async findUserByEmail(email: string) {
+    return await this.userRepo.findOne({ 
+      where: { 
+        email 
+      },
+      relations: {
+        staff: true
+      }
+    });
   }
 }
 
