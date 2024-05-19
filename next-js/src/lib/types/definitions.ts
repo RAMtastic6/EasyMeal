@@ -17,7 +17,7 @@ export const stateMessage = {
   'accept': 'Accettata',
   'reject': 'Rifiutata',
   'to_pay': 'Da pagare',
-  'completed': 'Completa',
+  'completed': 'Completata',
 }
 
 // Definition of the types used to call the API

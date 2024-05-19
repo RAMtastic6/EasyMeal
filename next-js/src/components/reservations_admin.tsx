@@ -23,7 +23,7 @@ export default function ReservationsAdmin() {
     }
     setLoading(true);
     fetchReservations();
-  }, []);
+  }, [restaurantId]);
 
   if (loading) {
     return <div>Loading...</div>;
