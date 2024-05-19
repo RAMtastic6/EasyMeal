@@ -13,14 +13,6 @@ export class FoodService {
     private foodRepository: Repository<Food>
   ) {}
 
-  create(createFoodDto: CreateFoodDto) {
-    return 'This action adds a new food';
-  }
-
-  findAll() {
-    return `This action returns all food`;
-  }
-
   async findOne(id: number) {
     return await this.foodRepository.findOne({
       where: {
@@ -30,13 +22,5 @@ export class FoodService {
         ingredients: true
       }
     });
-  }
-
-  update(id: number, updateFoodDto: UpdateFoodDto) {
-    return `This action updates a #${id} food`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} food`;
   }
 }

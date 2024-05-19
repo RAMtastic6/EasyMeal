@@ -96,11 +96,7 @@ export class OrdersService {
   }*/
 
   async findAll() {
-    const result = await this.ordersRepository.find();
-    if (result.length == 0) {
-      throw new NotFoundException('No orders found');
-    }
-    return result;
+    return await this.ordersRepository.find();
   }
 
   async findOne(order: {

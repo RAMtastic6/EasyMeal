@@ -23,7 +23,11 @@ export class OrdersController {
 
   @Get()
   async findAll() {
-    return await this.ordersService.findAll();
+    const result = await this.ordersService.findAll();
+    if (result.length == 0) {
+      throw new NotFoundException('No orders found');
+    }
+    return result;
   }
 
   @Post('findOne')
@@ -59,7 +63,10 @@ export class OrdersController {
     food_id: number,
     customer_id: number,
   }) {
-    return await this.ordersService.remove(order);
+    const result = await this.ordersService.remove(order);
+    if(result == null)
+      throw new NotFoundException('Order not found');
+    return result;
   }
 
   @Post('partialBill')
