@@ -3,6 +3,7 @@ import { Daysopen } from "src/daysopen/entities/daysopen.entity";
 import { Orders } from "src/orders/entities/order.entity";
 import { Reservation } from "src/reservation/entities/reservation.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Staff } from "../../staff/enities/staff.entity";
 
 @Entity()
 export class Restaurant {
@@ -48,4 +49,7 @@ export class Restaurant {
 
     @OneToMany(() => Reservation, reservation => reservation.restaurant)
     reservations: Reservation[];
+
+    @OneToMany(() => Staff, staff => staff.restaurant)
+    staff: Staff[];
 }

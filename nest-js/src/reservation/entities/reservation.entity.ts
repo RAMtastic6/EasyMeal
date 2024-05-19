@@ -34,7 +34,7 @@ export class Reservation {
 
     @ManyToMany(() => User, customer => customer.reservations)
     @JoinTable()
-    customers: User[];
+    users: User[];
 
     @ManyToOne(() => Restaurant, restaurant => restaurant.reservations)
     @JoinColumn({ name: 'restaurant_id' })

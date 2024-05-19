@@ -17,17 +17,4 @@ export class UserController {
     const result = await this.userService.findOne(+id);
     return result;
   }
-
-  @Post('login')
-  @HttpCode(200)
-  async login(@Body() body: {
-    email: string,
-    password: string
-  }) {
-    const result = await this.userService.login(body.email, body.password);
-    if (!result) {
-      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
-    }
-    return result;
-  }
 }
