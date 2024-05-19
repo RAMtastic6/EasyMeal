@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MyGateway } from './gateway';
-import e from 'express';
-import { emit } from 'process';
-import { on } from 'events';
+// import e from 'express';
+// import { emit } from 'process';
+// import { on } from 'events';
 
 import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
@@ -47,6 +47,7 @@ describe('MyGateway', () => {
   it('should be defined', () => {
     expect(gateway).toBeDefined();
   });
+
 
   it('should emit message to room', () => {
     const onMessage = jest.fn();
