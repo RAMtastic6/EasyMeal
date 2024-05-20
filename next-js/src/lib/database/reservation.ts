@@ -11,7 +11,7 @@ export async function getReservation(): Promise<JSON> {
 	return data;
 }
 
-export async function getReservationById(id: number): Promise<JSON> {
+export async function getReservationById(id: number) {
 	const response = await fetch(`${Endpoints.reservation}${id}`, {
 		method: "GET",
 		cache: "no-cache",

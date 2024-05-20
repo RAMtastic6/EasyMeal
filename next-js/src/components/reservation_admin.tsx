@@ -26,23 +26,23 @@ export default function ReservationDetails({ params }: { params: { id: string } 
 
   // fetch orders by reservation id if the reservation is accepted or to_pay
   useEffect(() => {
-    fetchReservation();
-    console.log("Reservation state: ", reservation.state);
-    if (reservation.state === 'accepted' || reservation.state === 'to_pay') {
-      const fetchOrders = async () => {
-        try {
-          console.log("Fetching orders data...");
-          const result = await getOrderByReservationId(parseInt(params.id));
-          setOrders(result);
-        } catch (error) {
-          console.error("Error fetching orders", error);
-        } finally {
-          setLoading(false);
-        }
-      }
+    async function fetchInitalData() {
       setLoading(true);
-      fetchOrders();
+      try {
+        console.log("Fetching orders data...");
+        const reservation = await getReservationById(parseInt(params.id));
+        setReservation(reservation);
+        if(reservation.state === 'accept' || reservation.state === 'to_pay') {
+          const orders = await getOrderByReservationId(parseInt(params.id));
+          setOrders(orders);
+        }
+      } catch (error) {
+        console.error("Error fetching orders", error);
+      } finally {
+        setLoading(false);
+      }
     }
+    fetchInitalData();
   }, []);
 
   const handleAccept = async () => {
