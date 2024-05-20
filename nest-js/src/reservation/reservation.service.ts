@@ -115,14 +115,14 @@ export class ReservationService {
 
   async acceptReservation(id: number) {
     if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } })) {
-      throw new HttpException('Reservation not found', 404);
+      return null;
     }
     return await this.reservationRepository.update({ id }, { state: ReservationStatus.ACCEPTED });
   }
 
   async rejectReservation(id: number) {
     if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING }})) {
-      throw new HttpException('Reservation not found', 404);
+      return null;
     }
     await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
     return true;

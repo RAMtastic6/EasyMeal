@@ -13,9 +13,7 @@ export async function getReservation(): Promise<JSON> {
 export async function getReservationById(id: number): Promise<JSON> {
 	const response = await fetch(`${Endpoints.reservation}${id}`, {
 		method: "GET",
-		headers: {
-			"Cache-Control": "no-cache",
-		},
+		cache: "no-cache",
 	});
 	if (!response.ok) {
 		throw new Error('Error fetching reservation from the database');
@@ -28,9 +26,7 @@ export async function getReservationById(id: number): Promise<JSON> {
 export async function getMenuWithOrdersQuantityByIdReservation(id: number) {
 	const response = await fetch(`${Endpoints.reservation}${id}/orders`, {
 		method: "GET",
-		headers: {
-			"Cache-Control": "no-cache",
-		},
+		cache: "no-cache",	
 	});
 	if (!response.ok) {
 		throw new Error('Error fetching restaurant from the database');
@@ -56,9 +52,7 @@ export async function createReservation(reservation: {}): Promise<any> {
 export async function getReservationsByRestaurantId(restaurantId: number): Promise<[]> {
 	const response = await fetch(`${Endpoints.reservation}restaurant/${restaurantId}`, {
 		method: "GET",
-		headers: {
-			"Cache-Control": "no-cache",
-		},
+		cache: "no-cache",
 	});
 	if (!response.ok) {
 		throw new Error('Error fetching reservations from the database');
@@ -72,6 +66,7 @@ export async function getReservationsByRestaurantId(restaurantId: number): Promi
 export async function acceptReservation(id: number): Promise<any> {
 	const response = await fetch(`${Endpoints.reservation}${id}/accept`, {
 		method: "POST",
+		cache: "no-cache",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -85,6 +80,7 @@ export async function acceptReservation(id: number): Promise<any> {
 export async function rejectReservation(id: number): Promise<any> {
 	const response = await fetch(`${Endpoints.reservation}${id}/reject`, {
 		method: "POST",
+		cache: "no-cache",
 		headers: {
 			"Content-Type": "application/json",
 		},

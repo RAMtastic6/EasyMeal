@@ -4,15 +4,17 @@ import { join } from "path";
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 import { stateMessage } from "@/src/lib/types/definitions";
+import { getRestaurantIdByAdminId } from "../lib/database/staff";
 
-export default function ReservationsAdmin() {
+export default function ReservationsAdmin({ userId }: { userId: number}) {
   const restaurantId = 1; // TO DO: get restaurant id from user
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function fetchReservations() {
       try {
-        const json = await getReservationsByRestaurantId(restaurantId);
+        //const restaurantId = await getRestaurantIdByAdminId(userId);
+        const json = await getReservationsByRestaurantId(1);
         setReservations(json);
       } catch (error) {
         console.error("Error fetching reservations", error);
@@ -35,6 +37,21 @@ export default function ReservationsAdmin() {
   // Sort reservations by date in ascending order
   reservations.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
+  function getStateColor(state: any) {
+    switch (state) {
+      case 'pending':
+        return 'text-yellow-500 mr-1';
+      case 'accept':
+        return 'text-green-500 mr-1';
+      case 'reject':
+        return 'text-red-500 mr-1';
+      case 'completed':
+        return 'text-blue-500 mr-1';
+      default:
+        return 'text-purple-500 mr-1';
+    }
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200 table-auto">
@@ -54,7 +71,7 @@ export default function ReservationsAdmin() {
               <td className="px-4 py-2">{reservation.id}</td>
               <td className="px-4 py-2">{reservation.number_people}</td>
               <td className="px-4 py-2">
-                <span className={`text-${reservation.state === 'pending' ? 'yellow' : reservation.state === 'accept' ? 'green' : reservation.state === 'reject' ? 'red' : reservation.state === 'completed' ? 'blue' : 'purple'}-500 mr-1`}>&#11044;</span>
+                <span className={getStateColor(reservation.state)}>&#11044;</span>
                 {stateMessage[reservation.state as keyof typeof stateMessage]}
               </td>
               <td className="px-4 py-2">{(new Date(reservation.date)).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })}</td>

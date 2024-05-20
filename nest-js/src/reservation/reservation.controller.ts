@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -39,11 +39,17 @@ export class ReservationController {
 
   @Post(':id/accept')
   async acceptReservation(@Param('id') id: number) {
-    return await this.reservationService.acceptReservation(id);
+    const result = await this.reservationService.acceptReservation(id);
+    if (result == null)
+      throw new NotFoundException('Reservation not found');
+    return result;
   }
 
   @Post(':id/reject')
   async rejectReservation(@Param('id') id: number) {
-    return await this.reservationService.rejectReservation(id);
+    const result = await this.reservationService.rejectReservation(id);
+    if (result == null)
+      throw new NotFoundException('Reservation not found');
+    return result;
   }
 }

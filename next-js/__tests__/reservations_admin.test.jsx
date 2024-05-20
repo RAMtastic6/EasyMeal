@@ -22,7 +22,7 @@ describe('Verifica il funzionamento frontend del componente ReservationsAdmin', 
   });
 
   it('Verifica della visualizzazione del caricamento', async () => {
-    render(<ReservationsAdmin />);
+    render(<ReservationsAdmin userId={1}/>);
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
@@ -30,7 +30,7 @@ describe('Verifica il funzionamento frontend del componente ReservationsAdmin', 
     // Mocking the fetchReservations function to simulate loading state
     getReservationsByRestaurantId.mockResolvedValueOnce([]);
 
-    render(<ReservationsAdmin />);
+    render(<ReservationsAdmin userId={1} />);
 
     await waitFor(() => {
       expect(screen.getByText('Non è stata effettuata nessuna prenotazione')).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe('Verifica il funzionamento frontend del componente ReservationsAdmin', 
   });
 
   it('Verifica della visualizzazione dopo il caricamento', async () => {
-    render(<ReservationsAdmin />);
+    render(<ReservationsAdmin userId={1}/>);
 
     await waitFor(() => {
       expect(getReservationsByRestaurantId).toHaveBeenCalledTimes(1);
