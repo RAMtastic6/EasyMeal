@@ -40,7 +40,11 @@ export class OrdersController {
 
   @Get()
   async findAll() {
-    return await this.ordersService.findAll();
+    const result = await this.ordersService.findAll();
+    if (result.length == 0) {
+      throw new NotFoundException('No orders found');
+    }
+    return result;
   }
 
   @Post('findOne')
@@ -49,7 +53,11 @@ export class OrdersController {
     reservation_id: number,
     food_id: number,
   }) {
-    return await this.ordersService.findOne(order);
+    const result = await this.ordersService.findOne(order);
+    if (result == null) {
+      throw new NotFoundException('Order not found');
+    }
+    return result;
   }
 
   @Post('addQuantity')
@@ -63,12 +71,16 @@ export class OrdersController {
     if (user == null) {
       throw new BadRequestException('Invalid token');
     }
-    return await this.ordersService.addQuantity({
+    const result = await this.ordersService.addQuantity({
       user_id: user.id,
       reservation_id: updateOrder.reservation_id,
       food_id: updateOrder.food_id,
       quantity: updateOrder.quantity
     });
+    if (result == null) {
+      throw new NotFoundException('Order not found');
+    }
+    return result;
   }
 
   @Post('updateIngredients')
@@ -76,7 +88,11 @@ export class OrdersController {
     id: number,
     ingredients: any[],
   }) {
-    return await this.ordersService.updateIngredients(order);
+    const result = await this.ordersService.updateIngredients(order);
+    if (result == null) {
+      throw new NotFoundException('Order not found');
+    }
+    return result;
   }
 
   @Post('remove')
@@ -127,13 +143,17 @@ export class OrdersController {
       reservation_id: order.reservation_id,
       orders: order.orders
     });
-    if(result === null) 
+    if(result == null) 
       throw new BadRequestException('Error updating orders');
     return result;
   }
 
   @Get('reservation/:id')
   async getReservationOrders(@Param('id') id: string) {
-    return await this.ordersService.getReservationOrders(+id);
+    const result = await this.ordersService.getReservationOrders(+id);
+    if (result.length == 0) {
+      throw new NotFoundException('No orders found');
+    }
+    return result;
   }
 }

@@ -65,11 +65,7 @@ export class OrdersService {
   }
 
   async findAll() {
-    const result = await this.ordersRepository.find();
-    if (result.length == 0) {
-      throw new NotFoundException('No orders found');
-    }
-    return result;
+    return await this.ordersRepository.find();
   }
 
   async findOne(order: {
@@ -77,14 +73,13 @@ export class OrdersService {
     reservation_id: number,
     food_id: number,
   }) {
-    const result = await this.ordersRepository.findOne({
+    return await this.ordersRepository.findOne({
       where: {
         user_id: order.user_id,
         reservation_id: order.reservation_id,
         food_id: order.food_id
       }
     });
-    return result;
   }
 
   async addQuantity(updateOrder: {
@@ -125,6 +120,9 @@ export class OrdersService {
         ingredients: true
       }
     });
+    if(result == null) {
+      return null;
+    }
     result.ingredients = order.ingredients;
     return await this.ordersRepository.save(result);
   }
@@ -140,9 +138,6 @@ export class OrdersService {
       },
       relations: {food: true}
     });
-    if (orders.length == 0) {
-      throw new NotFoundException('No orders found for this reservation');
-    }
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
   }
 
@@ -155,9 +150,6 @@ export class OrdersService {
       },
       relations: { food: true}
     });
-    if (orders.length == 0) {
-      throw new NotFoundException('No orders found for this reservation');
-    }
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
   }
 
@@ -186,9 +178,6 @@ export class OrdersService {
         }
       }
     });
-    if (orders.length == 0) {
-      throw new NotFoundException('No orders found for this reservation');
-    }
     return orders;
   }
 
@@ -207,7 +196,7 @@ export class OrdersService {
         });
       }
     };
-    await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY);
+    await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY, order.user_id);
     return true;
   }
 }

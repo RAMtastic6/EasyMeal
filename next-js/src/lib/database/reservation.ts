@@ -1,4 +1,5 @@
 "use server";
+import { cookies } from "next/headers";
 import { Endpoints } from "./endpoints";
 
 export async function getReservation(): Promise<JSON> {
@@ -10,7 +11,7 @@ export async function getReservation(): Promise<JSON> {
 	return data;
 }
 
-export async function getReservationById(id: number): Promise<JSON> {
+export async function getReservationById(id: number) {
 	const response = await fetch(`${Endpoints.reservation}${id}`, {
 		method: "GET",
 		cache: "no-cache",
@@ -36,12 +37,16 @@ export async function getMenuWithOrdersQuantityByIdReservation(id: number) {
 }
 
 export async function createReservation(reservation: {}): Promise<any> {
+	const token = cookies().get('session')?.value;
 	const response = await fetch(Endpoints.reservation, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(reservation),
+		body: JSON.stringify({
+			...reservation,
+			token
+		}),
 	});
 	return {
 		body: await response.json(),

@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2024-05-18 19:11:47
+-- Started on 2024-05-19 17:44:46
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -853,7 +853,6 @@ INSERT INTO public.menu (id, name) OVERRIDING SYSTEM VALUE VALUES (3, 'Menu 3');
 -- Data for Name: notification; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.notification (id, message, status, title, id_receiver) VALUES (1, 'Nuova prenotazione per 222 persone', 'unread', 'Nuova prenotazione con id: 36', 1);
 
 
 --
@@ -1834,7 +1833,7 @@ ALTER TABLE ONLY public.food_ingredient
     ADD CONSTRAINT "FK_f9553e6a77da903d8c6915a336a" FOREIGN KEY (id_food) REFERENCES public.food(id);
 
 
--- Completed on 2024-05-18 19:11:47
+-- Completed on 2024-05-19 17:44:47
 
 --
 -- PostgreSQL database dump complete

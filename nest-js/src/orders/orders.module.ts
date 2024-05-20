@@ -17,6 +17,6 @@ import { AuthenticationModule } from '../authentication/authentication.module';
     ReservationModule,
     AuthenticationModule
   ],
-  exports: [TypeOrmModule]
+  exports: [TypeOrmModule, OrdersService]
 })
 export class OrdersModule {}

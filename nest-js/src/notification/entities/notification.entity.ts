@@ -1,5 +1,5 @@
 import { last } from "rxjs";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../../user/entities/user.entity";
 
 export enum NotificationStatus {
@@ -24,7 +24,7 @@ export class Notification {
   @Column()
   id_receiver: number
 
-  @OneToOne(() => User, user => user.notification)
+  @ManyToOne(() => User, user => user.notification)
   @JoinColumn({ name: 'id_receiver' })
   user: User
 }

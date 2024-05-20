@@ -19,11 +19,11 @@ export class UserService {
     // Check if email is already registered
     const existingCustomer = await this.userRepo.findOne({ where: { email } });
     if (existingCustomer) {
-      throw new HttpException('Email already registered', HttpStatus.BAD_REQUEST);
+      return null;
     }
 
     if (!email || !name || !surname || !password || password == "") {
-      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+      return null;
     }
 
     // Hash the password
@@ -42,9 +42,6 @@ export class UserService {
 
   async findOne(id: number) {
     const user = await this.userRepo.findOne({ where: { id } });
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
     return user
   }
 

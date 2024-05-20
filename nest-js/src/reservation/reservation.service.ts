@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { NotificationService } from '../notification/notification.service';
 import { StaffService } from '../staff/staff.service';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @Injectable()
 export class ReservationService {
@@ -18,40 +19,51 @@ export class ReservationService {
     private readonly staffService: StaffService,
   ) {}
   
-  async create(dto: CreateReservationDto) {
-    const restaurant = await this.restaurantService.findOne(dto.restaurant_id);
+  async create(
+    restaurant_id: number,
+    date: string,
+    number_people: number,
+    user_id: number,
+  ) {
+    const restaurant = await this.restaurantService.findOne(restaurant_id);
     if(restaurant == null) {
-      throw new NotFoundException('Restaurant not found');
+      return null;
     }
-    const booked = await this.restaurantService.getBookedTables(dto.restaurant_id, dto.date);
+    const booked = await this.restaurantService.getBookedTables(restaurant_id, date);
     if(booked >= restaurant.tables) {
-      throw new HttpException('No tables available', 400);
+      return { status: false, message: 'Restaurant is full' };
     }
-    if(Date.now() > new Date(dto.date).getTime()) {
-      throw new HttpException('Invalid date', 400);
+    if(Date.now() > new Date(date).getTime()) {
+      return null;
     }
     const reservation = this.reservationRepository.create({
-      date: new Date(dto.date),
-      number_people: dto.number_people,
-      restaurant_id: dto.restaurant_id,
-      users: [{ id: dto.user_id }],
+      date: new Date(date),
+      number_people: number_people,
+      restaurant_id: restaurant_id,
+      
+      users: [{ id: user_id }],
     });
     await this.reservationRepository.save(reservation);
 
     // Notifiy the amministrator of the restaurant
-    const admin = await this.staffService.getAdminByRestaurantId(dto.restaurant_id);
+    const admin = await this.staffService.getAdminByRestaurantId(restaurant_id);
     await this.notificationService.create({
-      message: `Nuova prenotazione per ${dto.number_people} persone`,
+      message: `Nuova prenotazione per ${number_people} persone`,
       title: 'Nuova prenotazione con id: ' + reservation.id,
       id_receiver: admin.id,
     });
-    return reservation;
+
+    return {
+      status: true,
+      id: reservation.id,
+      data: reservation
+    };
   }
 
   async addCustomer(params: { customer_id: number, reservation_id: number }) {
     const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
-    if (reservation == null) {
-      throw new NotFoundException('Reservation not found');
+    if(reservation == null) {
+      return null
     }
     await this.reservationRepository.update({ id: params.reservation_id }, {
       users: [...reservation.users, { id: params.customer_id }],
@@ -95,8 +107,8 @@ export class ReservationService {
         }
       },
     });
-    if (result == null) {
-      throw new NotFoundException('Reservation not found');
+    if(result == null) {
+      return null;
     }
     //associamo la quantita del cibo direttamente al menu
     // e rimuoviamo l'array degli ordinati
@@ -128,14 +140,21 @@ export class ReservationService {
     return true;
   }
 
-  async updateStatus(id: number, state: ReservationStatus) {
-    const reservation = await this.reservationRepository.findOne({ where: { id } });
-    if (reservation == null) {
+ async updateStatus(id: number, state: ReservationStatus, user_id: number) {
+    const reservation = await this.reservationRepository.findOne({ 
+      where: { id },
+      relations: { users: true  },
+    });
+    if(reservation == null) {
       return false;
     }
     await this.reservationRepository.update({ id }, { state });
     //Notify all the users of the reservation changed status
+
     for(const user of reservation.users) {
+      if(user.id === user_id) {
+        continue;
+      }
       await this.notificationService.create({
         message: `La tua prenotazione con id: ${id} è stata ${state}`,
         title: 'Aggiornamento prenotazione',

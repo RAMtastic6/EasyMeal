@@ -20,11 +20,11 @@ export class StaffService {
       } 
     });
     if (existingStaff) {
-      throw new HttpException('Staff already exists', HttpStatus.CONFLICT);
+      return null;
     }
     //Check if inputs are valid
     if (!staffDto.restaurant_id || !staffDto.user_id || !staffDto.role) {
-      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+      return null;
     }
     const staff = this.staffRepo.create({...staffDto});
     return await this.staffRepo.save(staff);

@@ -30,6 +30,6 @@ export class User {
     @OneToOne(() => Staff, staff => staff.user)
     staff: Staff;
 
-    @OneToOne(() => Notification, notification => notification.user)
-    notification: Notification;
+    @OneToMany(() => Notification, notification => notification.user)
+    notification: Notification[];
 }
