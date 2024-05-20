@@ -12,6 +12,14 @@ export interface DaySchedule {
   };
 }
 
+export const stateMessage = {
+  'pending': 'In attesa di conferma',
+  'accept': 'Accettata',
+  'reject': 'Rifiutata',
+  'to_pay': 'Da pagare',
+  'completed': 'Completata',
+}
+
 // Definition of the types used to call the API
 
 // DAYS OPEN

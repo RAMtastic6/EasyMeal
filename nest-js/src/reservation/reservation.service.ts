@@ -60,7 +60,7 @@ export class ReservationService {
     };
   }
 
-  async addCustomer(params: {customer_id: number, reservation_id: number}) {
+  async addCustomer(params: { customer_id: number, reservation_id: number }) {
     const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
     if(reservation == null) {
       return null
@@ -91,8 +91,8 @@ export class ReservationService {
   async getMenuWithOrdersQuantityByIdReservation(id: number) {
     //otteniamo il menu e i cibi ordinati per una prenotazione
     const result = await this.reservationRepository.findOne({
-      where: { 
-        id: id 
+      where: {
+        id: id
       },
       relations: {
         restaurant: {
@@ -120,7 +120,27 @@ export class ReservationService {
     return result;
   }
 
-  async updateStatus(id: number, state: ReservationStatus, user_id: number) {
+  async getReservationsByRestaurantId(restaurantId: number) {
+    const reservations = await this.reservationRepository.find({ where: { restaurant_id: restaurantId } });
+    return reservations;
+  }
+
+  async acceptReservation(id: number) {
+    if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } })) {
+      return null;
+    }
+    return await this.reservationRepository.update({ id }, { state: ReservationStatus.ACCEPTED });
+  }
+
+  async rejectReservation(id: number) {
+    if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING }})) {
+      return null;
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
+    return true;
+  }
+
+ async updateStatus(id: number, state: ReservationStatus, user_id: number) {
     const reservation = await this.reservationRepository.findOne({ 
       where: { id },
       relations: { users: true  },

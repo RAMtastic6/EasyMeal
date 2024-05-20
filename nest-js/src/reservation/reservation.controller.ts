@@ -64,4 +64,25 @@ export class ReservationController {
     }
     return result;
   }
+
+  @Get('restaurant/:restaurantId')
+  async getReservationsByRestaurantId(@Param('restaurantId') restaurantId: number) {
+    return await this.reservationService.getReservationsByRestaurantId(restaurantId);
+  }
+
+  @Post(':id/accept')
+  async acceptReservation(@Param('id') id: number) {
+    const result = await this.reservationService.acceptReservation(id);
+    if (result == null)
+      throw new NotFoundException('Reservation not found');
+    return result;
+  }
+
+  @Post(':id/reject')
+  async rejectReservation(@Param('id') id: number) {
+    const result = await this.reservationService.rejectReservation(id);
+    if (result == null)
+      throw new NotFoundException('Reservation not found');
+    return result;
+  }
 }
