@@ -15,3 +15,15 @@ export async function createStaff(staff: any) {
     const data = await response.json();
     return data;
 }
+
+export async function getRestaurantIdByAdminId(restaurant_id: number) {
+    const response = await fetch(`${Endpoints.staff}${restaurant_id}/restaurant`, {
+        method: 'GET',
+        cache: 'no-cache',
+    });
+    if (!response.ok) {
+        throw new Error('Error fetching restaurant id');
+    }
+    const data = await response.json();
+    return data;
+}

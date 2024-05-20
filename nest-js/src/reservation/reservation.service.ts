@@ -48,9 +48,9 @@ export class ReservationService {
     return reservation;
   }
 
-  async addCustomer(params: {customer_id: number, reservation_id: number}) {
+  async addCustomer(params: { customer_id: number, reservation_id: number }) {
     const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
-    if(reservation == null) {
+    if (reservation == null) {
       throw new NotFoundException('Reservation not found');
     }
     await this.reservationRepository.update({ id: params.reservation_id }, {
@@ -79,8 +79,8 @@ export class ReservationService {
   async getMenuWithOrdersQuantityByIdReservation(id: number) {
     //otteniamo il menu e i cibi ordinati per una prenotazione
     const result = await this.reservationRepository.findOne({
-      where: { 
-        id: id 
+      where: {
+        id: id
       },
       relations: {
         restaurant: {
@@ -95,7 +95,7 @@ export class ReservationService {
         }
       },
     });
-    if(result == null) {
+    if (result == null) {
       throw new NotFoundException('Reservation not found');
     }
     //associamo la quantita del cibo direttamente al menu
@@ -108,9 +108,29 @@ export class ReservationService {
     return result;
   }
 
+  async getReservationsByRestaurantId(restaurantId: number) {
+    const reservations = await this.reservationRepository.find({ where: { restaurant_id: restaurantId } });
+    return reservations;
+  }
+
+  async acceptReservation(id: number) {
+    if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } })) {
+      return null;
+    }
+    return await this.reservationRepository.update({ id }, { state: ReservationStatus.ACCEPTED });
+  }
+
+  async rejectReservation(id: number) {
+    if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING }})) {
+      return null;
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
+    return true;
+  }
+
   async updateStatus(id: number, state: ReservationStatus) {
     const reservation = await this.reservationRepository.findOne({ where: { id } });
-    if(reservation == null) {
+    if (reservation == null) {
       return false;
     }
     await this.reservationRepository.update({ id }, { state });

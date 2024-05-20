@@ -38,4 +38,13 @@ export class StaffService {
       }
     });
   }
+
+  async getRestaurantByAdminId(userId: number) {
+    return await this.staffRepo.findOne({
+      where: {
+        user_id: userId,
+        role: StaffRole.ADMIN
+      }
+    });
+  }
 }
