@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from '@testing-library/react';
-import FoodList from '../src/components/food_lis/*  */t';
+import FoodList from '../src/components/food_list';
 
 describe('FoodList component', () => {
     // questo praticamente è un set di dati di rpova.
