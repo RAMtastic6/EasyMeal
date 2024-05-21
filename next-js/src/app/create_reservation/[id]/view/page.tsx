@@ -4,6 +4,7 @@ import { getMenuByRestaurantId } from "@/src/lib/database/menu";
 import ReservationForm from "@/src/components/reservation_form";
 import Header from "@/src/components/header";
 import { useEffect, useState } from "react";
+import FoodList from "@/src/components/food_list";
 
 export default function Page({ params }: { params: { id: string } }) {
   const id = params.id;
@@ -52,7 +53,7 @@ export default function Page({ params }: { params: { id: string } }) {
           </div>
         </div>
         <div className="space-y-4">
-          <div className="rounded-lg bg-white shadow-lg p-12 space-y-4">
+          {/* <div className="rounded-lg bg-white shadow-lg p-12 space-y-4">
             <h2 className="text-2xl font-bold text-orange-950 text-center">
               Menu:{" "}
             </h2>
@@ -67,6 +68,9 @@ export default function Page({ params }: { params: { id: string } }) {
                 ))}
               </ul>
             </div>
+          </div> */}
+          <div>
+            <FoodList menu={menu} />
           </div>
           <div>
             <ReservationForm restaurant_id={parseInt(id)} />
