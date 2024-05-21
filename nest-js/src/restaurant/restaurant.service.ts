@@ -133,7 +133,9 @@ export class RestaurantService {
       where: { id },
       relations: {
         menu: {
-          foods: true
+          foods: {
+            ingredients: true
+          } 
         }
       }
     });
