@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, HttpCode, ParseIntPipe } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { OrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -149,7 +149,7 @@ export class OrdersController {
   }
 
   @Get('reservation/:id')
-  async getReservationOrders(@Param('id') id: string) {
+  async getReservationOrders(@Param('id', ParseIntPipe) id: number) {
     const result = await this.ordersService.getReservationOrders(+id);
     if (result.length == 0) {
       throw new NotFoundException('No orders found');

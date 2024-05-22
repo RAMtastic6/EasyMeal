@@ -5,6 +5,7 @@ export class StaffDto {
   @IsNotEmpty()
   restaurant_id: number;
 
+  @IsNotEmpty()
   role: StaffRole;
 
   @IsNotEmpty()
