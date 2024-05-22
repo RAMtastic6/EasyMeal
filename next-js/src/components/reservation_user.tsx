@@ -126,11 +126,16 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
             )}
             {reservation.state === "to_pay" && (
               <div>
-                <div className="bg-red-200 p-4 text-center">
-                  Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.
+                <div className="bg-red-200 p-4 text-center rounded-lg shadow-md">
+                  <p className="text-lg font-semibold">
+                    Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.
+                  </p>
+                </div>
+                <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md text-center">
+                  <h2 className="text-2xl mb-2">Totale: €{Object.keys(orders).map((key: string) => orders[key as keyof typeof orders].reduce((acc: number, order: any) => acc + (order.quantity * order.food.price), 0)).reduce((acc, val) => acc + val, 0).toFixed(2)}</h2>
                 </div>
                 <div className="flex justify-center items-center mt-4">
-                  <button onClick={handlePayment} className="bg-orange-500 text-black px-4 py-2 rounded">
+                  <button onClick={handlePayment} className="bg-orange-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-orange-600 transition duration-300">
                     Paga
                   </button>
                 </div>
@@ -143,31 +148,32 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
             )}
             {(reservation.state === "to_pay" || reservation.state === "accept") && (
               <div>
-                <div className="bg-white p-4">
-                  <h2 className="text-2xl font-bold mb-4">Le ordinazioni</h2>
-                  {orders.length === 0 && <p>Non ci sono ancora ordini per questa prenotazione</p>}
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                  <h2 className="text-2xl font-bold mb-4 text-gray-800">Le ordinazioni</h2>
+                  {orders.length === 0 && <p className="text-gray-600">Non ci sono ancora ordini per questa prenotazione</p>}
                   <ul>
                     {Object.keys(orders).map((key: string) => (
-                      <div key={orders[key as keyof typeof orders]} className="container mx-auto">
-                        <h1 className="text-3xl font-bold mb-4">{key}</h1>
-                        {orders[key as keyof typeof orders].length === 0 && (
+                      <div key={key} className="container mx-auto mb-8">
+                        <h1 className="text-3xl font-bold mb-4 text-gray-900 border-b-2 pb-2">{key}</h1>
+                        {orders[key as keyof typeof orders].length === 0 ? (
                           <p className="text-gray-600">Non ci sono ordini per questa prenotazione</p>
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
+                              <div key={dishIndex} className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+                                <p className="text-gray-700 mb-2">Utente: <span className="font-medium">{order.user_id}</span></p>
+                                <h2 className="text-xl font-semibold mb-2 text-gray-800">{order.food.name} - €{order.food.price.toFixed(2)}</h2>
+                                <ul className="text-gray-700">
+                                  {order.ingredients.map((ingredient: any, ingredientIndex: number) => (
+                                    <li key={ingredientIndex} className="flex justify-between items-center mb-2">
+                                      <span>{ingredient.ingredient.name}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
                         )}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
-                            <div key={dishIndex} className="bg-white shadow-md rounded p-4">
-                              <p>Utente {order.customer_id}</p>
-                              <h2 className="text-xl font-semibold mb-2">{order.food.name}</h2>
-                              <ul>
-                                {order.ingredients.map((ingredient: any, ingredientIndex: number) => (
-                                  <li key={ingredientIndex} className="flex justify-between items-center mb-2">
-                                    <span>{ingredient.ingredient.name}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          ))}
-                        </div>
                       </div>
                     ))}
                   </ul>
