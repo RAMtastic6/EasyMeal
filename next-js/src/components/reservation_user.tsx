@@ -47,15 +47,13 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
     <>
       <div className="w-full">
         <div className="w-full">
-          <div className="container mx-auto mt-4 space-y-8 p-6 bg-white shadow-lg rounded-lg">
+          <div className="container mx-auto mt-4 space-y-8 p-6 bg-100 rounded-lg shadow-lg">
 
-            <div className="text-2xl font-semibold text-gray-800">
-              Ristorante
-            </div>
+            <div className="text-2xl font-semibold text-gray-800">Informazioni sul Ristorante</div>
             <ul className="space-y-2 text-gray-700">
               <li>
                 <span className="font-bold">Ristorante:</span>
-                <span> {restaurant.name}</span>
+                <span className="capitalize"> {restaurant.name}</span>
               </li>
               <li>
                 <span className="font-bold">Indirizzo:</span>
@@ -79,12 +77,10 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
               </li>
             </ul>
 
-            <div className="text-2xl font-semibold text-gray-800">
-              Prenotazione
-            </div>
+            <div className="text-2xl font-semibold text-gray-800">Dettagli Prenotazione</div>
             <ul className="space-y-2 text-gray-700">
               <li>
-                <span className="font-bold">Numero persone:</span>
+                <span className="font-bold">Numero di persone:</span>
                 <span> {reservation.number_people}</span>
               </li>
               <li>
@@ -92,8 +88,8 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                 <span> {stateMessage[reservation.state as keyof typeof stateMessage]}</span>
               </li>
               <li>
-                <span className="font-bold">Giorno:</span>
-                <span> {(new Date(reservation.date)).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+                <span className="font-bold">Data:</span>
+                <span> {(new Date(reservation.date)).toLocaleDateString('it-IT')}</span>
               </li>
               <li>
                 <span className="font-bold">Ora:</span>
@@ -109,20 +105,26 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
             )}
             {(reservation.state === "accept") && (
               <div>
-              <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
-                <p className="text-lg font-semibold text-gray-800">
-                  La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.
-                </p>
+                <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
+                  <p className="text-lg font-semibold text-gray-800">
+                    La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.
+                  </p>
+                </div>
+                <div className="flex justify-center mt-4">
+                  <a
+                    href={`/order/${reservation.id}`}
+                    className="bg-orange-500 text-white text-lg font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-orange-600 transition duration-300"
+                  >
+                    Vai all'ordinazione
+                  </a>
+                </div>
+                <div className="text-center mt-4">
+                  <p className="text-sm text-gray-600">
+                    Puoi modificare l'ordinazione entro 24 ore rispetto alla data stabilita per la prenotazione.
+                  </p>
+                </div>
               </div>
-              <div className="flex justify-center mt-4">
-                <a 
-                  href={`/order/${reservation.id}`} 
-                  className="bg-orange-500 text-white text-lg font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-orange-600 transition duration-300"
-                >
-                  Vai all'ordinazione
-                </a>
-              </div>
-            </div>         
+
             )}
             {reservation.state === "reject" && (
               <div className="bg-red-200 p-4">
@@ -185,9 +187,9 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                 </div>
               </div>
             )}
-          </div>
-        </div>
-      </div>
+          </div >
+        </div >
+      </div >
     </>
   );
 }
