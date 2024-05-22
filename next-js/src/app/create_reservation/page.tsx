@@ -4,12 +4,27 @@ import RestaurantSearch from '@/src/components/restaurant_search';
 import Pagination from '@/src/components/pagination';
 import { getAllCities, getAllCuisines, getRestaurantsTotalPages } from "@/src/lib/database/restaurant";
 import { RestaurantFilter } from "@/src/lib/database/restaurant";
+import { query } from "firebase/database";
 
-export default async function Page({ restaurantFilter }: { restaurantFilter: RestaurantFilter }) {
+export default async function Page({ searchParams }: {
+  searchParams?: {
+    date?: string,
+    name?: string,
+    city?: string,
+    cuisine?: string,
+    page?: string
+  }
+}) {
   const ITEMS_PER_PAGE = 1;
   const cuisines = await getAllCuisines();
   const cities = await getAllCities();
-  const totalPages = await getRestaurantsTotalPages(restaurantFilter, ITEMS_PER_PAGE);
+  const query: RestaurantFilter = {
+    date: searchParams?.date || "",
+    name: searchParams?.name || "",
+    city: searchParams?.city || "",
+    cuisine: searchParams?.cuisine || ""
+  }
+  const totalPages = await getRestaurantsTotalPages(query, ITEMS_PER_PAGE);
 
   return (
     <>
