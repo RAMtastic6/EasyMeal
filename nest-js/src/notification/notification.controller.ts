@@ -12,7 +12,7 @@ export class NotificationController {
 
   @Post()
   @HttpCode(200)
-// body: { userId: number, token: string}
+  // body: { userId: number, token: string}
   async findAllByUserId(@Body() body: FindAllByUserIdDTO ) {
     const auth = await this.authenticationService.verifyToken(body.token);
     if (!auth) {
