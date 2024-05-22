@@ -48,11 +48,6 @@ jobs:
           echo "### Backend Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-      
-      - name: Add coverage report to the PR
-        uses: mshick/add-pr-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.MD_REPORT }}
 
       - name: Add coverage report to the job summary
         run: |
@@ -98,11 +93,6 @@ jobs:
           echo "### Frontend Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-      
-      - name: Add coverage report to the PR
-        uses: mshick/add-pr-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.MD_REPORT }}
 
       - name: Add coverage report to the job summary
         run: |
@@ -147,11 +137,6 @@ jobs:
           echo "### Websocket Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-      
-      - name: Add coverage report to the PR
-        uses: mshick/add-pr-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.MD_REPORT }}
 
       - name: Add coverage report to the job summary
         run: |
