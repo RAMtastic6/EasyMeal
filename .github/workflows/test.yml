@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'develop'
-      - 'P1-411-fix-coveralls'
 
 jobs:
   backend-test:
@@ -37,7 +36,7 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --flag backend
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --job-flag backend
 
       - name: Convert coverage to MD
         id: coverage
@@ -87,7 +86,7 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --flag frontend
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --job-flag frontend
 
       - name: Convert coverage to MD
         id: coverage
@@ -136,7 +135,7 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --flag websocket
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --job-flag websocket
 
       - name: Convert coverage to MD
         id: coverage
@@ -154,3 +153,10 @@ jobs:
       - name: Add coverage report to the job summary
         run: |
           echo "${{ steps.coverage.outputs.MD_REPORT }}" >> $GITHUB_STEP_SUMMARY
+
+  finalize:
+    needs: [backend-test, frontend-test, websocket-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finalize Coveralls
+        run: coveralls done -r ${{ secrets.COVERALLS_REPO_TOKEN }}
