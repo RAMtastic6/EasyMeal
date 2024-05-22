@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'develop'
+      - 'P1-411-fix-coveralls'
 
 jobs:
   backend-test:
