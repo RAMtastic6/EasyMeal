@@ -14,6 +14,7 @@ import { Daysopen } from '../daysopen/entities/daysopen.entity';
 import { Restaurant } from '../restaurant/entities/restaurant.entity';
 import { start } from 'repl';
 import { create } from 'domain';
+import * as passUtils from '../utils';
 
 describe('UserService', () => {
   let service: UserService;
@@ -22,6 +23,7 @@ describe('UserService', () => {
   let dayService: DaysopenService;
   let staffService: StaffService;
   let dataSource: DataSource;
+  let manager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -55,6 +57,14 @@ describe('UserService', () => {
           useValue: {
             create_manager: jest.fn(),
           },
+        },
+        {
+          provide: EntityManager,
+          useValue: {
+            findOne: jest.fn(),
+            create: jest.fn(),
+            save: jest.fn(),
+          },
         }
       ],
     }).compile();
@@ -65,6 +75,7 @@ describe('UserService', () => {
     dayService = module.get<DaysopenService>(DaysopenService);
     staffService = module.get<StaffService>(StaffService);
     dataSource = module.get<DataSource>(DataSource);
+    manager = module.get<EntityManager>(EntityManager);
   });
 
   describe('create_user', () => {
@@ -269,4 +280,42 @@ describe('UserService', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('create_user_manager', () => {
+    it('should create a new user with a manager', async () => {
+      const userDto: UserDto = {
+        email: 'test@example.com',
+        name: 'John',
+        surname: 'Doe',
+        password: 'password',
+      };
+
+      jest.spyOn(passUtils, 'hashPassword').mockResolvedValueOnce('password');
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(manager, 'create').mockReturnValueOnce(userDto as any);
+      jest.spyOn(manager, 'save').mockResolvedValueOnce(userDto);
+
+      const createdUser = await service.create_user_manager(userDto, manager);
+
+      expect(manager.create).toHaveBeenCalledWith(User, userDto);
+      expect(manager.save).toHaveBeenCalledWith(userDto);
+      expect(createdUser).toEqual(userDto);
+    });
+
+    it('should return null if email is already registered', async () => {
+      const userDto: UserDto = {
+        email: 'test@example.com',
+        name: 'John',
+        surname: 'Doe',
+        password: 'password',
+      };
+
+      jest.spyOn(repository, 'findOne').mockResolvedValueOnce({} as any);
+
+      const createdUser = await service.create_user_manager(userDto, manager);
+
+      expect(createdUser).toBeNull();
+    });
+  });
+      
 });
