@@ -1,9 +1,10 @@
 name: Code Coverage
-  
+
 on: 
   push:
     branches:
       - 'develop'
+      - 'P1-411-fix-coveralls'
 
 jobs:
   backend-test:
@@ -36,7 +37,7 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --flag backend
 
       - name: Convert coverage to MD
         id: coverage
@@ -86,7 +87,7 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --flag frontend
 
       - name: Convert coverage to MD
         id: coverage
@@ -135,13 +136,13 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --flag websocket
 
       - name: Convert coverage to MD
         id: coverage
         run: |
           echo 'MD_REPORT<<EOF' >> $GITHUB_OUTPUT
-          echo "### Backend Code Coverage" >> $GITHUB_OUTPUT
+          echo "### Websocket Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
       
@@ -153,7 +154,3 @@ jobs:
       - name: Add coverage report to the job summary
         run: |
           echo "${{ steps.coverage.outputs.MD_REPORT }}" >> $GITHUB_STEP_SUMMARY
-
-
-          
-      
