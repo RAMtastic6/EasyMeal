@@ -11,7 +11,7 @@ const initialState = {
 
 export default function SignupAdmin() {
   const [state, formAction] = useFormState(validateSignUpAdmin, initialState)
-  const actionUrl = typeof formAction === 'string' ? formAction : '';
+
   const [schedule, setSchedule] = useState<Record<Day, DaySchedule>>(
     daysOfWeek.reduce((acc, day) => {
       acc[day] = { isOpen: false, hours: { open: '', close: '' } };
@@ -45,7 +45,7 @@ export default function SignupAdmin() {
               Registrati come ristoratore
             </h2>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action={formAction} className="max-w-md mx-auto space-y-6" method="POST">
+              <form action={formAction} className="max-w-md mx-auto space-y-6">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email personale *</label>
                   <input

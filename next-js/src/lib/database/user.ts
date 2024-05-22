@@ -15,7 +15,19 @@ export async function createUser(data: any) {
     },
     body: JSON.stringify(data),
   });
-  console.log(await response.text());
-  return response.status;
+  if (response.status != 201) return null;
+  return await response.json();
+}
+
+export async function createAdmin(data: any) {
+  const response = await fetch(Endpoints.user+"admin", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (response.status != 201) return null;
+  return await response.json();
 }
 

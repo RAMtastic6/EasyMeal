@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Staff, StaffRole } from './enities/staff.entity';
 import { Repository } from 'typeorm';
 import { StaffDto } from './dto/create-staff.dto';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class StaffService {
@@ -11,6 +12,7 @@ export class StaffService {
     private staffRepo: Repository<Staff>,
   ) {}
 
+  @Transactional()
   async create(staffDto: StaffDto) {
     //Check if the staff already exists
     const existingStaff = await this.staffRepo.findOne({ 

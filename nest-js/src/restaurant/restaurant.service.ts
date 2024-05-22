@@ -5,6 +5,7 @@ import { Restaurant } from './entities/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StaffRole } from '../staff/enities/staff.entity';
+import { Transactional } from 'typeorm-transactional-cls-hooked';
 
 @Injectable()
 export class RestaurantService {
@@ -41,6 +42,7 @@ export class RestaurantService {
     return result.getMany();
   }
 
+  @Transactional()
   async create(createRestaurantDto: RestaurantDto) {
     const { name, address, city, cuisine, tables, email, phone_number } = createRestaurantDto;
     // Check if the restaurant already exists

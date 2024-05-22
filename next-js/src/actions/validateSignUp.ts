@@ -38,7 +38,7 @@ export async function validateSignUp(prevState:any, formData: FormData) {
 
     // Create the customer
     const response = await createUser({ email: email, name: firstName, surname: lastName, password: password })
-    if (response !== 201) {
+    if (response == null) {
         return { message: 'Registration failed, credenziali non valide!' }
     }
     redirect('/login?signup=success')

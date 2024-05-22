@@ -1,8 +1,5 @@
 'use server'
-import { createUser } from "../lib/database/user"
-import { createRestaurant } from "../lib/database/restaurant"
-import { createStaff } from "../lib/database/staff"
-import { createDaysOpen } from "../lib/database/daysopen"
+import { createAdmin } from "../lib/database/user"
 import { getFormData } from "@/src/lib/utils"
 import { Day, DaySchedule, daysOfWeek } from "@/src/lib/types/definitions"
 
@@ -65,40 +62,33 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     return null;
   });
   console.log('daysOpenData', daysOpenData);
-  
-  // Create the user
-  const user = await createUser({
+
+  const json = {
     email: data['email'],
     name: data['nome'],
     surname: data['cognome'],
     password: data['password'],
-  })
+    restaurant: {
+      name: data['nome-ristorante'],
+      address: data['indirizzo'],
+      city: data['city'],
+      cuisine: data['cucina'],
+      tables: parseInt(data['coperti']),
+      phone_number: data['numero'],
+      email: data['email-ristorante'],
+      description: data['descrizione'],
+    },
+    staff: {
+      role: 'admin',
+    },
+    dayopen: {
+      days_open: daysOpenData.filter(day => day !== null),
+    },
+  };
 
-  // Create the restaurant
-  const restaurant = await createRestaurant({
-    name: data['nome-ristorante'],
-    address: data['indirizzo'],
-    city: data['city'],
-    cuisine: data['cucina'],
-    tables: parseInt(data['coperti']),
-    phone_number: data['numero'],
-    email: data['email-ristorante'],
-    description: data['descrizione'],
-  })
-  // Create the staff
-  const staff = await createStaff({
-    restaurant_id: restaurant.id,
-    role: 'admin',
-    user_id: user.id
-  })
+  const result = await createAdmin(json);
   
-  //create days open
-  const daysOpen = await createDaysOpen({
-    restaurant_id: restaurant.id,
-    days_open: daysOpenData.filter(day => day !== null)
-  })
-  
-  if (!user || !restaurant || !staff || !daysOpen) {
+  if (result == null) {
     return { message: 'Registration failed' }
   }
   return { message: 'Registration successful' }
