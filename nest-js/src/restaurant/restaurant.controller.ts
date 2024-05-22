@@ -67,7 +67,7 @@ export class RestaurantController {
 
   @Get(':id/menu')
   async getRestaurantAndMenuByRestaurantId(@Param('id', ParseIntPipe) id: number) {
-    const result = await this.restaurantService.getRestaurantAndMenuByRestaurantId(+id);
+    const result = await this.restaurantService.getRestaurantAndMenuByRestaurantId(id);
     if (result == null) {
       throw new NotFoundException('Reservation not found');
     }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumberString } from "class-validator";
+import { IsNotEmpty, IsNumberString, IsJWT } from "class-validator";
 
 export class FindAllByUserIdDTO {
     
@@ -6,5 +6,6 @@ export class FindAllByUserIdDTO {
     userId: number;
 
     @IsNotEmpty()
+    @IsJWT()
     token: string;
   }

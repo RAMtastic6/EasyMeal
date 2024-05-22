@@ -8,8 +8,8 @@ export class FoodController {
   constructor(private readonly foodService: FoodService) {}
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: string) {
-    const result = this.foodService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    const result = this.foodService.findOne(id);
     if (result) {
       return result;
     }
