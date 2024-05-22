@@ -44,11 +44,13 @@ export class RestaurantService {
   async create(createRestaurantDto: RestaurantDto) {
     const { name, address, city, cuisine, tables, email, phone_number } = createRestaurantDto;
     // Check if the restaurant already exists
-    const existingRestaurant = await this.restaurantRepo.findOne({ where: { name: createRestaurantDto.name } });
+    const existingRestaurant = await this.restaurantRepo.findOne({ 
+      where: { name: createRestaurantDto.name } 
+    });
     if (existingRestaurant) {
       return null;
     }
-
+    
     if (!name || !address || !city || !cuisine || !tables || !email || !phone_number) {
       return null;
     }

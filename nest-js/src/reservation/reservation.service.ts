@@ -40,7 +40,6 @@ export class ReservationService {
       date: new Date(date),
       number_people: number_people,
       restaurant_id: restaurant_id,
-      
       users: [{ id: user_id }],
     });
     await this.reservationRepository.save(reservation);
@@ -126,14 +125,14 @@ export class ReservationService {
   }
 
   async acceptReservation(id: number) {
-    if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } })) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } }) == null) {
       return null;
     }
     return await this.reservationRepository.update({ id }, { state: ReservationStatus.ACCEPTED });
   }
 
   async rejectReservation(id: number) {
-    if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING }})) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING }}) == null) {
       return null;
     }
     await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
