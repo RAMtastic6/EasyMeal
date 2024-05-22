@@ -21,9 +21,11 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
         setReservation(result1);
         const result2 = await getRestaurantById(result1.restaurant_id);
         setRestaurant(result2);
-        if (result1.state !== 'pending') {
+        if (result1.state === 'accept' || result1.state === 'to_pay' || result1.state === 'completed') {
           const orders = await getOrderByReservationId(parseInt(params.id));
-          setOrders(orders);
+          if (orders.length !== 0) {
+            setOrders(orders);
+          }
         }
       } catch (error) {
         console.error("Error fetching orders", error);
@@ -33,6 +35,11 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
     }
     fetchInitalData();
   }, [params.id]);
+
+  // TO DO: implement the payment method
+  const handlePayment = () => {
+    alert('Payment not implemented');
+  }
 
   if (loading) return (<p>Loading...</p>);
 
@@ -119,8 +126,13 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
             )}
             {reservation.state === "to_pay" && (
               <div>
-                <div className="bg-red-200 p-4">
+                <div className="bg-red-200 p-4 text-center">
                   Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.
+                </div>
+                <div className="flex justify-center items-center mt-4">
+                  <button onClick={handlePayment} className="bg-orange-500 text-black px-4 py-2 rounded">
+                    Paga
+                  </button>
                 </div>
               </div>
             )}
@@ -129,7 +141,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                 La prenotazione è stata pagata e completata.
               </div>
             )}
-            {(reservation.state !== 'pending') && (
+            {(reservation.state === "to_pay" || reservation.state === "accept") && (
               <div>
                 <div className="bg-white p-4">
                   <h2 className="text-2xl font-bold mb-4">Le ordinazioni</h2>
@@ -144,7 +156,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                           {orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
                             <div key={dishIndex} className="bg-white shadow-md rounded p-4">
-                              <p>Cliente {order.customer_id}</p>
+                              <p>Utente {order.customer_id}</p>
                               <h2 className="text-xl font-semibold mb-2">{order.food.name}</h2>
                               <ul>
                                 {order.ingredients.map((ingredient: any, ingredientIndex: number) => (
