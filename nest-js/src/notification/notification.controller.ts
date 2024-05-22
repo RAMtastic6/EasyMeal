@@ -2,6 +2,7 @@ import { Body, Controller, Get, HttpCode, ParseIntPipe, Post, UnauthorizedExcept
 import { NotificationService } from './notification.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { FindAllByUserIdDTO } from './dto/findAllByUserId.dto';
+import { UpdateStatusDTO } from './dto/updateStatus.dto';
 
 @Controller('notification')
 export class NotificationController {
@@ -23,7 +24,7 @@ export class NotificationController {
 
   @Post('update')
   @HttpCode(200)
-  async updateStatus(@Body() body: { notificationId: number, token: string }) {
+  async updateStatus(@Body() body: UpdateStatusDTO ) {
     const auth = await this.authenticationService.verifyToken(body.token);
     if (!auth || auth.id !== body.notificationId) {
       throw new UnauthorizedException('Invalid token');

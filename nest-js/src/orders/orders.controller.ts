@@ -3,6 +3,13 @@ import { OrdersService } from './orders.service';
 import { OrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { FindOneDTO } from './dto/find-one.dto';
+import { AddQuantityDTO } from './dto/add-quantity.dto';
+import { UpdateIngredientsDTO } from './dto/update-ingredients.dto';
+import { RemoveDTO } from './dto/remove.dto';
+import { PartialBillDTO } from './dto/partial-bill.dto';
+import { FullBillDTO } from './dto/full-bill.dto';
+import { UpdateListOrdersDTO } from './dto/update-list-orders.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -11,6 +18,7 @@ export class OrdersController {
     private readonly authService: AuthenticationService
   ) { }
 
+  // da rivedere in generale.
   @Post('create')
   async create(@Body() body: { 
     reservation_id: number,
@@ -48,11 +56,7 @@ export class OrdersController {
   }
 
   @Post('findOne')
-  async findOne(@Body() order: {
-    user_id: number,
-    reservation_id: number,
-    food_id: number,
-  }) {
+  async findOne(@Body() order: FindOneDTO) {
     const result = await this.ordersService.findOne(order);
     if (result == null) {
       throw new NotFoundException('Order not found');
@@ -61,12 +65,7 @@ export class OrdersController {
   }
 
   @Post('addQuantity')
-  async update(@Body() updateOrder: {
-    token: string,
-    reservation_id: number,
-    food_id: number,
-    quantity: number
-  }) {
+  async update(@Body() updateOrder: AddQuantityDTO) {
     const user = await this.authService.verifyToken(updateOrder.token);
     if (user == null) {
       throw new BadRequestException('Invalid token');
@@ -84,10 +83,7 @@ export class OrdersController {
   }
 
   @Post('updateIngredients')
-  async updateIngredients(@Body() order: {
-    id: number,
-    ingredients: any[],
-  }) {
+  async updateIngredients(@Body() order: UpdateIngredientsDTO) {
     const result = await this.ordersService.updateIngredients(order);
     if (result == null) {
       throw new NotFoundException('Order not found');
@@ -96,11 +92,7 @@ export class OrdersController {
   }
 
   @Post('remove')
-  async remove(@Body() order: {
-    reservation_id: number,
-    food_id: number,
-    token: string,
-  }) {
+  async remove(@Body() order: RemoveDTO) {
     const user = await this.authService.verifyToken(order.token);
     if (user == null) {
       throw new BadRequestException('Invalid token');
@@ -113,28 +105,18 @@ export class OrdersController {
   }
 
   @Post('partialBill')
-  async partialBill(@Body() order: {
-    customer_id: number,
-    reservation_id: number,
-  }) {
+  async partialBill(@Body() order: PartialBillDTO) {
     return await this.ordersService.getPartialBill(order);
   }
 
   @Post('totalBill')
-  async fullBill(@Body() order: {
-    customer_id: number,
-    reservation_id: number,
-  }) {
+  async fullBill(@Body() order: FullBillDTO) {
     return await this.ordersService.getTotalBill(order);
   }
 
   @Post('updateListOrders')
   @HttpCode(200)
-  async updateListOrders(@Body() order: {
-    token: string,
-    reservation_id: number,
-    orders: any[],
-  }) {
+  async updateListOrders(@Body() order: UpdateListOrdersDTO) {
     const user = await this.authService.verifyToken(order.token);
     if(user == null)
       throw new BadRequestException('Invalid token');

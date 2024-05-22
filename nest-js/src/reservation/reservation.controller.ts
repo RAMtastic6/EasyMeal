@@ -3,6 +3,7 @@ import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { AddCustomerDTO } from './dto/add-customer.dto';
 
 @Controller('reservation')
 export class ReservationController {
@@ -30,8 +31,9 @@ export class ReservationController {
   }
 
   @Post('addCustomer')
-  async addCustomer(@Body() params: {customer_id: number, reservation_id: number}) {
-    const result = await this.reservationService.addCustomer(params);
+  // {customer_id: number, reservation_id: number}
+  async addCustomer(@Body() body: AddCustomerDTO) {
+    const result = await this.reservationService.addCustomer(body);
     if(result == null) {
       throw new NotFoundException('Reservation not found');
     }

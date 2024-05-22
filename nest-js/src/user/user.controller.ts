@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, HttpCode, BadRequestException, NotFoundException, ParseIntPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/create-user.dto';
-import { FindOneParams } from './dto/find-one-params.dto';
 
 @Controller('user')
 export class UserController {
