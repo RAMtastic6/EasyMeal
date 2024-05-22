@@ -76,7 +76,7 @@ describe('RestaurantService', () => {
       name: 'restaurant',
       phone_number: 'phone_number',
       tables: 1,
-      id: 0
+      description: ''
     };
 
     const restaurant: Restaurant = {

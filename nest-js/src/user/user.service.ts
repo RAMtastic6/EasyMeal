@@ -125,7 +125,6 @@ export class UserService {
 
       await query.commitTransaction();
     } catch(e) {
-      console.log("Error while creating admin, let's rollback");
       if(query.isTransactionActive)
         await query.rollbackTransaction();
       result = null;

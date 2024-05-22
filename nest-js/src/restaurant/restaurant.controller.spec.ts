@@ -56,7 +56,6 @@ describe('RestaurantController', () => {
     it('should call restaurantService.create with the provided createRestaurantDto',
     async () => {
       const createRestaurantDto: CreateRestaurantDto = {
-        id: 0,
         name: 'test',
         address: 'test',
         city: 'test',
@@ -64,6 +63,7 @@ describe('RestaurantController', () => {
         phone_number: 'test',
         email: 'test',
         tables: 1,
+        description: ''
       };
       jest.spyOn(service, 'create').mockResolvedValueOnce({} as any);
       await controller.create(createRestaurantDto);
@@ -72,7 +72,6 @@ describe('RestaurantController', () => {
 
     it('should throw BadRequestException if result is null', async () => {
       const createRestaurantDto: CreateRestaurantDto = {
-        id: 0,
         name: '',
         address: '',
         city: '',
@@ -80,6 +79,7 @@ describe('RestaurantController', () => {
         phone_number: '',
         email: '',
         tables: 0,
+        description: ''
       };
       jest.spyOn(service, 'create').mockReturnValueOnce(null);
       await expect(controller.create(createRestaurantDto)).rejects.toThrow(BadRequestException);
