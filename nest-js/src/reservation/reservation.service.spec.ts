@@ -348,7 +348,7 @@ describe('ReservationService', () => {
   describe('getReservationsByUserId',() => {
     it('should return reservations by user Id', async () => {
       jest.spyOn(reservationRepo, 'find').mockResolvedValue([])
-      expect(await service.getReservationsByUserId(1)).toBe([])
+      expect(await service.getReservationsByUserId(1)).toEqual([])
     });
   }); 
 
