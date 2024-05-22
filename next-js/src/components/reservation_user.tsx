@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { getReservationById } from "@/src/lib/database/reservation";
 import { stateMessage } from "@/src/lib/types/definitions";
-import { getRestaurantById } from "../lib/database/restaurant";
-import { set } from "firebase/database";
+import { getRestaurantById } from "@/src/lib/database/restaurant";
+import { getOrderByReservationId } from "@/src/lib/database/order";
 
 export default function ReservationUser({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
@@ -11,31 +11,20 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
   const [restaurant, setRestaurant] = useState<any>({}); // TO DO: define the type of the restaurant object
   const [orders, setOrders] = useState<any[]>([]); // TO DO: define the type of the orders object
 
-
-  async function fetchRestaurant() {
-    setLoading(true);
-    try {
-      console.log("Fetching restaurant data...");
-      const result = await getRestaurantById(reservation.restaurant_id);
-      setRestaurant(result);
-    } catch (error) {
-      console.error("Error fetching restaurant", error);
-    }
-    finally {
-      setLoading(false);
-    }
-  }
-  // fetch orders by reservation id if the reservation is accepted or to_pay
+  // fetch orders by reservation, restaurant and orders if the reservation is in a state different from pending
   useEffect(() => {
     async function fetchInitalData() {
       setLoading(true);
       try {
         console.log("Fetching orders data...");
         const result1 = await getReservationById(parseInt(params.id));
-        console.log(result1.restaurant_id);
         setReservation(result1);
         const result2 = await getRestaurantById(result1.restaurant_id);
         setRestaurant(result2);
+        if (result1.state !== 'pending') {
+          const orders = await getOrderByReservationId(parseInt(params.id));
+          setOrders(orders);
+        }
       } catch (error) {
         console.error("Error fetching orders", error);
       } finally {
@@ -116,6 +105,11 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                 <div className="bg-green-200 p-4">
                   La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.
                 </div>
+                <ul className="space-y-4">
+                  <li>
+                    Vai all'ordinazione <a href={`/order/${reservation.id}`}>qui</a>
+                  </li>
+                </ul>
               </div>
             )}
             {reservation.state === "reject" && (
@@ -135,7 +129,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                 La prenotazione è stata pagata e completata.
               </div>
             )}
-            {(reservation.state === "to_pay" || reservation.state === "accept") && (
+            {(reservation.state !== 'pending') && (
               <div>
                 <div className="bg-white p-4">
                   <h2 className="text-2xl font-bold mb-4">Le ordinazioni</h2>
