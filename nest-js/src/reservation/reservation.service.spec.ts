@@ -225,4 +225,14 @@ describe('ReservationService', () => {
       await expect(service.getMenuWithOrdersQuantityByIdReservation(id)).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('getReservationsByUserId',() => {
+    it('should return reservations by user Id', async () => {
+      jest.spyOn(reservationRepo, 'find').mockResolvedValue([])
+      expect(await service.getReservationsByUserId(1)).toBe([])
+    });
+  }); 
+
+  
+
 });

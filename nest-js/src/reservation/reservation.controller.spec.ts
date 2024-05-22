@@ -77,4 +77,14 @@ describe('ReservationController', () => {
       expect(service.getMenuWithOrdersQuantityByIdReservation).toHaveBeenCalledWith(id);
     });
   });
+
+  describe('getReservationsByUserId', () => {
+    it('should return reservations by user Id', async () =>{
+
+      jest.spyOn(service,'getReservationsByUserId').mockResolvedValue([])
+      expect(await controller.getReservationsByUserId(1)).toBe([])
+    })
+  })
+
+
 });
