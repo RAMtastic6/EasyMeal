@@ -14,6 +14,7 @@ export default function Header() {
                     <div className="flex items-center gap-4">
                         <div className="flex sm:gap-4">
                             <Link href="/notifications">
+                            <div className="absolute inline-block rounded-full bg-red-700 p-2.5"></div>
                                 <span className="[&>svg]:h-10 [&>svg]:w-10">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
