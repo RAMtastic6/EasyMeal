@@ -5,6 +5,9 @@ on:
     branches:
       - 'develop'
       - 'P1-411-fix-coveralls'
+  pull_request:
+    branches:
+      - 'develop'
 
 jobs:
   backend-test:
