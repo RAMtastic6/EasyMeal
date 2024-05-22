@@ -344,4 +344,14 @@ describe('ReservationService', () => {
       expect(result).toEqual(false);
     });
   });
+
+  describe('getReservationsByUserId',() => {
+    it('should return reservations by user Id', async () => {
+      jest.spyOn(reservationRepo, 'find').mockResolvedValue([])
+      expect(await service.getReservationsByUserId(1)).toEqual([])
+    });
+  }); 
+
+  
+
 });

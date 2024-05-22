@@ -27,6 +27,7 @@ describe('ReservationController', () => {
             getReservationsByRestaurantId: jest.fn(),
             acceptReservation: jest.fn(),
             rejectReservation: jest.fn(),
+            getReservationsByUserId: jest.fn(),
           },
         },
         {
@@ -273,4 +274,14 @@ describe('ReservationController', () => {
       );
     });
   });
+
+  describe('getReservationsByUserId', () => {
+    it('should return reservations by user Id', async () =>{
+
+      jest.spyOn(service,'getReservationsByUserId').mockResolvedValue([])
+      expect(await controller.getReservationsByUserId(1)).toEqual([])
+    })
+  })
+
+
 });
