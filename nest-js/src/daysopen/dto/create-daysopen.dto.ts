@@ -1,13 +1,14 @@
 import { Day } from '../entities/daysopen.entity';
-import { IsNotEmpty } from 'class-validator';
+import { IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
+import { DayOpenDTO } from './dayOpen.dto';
+import { Type } from 'class-transformer';
 
 export class CreateDaysopenDto {
   @IsNotEmpty()
   restaurant_id: number;
 
-  days_open: {
-    day_open: Day;
-    opening: string;
-    closing: string;
-  }[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DayOpenDTO)
+  days_open: DayOpenDTO[];
 }
