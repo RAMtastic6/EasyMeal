@@ -74,7 +74,7 @@ jobs:
         with: 
           node-version: 21
 
-      - name:  Install NPM dependencies
+      - name: Install NPM dependencies
         run: npm ci
 
       - name: Run tests
@@ -159,5 +159,10 @@ jobs:
     needs: [backend-test, frontend-test, websocket-test]
     runs-on: ubuntu-latest
     steps:
+      - name: Install Coveralls
+        run: |
+          curl -L https://coveralls.io/coveralls-linux.tar.gz | tar -xz -C /usr/local/bin
+          chmod +x /usr/local/bin/coveralls
+          coveralls --version
       - name: Finalize Coveralls
         run: coveralls done -r ${{ secrets.COVERALLS_REPO_TOKEN }}
