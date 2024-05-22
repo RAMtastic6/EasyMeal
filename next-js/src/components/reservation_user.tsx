@@ -109,15 +109,20 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
             )}
             {(reservation.state === "accept") && (
               <div>
-                <div className="bg-green-200 p-4">
+              <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
+                <p className="text-lg font-semibold text-gray-800">
                   La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.
-                </div>
-                <ul className="space-y-4">
-                  <li>
-                    Vai all'ordinazione <a href={`/order/${reservation.id}`}>qui</a>
-                  </li>
-                </ul>
+                </p>
               </div>
+              <div className="flex justify-center mt-4">
+                <a 
+                  href={`/order/${reservation.id}`} 
+                  className="bg-orange-500 text-white text-lg font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-orange-600 transition duration-300"
+                >
+                  Vai all'ordinazione
+                </a>
+              </div>
+            </div>         
             )}
             {reservation.state === "reject" && (
               <div className="bg-red-200 p-4">
