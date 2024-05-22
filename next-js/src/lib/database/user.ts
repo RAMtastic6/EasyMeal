@@ -10,6 +10,7 @@ export async function getUserById(id: number) {
 export async function createUser(data: any) {
   const response = await fetch(Endpoints.user+"user", {
     method: 'POST',
+    cache: 'no-cache',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -22,6 +23,7 @@ export async function createUser(data: any) {
 export async function createAdmin(data: any) {
   const response = await fetch(Endpoints.user+"admin", {
     method: 'POST',
+    cache: 'no-cache',
     headers: {
       'Content-Type': 'application/json',
     },

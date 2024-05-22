@@ -139,6 +139,8 @@ export default function SignupAdmin() {
                           type="checkbox"
                           checked={schedule[day].isOpen}
                           onChange={e => handleDayChange(day, e.target.checked)}
+                          id={day + '-isOpen'}
+                          name={day + '-isOpen'}
                           data-testid={`InputOrari-${day}`}
                         />
                         {day}
