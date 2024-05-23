@@ -127,7 +127,20 @@ export class ReservationService {
 
 
   async getReservationsByUserId(userId: number) {
-    const reservations = await this.reservationRepository.find({ where: { users:{id:userId}  }, relations:{users:true} });
+    const reservations = await this.reservationRepository.find({ where: { users:{id:userId}  }, 
+    relations:
+    {
+      users:true, 
+      restaurant:true
+    }, 
+    select:
+    {
+      restaurant:
+      {
+       name:true
+      }
+    } 
+  });
     return reservations;
   }
 

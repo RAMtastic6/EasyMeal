@@ -66,6 +66,20 @@ export async function getReservationsByRestaurantId(restaurantId: number): Promi
 	return data;
 }
 
+export async function getReservationsByUserId(UserId: number): Promise<[]> {
+	const response = await fetch(`${Endpoints.reservation}user/${UserId}`, {
+		method: "GET",
+		cache: "no-cache",
+	});
+	if (!response.ok) {
+		throw new Error('Error fetching reservations from the database');
+	}
+	console.log(response);
+	const data = await response.json();
+	console.log(data);
+	return data;
+}
+
 /* FUNZIONI ADMIN */
 
 export async function acceptReservation(id: number): Promise<any> {
