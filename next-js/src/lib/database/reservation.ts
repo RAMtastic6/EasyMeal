@@ -36,7 +36,11 @@ export async function getMenuWithOrdersQuantityByIdReservation(id: number) {
 	return data;
 }
 
-export async function createReservation(reservation: {}): Promise<any> {
+export async function createReservation(reservation: {
+	date: string,
+	restaurant_id: number,
+	number_people: number,
+}): Promise<any> {
 	const token = cookies().get('session')?.value;
 	const response = await fetch(Endpoints.reservation, {
 		method: "POST",

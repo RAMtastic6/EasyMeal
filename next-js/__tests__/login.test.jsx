@@ -1,10 +1,14 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Login from '../src/components/login'; 
+import { useSearchParams } from 'next/navigation';
 
 jest.mock('next/navigation', () => ({
     useRouter: () => ({
         replace: jest.fn(),
+    }),
+    useSearchParams: () => ({
+        get: jest.fn(),
     }),
 }));
 
