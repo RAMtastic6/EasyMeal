@@ -7,15 +7,29 @@ export async function getUserById(id: number) {
   return await response.json();
 }
 
-export async function createUser(data: any, role: string = "user") {
-  const response = await fetch(Endpoints.user + role, {
+export async function createUser(data: any) {
+  const response = await fetch(Endpoints.user+"user", {
     method: 'POST',
+    cache: 'no-cache',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   });
-  if (response.status == 400) return null;
+  if (response.status != 201) return null;
+  return await response.json();
+}
+
+export async function createAdmin(data: any) {
+  const response = await fetch(Endpoints.user+"admin", {
+    method: 'POST',
+    cache: 'no-cache',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if (response.status != 201) return null;
   return await response.json();
 }
 
