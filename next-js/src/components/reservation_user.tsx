@@ -185,7 +185,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                           <p className="text-gray-600">Non ci sono ordini per questa prenotazione</p>
                         ) : (
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
+                            {orders[key as keyof typeof orders] && Array.isArray(orders[key as keyof typeof orders]) && orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
                               <div key={dishIndex} className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
                                 <p className="text-gray-700 mb-2">Utente: <span className="font-medium">{order.user_id}</span></p>
                                 <h2 className="text-xl font-semibold mb-2 text-gray-800">{order.food.name} - €{order.food.price.toFixed(2)}</h2>
