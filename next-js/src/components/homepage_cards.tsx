@@ -20,7 +20,7 @@ export default function homePageCards() {
 
   return (
     <>
-      <div className="flex mx-auto justify-center">
+      <div className="flex flex-col md:flex-row justify-center">
         <div className="container mx-auto bg-white mt-4 p-10 rounded-md border" >
           <h3 className="text-center text-xl font-bold leading-9 tracking-tight text-red-950 mx-auto">
             Sei un utente?
