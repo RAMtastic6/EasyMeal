@@ -1,15 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MyGateway } from './gateway';
-
-import { Socket } from 'socket.io';
-import { Server } from 'socket.io';
-import { emit } from 'process';
+import { Server, Socket } from 'socket.io';
 
 describe('MyGateway', () => {
   let gateway: MyGateway;
   let mockServer: Server;
-  let mockSocket: jest.Mocked<Socket>;
-  let mockClient: jest.Mocked<Socket>;
+  let mockSocket: Socket;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,149 +14,110 @@ describe('MyGateway', () => {
 
     gateway = module.get<MyGateway>(MyGateway);
 
-    // Mock Server e Sockets
+    // Mock Server and Socket
     mockServer = {
-      sockets: {
-        sockets: new Map<string, jest.Mocked<Socket>>(),
-      },
+      to: jest.fn(() => mockServer),
+      except: jest.fn(() => mockServer),
+      emit: jest.fn(),
+      on: jest.fn(() => mockSocket),
     } as unknown as Server;
 
     gateway.server = mockServer;
 
     mockSocket = {
       id: 'mockSocketId',
-      rooms: new Set<string>(),
-      emit: jest.fn(),
-    } as unknown as jest.Mocked<Socket>;
-
-    mockClient = {
-      id: 'mockClientId',
-      rooms: new Set<string>().add('testroomid'),
-      emit: jest.fn(),
-    } as unknown as jest.Mocked<Socket>;
-
-    // Aggiungi mockSocket alla lista di sockets
-    mockServer.sockets.sockets.set(mockSocket.id, mockSocket);
-  });
-
-  it('should be defined', () => {
-    expect(gateway).toBeDefined();
-  });
-
-
-  it('should emit message to room', () => {
-    const onMessage = jest.fn();
-    const to = jest.fn().mockReturnThis();
-    gateway.server = {
-      to: to,
-      emit: onMessage,
-    } as any;
-
-    // chiama la funzione
-    gateway.onIncrement({
-      id_prenotazione: '123',
-      data: { index: 0, quantity: 1 },
-    });
-
-    // verifica che il metodo to sia stato chiamato con il parametro '123'
-    expect(to).toHaveBeenCalledWith('123');
-
-    // verifica che la funzione emit del server sia stata chiamata
-    // con i parametri onMessage e data
-    expect(onMessage).toHaveBeenCalledWith('onMessage', {
-      index: 0,
-      quantity: 1,
-    });
-  });
-
-  it('should emit ingredient to room', () => {
-    const onIngredient = jest.fn();
-    const to = jest.fn().mockReturnThis();
-    gateway.server = {
-      to: to,
-      emit: onIngredient,
-    } as any;
-    gateway.onIngredient({
-      id_prenotazione: '123',
-      data: {
-        key: 0,
-        index: 0,
-        ingredientIndex: 0,
-        removed: false,
+      handshake: {
+        query: {
+          id_prenotazione: 'testRoomId',
+        },
+        auth: {
+          token: 'testToken',
+        }
       },
+      join: jest.fn(),
+      disconnect: jest.fn(),
+      on: jest.fn(),
+    } as unknown as Socket;
+  });
+
+  describe('handleConnection', () => {
+    it('should disconnect the socket if id_prenotazione is missing', async () => {
+      // Remove id_prenotazione from mock socket
+      delete mockSocket.handshake.query.id_prenotazione;
+  
+      // Call handleConnection
+      await gateway.handleConnection(mockSocket);
+  
+      // Verify socket was disconnected
+      expect(mockSocket.disconnect).toHaveBeenCalled();
     });
-
-    // verifica che il metodo to sia stato chiamato con il parametro '123'
-    expect(to).toHaveBeenCalledWith('123');
-
-    // verifica che la funzione emit del server sia stata chiamata
-    // con i parametri onIngredient e data
-    expect(onIngredient).toHaveBeenCalledWith('onIngredient', {
-      key: 0,
-      index: 0,
-      ingredientIndex: 0,
-      removed: false,
+  
+    it('should disconnect the socket if token is missing', async () => {
+      // Remove token from mock socket
+      delete mockSocket.handshake.auth.token;
+  
+      // Call handleConnection
+      await gateway.handleConnection(mockSocket);
+  
+      // Verify socket was disconnected
+      expect(mockSocket.disconnect).toHaveBeenCalled();
+    });
+  
+    it('should disconnect the socket if token is invalid', async () => {
+      // Mock fetch response
+      jest.spyOn(global, 'fetch').mockResolvedValueOnce({ status: 401 } as Response);
+  
+      // Call handleConnection
+      await gateway.handleConnection(mockSocket);
+  
+      // Verify socket was disconnected
+      expect(mockSocket.disconnect).toHaveBeenCalled();
+    });
+  
+    it('should join the socket to the room if id_prenotazione is provided and token is valid', async () => {
+      // Mock fetch response
+      jest.spyOn(global, 'fetch').mockResolvedValueOnce({ status: 200 } as Response);
+  
+      // Call handleConnection
+      await gateway.handleConnection(mockSocket);
+  
+      // Verify socket joined the room
+      expect(mockSocket.join).toHaveBeenCalledWith('testRoomId');
     });
   });
 
-  describe('onConfirm', () => {
+  it('should emit "onMessage" to the specified room', () => {
+    const body = {
+      id_prenotazione: 'testRoomId',
+      data: { index: 0, quantity: 1 },
+    };
 
-    it('should emit onConfirm to other sockets in the same room', async () => {
-      const onMessage = jest.fn().mockReturnThis();
-      const to = jest.fn(() => ({
-        except: jest.fn(() => ({
-          emit: onMessage,
-        })),
-      }));
-      gateway.server = {
-        to: to,
-      } as any;
+    gateway.onIncrement(body);
 
-      // Configura la stanza e il socket corrente
-      const roomId = 'testRoomId';
-      mockClient.rooms.add(roomId);
-      mockSocket.rooms.add(roomId);
+    expect(mockServer.to).toHaveBeenCalledWith('testRoomId');
+    expect(mockServer.emit).toHaveBeenCalledWith('onMessage', body.data);
+  });
 
-      // Esegui la funzione onConfirm con il body e il client mock corrente
-      await gateway.onConfirm({ id_prenotazione: roomId }, mockSocket);
+  it('should emit "onIngredient" to the specified room', () => {
+    const body = {
+      id_prenotazione: 'testRoomId',
+      data: { key: 0, index: 0, ingredientIndex: 0, removed: false },
+    };
 
-      // Verifica che l'evento 'onConfirm' sia stato emesso agli altri client nella stanza
-      expect(to).toHaveBeenCalled();
-    });
+    gateway.onIngredient(body);
 
-    it('should not emit onConfirm to the same socket', async () => {
-      const body = { id_prenotazione: 'testroomid' };
-      const onMessage = jest.fn().mockReturnThis();
-      const to = jest.fn(() => ({
-        except: jest.fn().mockReturnThis(),
-        emit: onMessage,
-      }));
-      gateway.server = {
-        to: to,
-      } as any;
+    expect(mockServer.to).toHaveBeenCalledWith('testRoomId');
+    expect(mockServer.emit).toHaveBeenCalledWith('onIngredient', body.data);
+  });
 
-      // Aggiungi mockClient alla stanza
-      // mockClient.rooms = new Set<string>().add(body.id_prenotazione);
-  
-      await gateway.onConfirm(body, mockClient);
-  
-      expect(mockSocket.emit).not.toHaveBeenCalled();
-    });
+  it('should emit "onConfirm" to other sockets in the same room', () => {
+    const body = { id_prenotazione: 'testRoomId' };
 
-    it('should not emit onConfirm if socket is not in the room', async () => {
-      const body = { id_prenotazione: 'testRoomId' };
-      const onMessage = jest.fn().mockReturnThis();
-      const to = jest.fn(() => ({
-        except: jest.fn().mockReturnThis(),
-        emit: onMessage,
-      }));
-      gateway.server = {
-        to: to,
-      } as any;
+    gateway.onConfirm(body, mockSocket);
 
-      await gateway.onConfirm(body, mockClient);
-
-      expect(mockSocket.emit).not.toHaveBeenCalled();
-    });
-  }); 
+    expect(mockServer.to).toHaveBeenCalledWith('testRoomId');
+    expect(mockServer.except).toHaveBeenCalledWith('mockSocketId');
+    expect(mockServer.emit).toHaveBeenCalledWith('onConfirm');
+  });
 });
+

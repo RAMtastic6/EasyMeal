@@ -8,36 +8,38 @@ export class MyGateway implements OnModuleInit {
   @WebSocketServer()
   server: Server;
 
-  onModuleInit() {
-    this.server.on('connection', async (socket) => {
-      if(socket.handshake.query.id_prenotazione) {
-        const token = socket.handshake.auth.token;
-        if(!token) {
-          socket.disconnect();
-          return;
-        }
-        const host = process.env.BACKEND_HOST || 'localhost';
-        const response = await fetch('http://'+host+':6969/authentication/decodeToken', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token: token }),
-        });
-        if(response.status != 200) {
-          socket.disconnect();
-          return;
-        }
-        socket.join(socket.handshake.query.id_prenotazione);
-        console.log(socket.id + " connected to room: " + socket.handshake.query.id_prenotazione);
-      } else {
+  async handleConnection(socket: Socket) {
+    if (socket.handshake.query.id_prenotazione) {
+      const token = socket.handshake.auth.token;
+      if (!token) {
         socket.disconnect();
         return;
       }
-      socket.on('disconnect', () => {
-        console.log(socket.id + " disconnected from room: " + socket.handshake.query.id_prenotazione);
+      const host = process.env.BACKEND_HOST || 'localhost';
+      const response = await fetch('http://' + host + ':6969/authentication/decodeToken', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token: token }),
       });
+      if (response.status != 200) {
+        socket.disconnect();
+        return;
+      }
+      socket.join(socket.handshake.query.id_prenotazione);
+      console.log(socket.id + " connected to room: " + socket.handshake.query.id_prenotazione);
+    } else {
+      socket.disconnect();
+      return;
+    }
+    socket.on('disconnect', () => {
+      console.log(socket.id + " disconnected from room: " + socket.handshake.query.id_prenotazione);
     });
+  }
+
+  onModuleInit() {
+    this.server.on('connection', this.handleConnection);
   }
 
   @SubscribeMessage('onMessage')
