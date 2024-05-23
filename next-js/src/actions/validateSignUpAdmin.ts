@@ -1,7 +1,8 @@
 'use server'
-import { createAdmin } from "../lib/database/user"
+import { AdminDto, createAdmin } from "../lib/database/user"
+import { DaysopenDto } from "../lib/database/daysopen"
 import { getFormData } from "@/src/lib/utils"
-import { Day, DaySchedule, daysOfWeek } from "@/src/lib/types/definitions"
+import { Day, daysOfWeek } from "@/src/lib/types/definitions"
 import { redirect } from "next/navigation";
 
 export async function validateSignUpAdmin(prevState: any, formData: FormData) {
@@ -38,21 +39,45 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   if (String(data['password']) !== String(data['password_confirmation'])) return { message: 'Passwords do not match' };
   
   // Get the days open
-  const daysOpenData = daysOfWeek.map((day: Day, index: number) => {
-    const isOpen = formData.get(`${day}-isOpen`) === 'on';
-    const opening = formData.get(`${day}-apertura`);
-    const closing = formData.get(`${day}-chiusura`);
-    if (isOpen ) {
+  /*const daysOpenData = daysOfWeek.map((day: Day, index: number) => {
+    console.log('day', day);
+    const isOpen = data[`${day}-isOpen`] === 'on';
+    console.log('day', data[`${day}-isOpen`]);
+    console.log('day', data[`${day}-apertura`]);
+    console.log('day', data[`${day}-chiusura`]);
+
+    console.log('isOpen', day, isOpen);
+    const opening: string = data[`${day}-apertura`];
+    const closing: string = data[`${day}-chiusura`];
+    if (isOpen && opening && closing) {
       return {
         day_open: index,
-        opening: isOpen ? opening : null,
-        closing: isOpen ? closing : null,
+        opening: opening,
+        closing: closing,
       }
     }
     return null;
+  });*/
+
+  const daysOpenData: {
+    day_open: number;
+    opening: string;
+    closing: string;
+  }[] = [];
+  daysOfWeek.forEach((day: Day, index: number) => {
+    const isOpen = data[`${day}-isOpen`] === 'on';
+    const opening: string = data[`${day}-apertura`];
+    const closing: string = data[`${day}-chiusura`];
+    if (isOpen && opening && closing) {
+      daysOpenData.push({
+        day_open: index,
+        opening: opening,
+        closing: closing,
+      });
+    }
   });
 
-  const json = {
+  const json: AdminDto = {
     email: data['email'],
     name: data['nome'],
     surname: data['cognome'],
@@ -71,14 +96,19 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
       role: 'admin',
     },
     dayopen: {
-      days_open: daysOpenData.filter(day => day !== null),
+      days_open: daysOpenData,
     },
   };
 
-  const result = await createAdmin(json);
+  const response = await createAdmin(json);
   
-  if (result == null) {
-    return { message: 'Registration failed' }
+  if (!response.ok) {
+    const data = await response.json();
+    if(data.message && Array.isArray(data.message))
+      return { message: data.message.join(', ') };
+    if(data.message)
+      return { message: data.message };
+    return { message: 'Registration failed' };
   }
   redirect("login?signup=success");
 }
