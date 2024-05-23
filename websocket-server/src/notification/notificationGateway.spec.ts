@@ -29,12 +29,10 @@ describe('NotificationGateway', () => {
 
     await gateway.emitAll(notification);
 
-    expect(emitSpy).toHaveBeenCalledTimes(3);
-    expect(emitSpy).toHaveBeenCalledWith('1');
-    expect(emitSpy).toHaveBeenCalledWith('2');
-    expect(emitSpy).toHaveBeenCalledWith('3');
+    expect(emitSpy).toHaveBeenCalled();
+    expect(emitSpy).toHaveBeenCalledWith(['1', '2', '3']);
 
-    expect(emitToSpy).toHaveBeenCalledTimes(3);
+    expect(emitToSpy).toHaveBeenCalled();
     expect(emitToSpy).toHaveBeenCalledWith('onNotification', JSON.stringify({ title: notification.title, message: notification.message }));
   });
 });

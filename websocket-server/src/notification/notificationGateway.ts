@@ -32,9 +32,8 @@ export class NotificationGateway implements OnModuleInit {
 
   @SubscribeMessage('onNotification')
   async emitAll(notification: NotificationDto) {
-    notification.id_receiver.forEach((id) => {
-       this.server.to(id.toString()).emit('onNotification', JSON.stringify({title: notification.title, message : notification.message}));
-    });
+    const ids = notification.id_receiver.map((id) => id.toString());
+    this.server.to(ids).emit('onNotification', JSON.stringify({title: notification.title, message : notification.message}));
     console.log("sending notification to " + notification.id_receiver);
   }
 
