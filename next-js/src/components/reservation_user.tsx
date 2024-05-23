@@ -172,7 +172,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                 La prenotazione è stata pagata e completata.
               </div>
             )}
-            {(reservation.state === "to_pay" || reservation.state === "accept") && (
+            {(reservation.state === "to_pay" || reservation.state === "accept" || reservation.state === "completed") && (
               <div>
                 <div className="bg-white p-4 rounded-lg shadow-md">
                   <h2 className="text-2xl font-bold mb-4 text-gray-800">Le ordinazioni</h2>
