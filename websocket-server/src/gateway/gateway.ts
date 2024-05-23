@@ -12,10 +12,10 @@ export class MyGateway implements OnModuleInit {
     this.server.on('connection', async (socket) => {
       if(socket.handshake.query.id_prenotazione) {
         socket.join(socket.handshake.query.id_prenotazione);
-        console.log(socket.id + " connected to room: " + socket.handshake.query.id_prenotazione);
+        console.log(socket.id + " connected to gatewayOrdinazioneCollaborativa/room: " + socket.handshake.query.id_prenotazione);
       }
       socket.on('disconnect', () => {
-        console.log(socket.id + " disconnected from room: " + socket.handshake.query.id_prenotazione);
+        console.log(socket.id + " disconnected from gatewayOrdinazioneCollaborativa/room: " + socket.handshake.query.id_prenotazione);
       });
     });
   }
