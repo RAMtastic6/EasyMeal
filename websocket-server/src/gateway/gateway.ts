@@ -16,13 +16,15 @@ export class MyGateway implements OnModuleInit {
       return;
     }
     const host = process.env.BACKEND_HOST || 'localhost';
-    const response = await fetch('http://' + host + ':6969/reservation/' + id_prenotazione + 'verify', {
+    const response = 
+    await fetch('http://' + host + ':6969/reservation/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ 
         token: token,
+        id_prenotazione: id_prenotazione,
       }),
     });
     if (response.status != 200) {
