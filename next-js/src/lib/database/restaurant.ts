@@ -99,7 +99,15 @@ export async function getRestaurantsTotalPages(params: RestaurantFilter, ITEMS_P
 	return Math.ceil(data / ITEMS_PER_PAGE);
 }
 
-export async function createRestaurant(data: any) {
+export async function createRestaurant(data: {
+	name: string,
+	address: string,
+	city: string,
+	cuisine: string,
+	tables: number,
+	phone_number: string,
+	email: string,
+}) {
 	const response = await fetch(`${Endpoints.restaurant}`, {
 		method: 'POST',
     headers: {

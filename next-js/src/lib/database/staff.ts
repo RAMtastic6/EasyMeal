@@ -1,7 +1,11 @@
 'use server';
 import { Endpoints } from "./endpoints";
 
-export async function createStaff(staff: any) {
+export async function createStaff(staff: {
+    restaurant_id: number,
+    role: string,
+    user_id: number,
+}) {
     const response = await fetch(Endpoints.staff, {
         method: 'POST',
         headers: {

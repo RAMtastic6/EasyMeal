@@ -2,8 +2,6 @@ import { Food } from 'src/food/entities/food.entity'
 import { IsNotEmpty, IsEmail, IsNumberString } from 'class-validator';
 
 export class CreateRestaurantDto {
-    @IsNotEmpty()
-    id: number;
 
     @IsNotEmpty()
     name: string;

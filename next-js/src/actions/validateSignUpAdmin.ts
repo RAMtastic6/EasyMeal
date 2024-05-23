@@ -2,7 +2,7 @@
 import { createUser } from "../lib/database/user"
 import { createRestaurant } from "../lib/database/restaurant"
 import { createStaff } from "../lib/database/staff"
-import { createDaysOpen } from "../lib/database/daysopen"
+import { DaysopenDto, createDaysOpen } from "../lib/database/daysopen"
 import { getFormData } from "@/src/lib/utils"
 import { Day, DaySchedule, daysOfWeek } from "@/src/lib/types/definitions"
 
@@ -45,7 +45,7 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   if (String(data['password']) !== String(data['password_confirmation'])) return { message: 'Passwords do not match' };
   
   // Get the days open
-  const daysOpenData = daysOfWeek.map((day: Day, index: number) => {
+  /*const daysOpenData = daysOfWeek.map((day: Day, index: number) => {
     console.log('day', day);
     const isOpen = data[`${day}-isOpen`] === 'on';
     console.log('day', data[`${day}-isOpen`]);
@@ -53,16 +53,33 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     console.log('day', data[`${day}-chiusura`]);
 
     console.log('isOpen', day, isOpen);
-    const opening = data[`${day}-apertura`];
-    const closing = data[`${day}-chiusura`];
-    if (isOpen ) {
+    const opening: string = data[`${day}-apertura`];
+    const closing: string = data[`${day}-chiusura`];
+    if (isOpen && opening && closing) {
       return {
         day_open: index,
-        opening: isOpen ? opening : null,
-        closing: isOpen ? closing : null,
+        opening: opening,
+        closing: closing,
       }
     }
     return null;
+  });*/
+  let daysOpenData: {
+    day_open: number;
+    opening: string;
+    closing: string;
+  }[] = [];
+  daysOfWeek.forEach((day: Day, index: number) => {
+    const isOpen = data[`${day}-isOpen`] === 'on';
+    const opening: string = data[`${day}-apertura`];
+    const closing: string = data[`${day}-chiusura`];
+    if (isOpen && opening && closing) {
+      daysOpenData.push({
+        day_open: index,
+        opening: opening,
+        closing: closing,
+      });
+    }
   });
   console.log('daysOpenData', daysOpenData);
   
@@ -83,7 +100,6 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     tables: parseInt(data['coperti']),
     phone_number: data['numero'],
     email: data['email-ristorante'],
-    description: data['descrizione'],
   })
   // Create the staff
   const staff = await createStaff({
@@ -95,7 +111,7 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   //create days open
   const daysOpen = await createDaysOpen({
     restaurant_id: restaurant.id,
-    days_open: daysOpenData.filter(day => day !== null)
+    days_open: daysOpenData
   })
   
   if (!user || !restaurant || !staff || !daysOpen) {
