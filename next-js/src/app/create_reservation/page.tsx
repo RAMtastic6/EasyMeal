@@ -9,7 +9,7 @@ import { query } from "firebase/database";
 export default async function Page({ searchParams }: {
   searchParams?: {
     date?: string,
-    name?: string,
+    nameRestaurant?: string,
     city?: string,
     cuisine?: string,
     page?: string
@@ -20,11 +20,12 @@ export default async function Page({ searchParams }: {
   const cities = await getAllCities();
   const query: RestaurantFilter = {
     date: searchParams?.date || "",
-    name: searchParams?.name || "",
+    name: searchParams?.nameRestaurant || "",
     city: searchParams?.city || "",
     cuisine: searchParams?.cuisine || ""
   }
   const totalPages = await getRestaurantsTotalPages(query, ITEMS_PER_PAGE);
+  console.log('Total pages:', totalPages);
 
   return (
     <>
