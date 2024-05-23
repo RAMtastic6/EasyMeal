@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { getReservationById } from "@/src/lib/database/reservation";
+import { getReservationById, completeReservation } from "@/src/lib/database/reservation";
 import { stateMessage } from "@/src/lib/types/definitions";
 import { getRestaurantById } from "@/src/lib/database/restaurant";
 import { getOrderByReservationId } from "@/src/lib/database/order";
@@ -11,6 +11,20 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
   const [restaurant, setRestaurant] = useState<any>({}); // TO DO: define the type of the restaurant object
   const [orders, setOrders] = useState<any[]>([]); // TO DO: define the type of the orders object
 
+  // fetch reservation by id
+  async function fetchReservation() {
+    setLoading(true);
+    try {
+      console.log("Fetching reservation data...");
+      const result = await getReservationById(parseInt(params.id));
+      setReservation(result);
+    } catch (error) {
+      console.error("Error fetching reservation", error);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
   // fetch orders by reservation, restaurant and orders if the reservation is in a state different from pending
   useEffect(() => {
     async function fetchInitalData() {
@@ -36,9 +50,14 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
     fetchInitalData();
   }, [params.id]);
 
-  // TO DO: implement the payment method
-  const handlePayment = () => {
-    alert('Payment not implemented');
+  const handlePayment = async () => {
+    // payment ...
+    const response = await completeReservation(parseInt(params.id));
+    if (!response.status || response.body == null) {
+      alert("Errore nel completamento della prenotazione");
+    } else {
+      fetchReservation();
+    }
   }
 
   if (loading) return (<p>Loading...</p>);
