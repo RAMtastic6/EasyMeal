@@ -168,4 +168,15 @@ export class ReservationService {
     }
     return true;
   }
+
+  async verifyReservation(reservation_id: number, user_id: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservation_id, users: { id: user_id } },
+      relations: { users: true },
+    });
+    if(reservation == null) {
+      return null;
+    }
+    return reservation;
+  }
 }

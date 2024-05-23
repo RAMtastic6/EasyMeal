@@ -352,6 +352,27 @@ describe('ReservationService', () => {
     });
   }); 
 
+  describe('verifyReservation', () => {
+    const reservationId = 1;
+    const userId = 1;
+    const reservation = { id: reservationId, users: [{ id: userId }] } as Reservation;
   
+    it('should return the reservation if it exists and the user is associated with it', async () => {
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(reservation);
+  
+      const result = await service.verifyReservation(reservationId, userId);
+  
+      expect(reservationRepo.findOne).toHaveBeenCalled();
+      expect(result).toEqual(reservation);
+    });
+  
+    it('should return null if the reservation does not exist', async () => {
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(null);
+  
+      const result = await service.verifyReservation(reservationId, userId);
+  
+      expect(result).toBe(null);
+    });
+  });
 
 });

@@ -4,6 +4,7 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AddCustomerDTO } from './dto/add-customer.dto';
+import { verifyReservationDto } from './dto/verify-reservation.dto';
 
 @Controller('reservation')
 export class ReservationController {
@@ -73,11 +74,26 @@ export class ReservationController {
   }
 
   @Get('user/:userId')
-  async getReservationsByUserId(@Param('userId') userId: number) {
+  async getReservationsByUserId(@Param('userId', ParseIntPipe) userId: number) {
     return await this.reservationService.getReservationsByUserId(userId);
   }
 
-
+  @Post(':reservation_id/verify')
+  async verifyReservation(
+    @Param('reservation_id', ParseIntPipe) reservation_id: number,
+    @Body() data: verifyReservationDto,
+  ) {
+    const token = await this.authService.verifyToken(data.token);
+    if(token == null)
+      throw new UnauthorizedException('Invalid token');
+    const result = await this.reservationService.verifyReservation(
+      reservation_id,
+      token.id
+    );
+    if (result == null)
+      throw new NotFoundException('Reservation not found');
+    return result;
+  }
 
   @Post(':id/accept')
   async acceptReservation(@Param('id', ParseIntPipe) id: number) {
