@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Endpoints } from '../lib/database/endpoints';
 import { Socket, io } from 'socket.io-client';
-import { verifySession } from '../lib/dal';
+import { getToken, verifySession } from '../lib/dal';
 import { deleteOrders, saveOrders } from '../lib/database/order';
 
 export default function MenuTable(
@@ -21,6 +21,7 @@ export default function MenuTable(
 ) {
 	const socket = useRef<Socket>();
 	const [menu, setMenu] = useState(menuData);
+	const [token, setToken] = useState<string | null>(null);
 	const [price, setPrice] = useState(menuData.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 
 	const sendData = async (index: number, menu: any, add: boolean) => {
@@ -54,7 +55,22 @@ export default function MenuTable(
 	}
 
 	useEffect(() => {
-		const soc = io(Endpoints.socket + '?id_prenotazione=' + params.number);
+		getToken().then((token) => {
+			setToken(token);
+		});
+	}, []);
+
+	useEffect(() => {
+		if(!token) return;
+		console.log(token);
+		const soc = io(Endpoints.socket, {
+			query: {
+				id_prenotazione: params.number,
+			},
+			auth: {
+				token: token,
+			}
+		});
 		socket.current = soc;
 		socket.current.on('onMessage', handleMessage);
 		//Close the socket connection when the component is unmounted
@@ -62,7 +78,7 @@ export default function MenuTable(
 			socket.current?.off('onMessage', handleMessage);
 			socket.current?.disconnect();
 		}
-	}, []);
+	}, [token]);
 
 	const decreaseQuantity = (index: number) => {
 		const newMenu = { ...menu };

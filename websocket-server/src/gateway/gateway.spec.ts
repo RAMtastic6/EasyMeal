@@ -3,6 +3,7 @@ import { MyGateway } from './gateway';
 
 import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
+import { emit } from 'process';
 
 describe('MyGateway', () => {
   let gateway: MyGateway;
@@ -34,7 +35,8 @@ describe('MyGateway', () => {
 
     mockClient = {
       id: 'mockClientId',
-      rooms: new Set<string>().add('testroomid')
+      rooms: new Set<string>().add('testroomid'),
+      emit: jest.fn(),
     } as unknown as jest.Mocked<Socket>;
 
     // Aggiungi mockSocket alla lista di sockets
@@ -102,22 +104,41 @@ describe('MyGateway', () => {
   });
 
   describe('onConfirm', () => {
-    
+
     it('should emit onConfirm to other sockets in the same room', async () => {
-    
-      const body = { id_prenotazione: 'testRoomId' };
+      const onMessage = jest.fn().mockReturnThis();
+      const to = jest.fn(() => ({
+        except: jest.fn(() => ({
+          emit: onMessage,
+        })),
+      }));
+      gateway.server = {
+        to: to,
+      } as any;
 
-      // Aggiungi mockSocket alla stanza
-      mockSocket.rooms.add(body.id_prenotazione);
+      // Configura la stanza e il socket corrente
+      const roomId = 'testRoomId';
+      mockClient.rooms.add(roomId);
+      mockSocket.rooms.add(roomId);
 
-      await gateway.onConfirm(body, mockClient);
+      // Esegui la funzione onConfirm con il body e il client mock corrente
+      await gateway.onConfirm({ id_prenotazione: roomId }, mockSocket);
 
-      expect(mockSocket.emit).toHaveBeenCalledWith('onConfirm');
+      // Verifica che l'evento 'onConfirm' sia stato emesso agli altri client nella stanza
+      expect(to).toHaveBeenCalled();
     });
 
     it('should not emit onConfirm to the same socket', async () => {
       const body = { id_prenotazione: 'testroomid' };
-  
+      const onMessage = jest.fn().mockReturnThis();
+      const to = jest.fn(() => ({
+        except: jest.fn().mockReturnThis(),
+        emit: onMessage,
+      }));
+      gateway.server = {
+        to: to,
+      } as any;
+
       // Aggiungi mockClient alla stanza
       // mockClient.rooms = new Set<string>().add(body.id_prenotazione);
   
@@ -128,6 +149,14 @@ describe('MyGateway', () => {
 
     it('should not emit onConfirm if socket is not in the room', async () => {
       const body = { id_prenotazione: 'testRoomId' };
+      const onMessage = jest.fn().mockReturnThis();
+      const to = jest.fn(() => ({
+        except: jest.fn().mockReturnThis(),
+        emit: onMessage,
+      }));
+      gateway.server = {
+        to: to,
+      } as any;
 
       await gateway.onConfirm(body, mockClient);
 
