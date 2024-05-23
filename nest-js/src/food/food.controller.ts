@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ParseIntPipe } from '@nestjs/common';
 import { FoodService } from './food.service';
 import { CreateFoodDto } from './dto/create-food.dto';
 import { UpdateFoodDto } from './dto/update-food.dto';
@@ -8,8 +8,8 @@ export class FoodController {
   constructor(private readonly foodService: FoodService) {}
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const result = await this.foodService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.foodService.findOne(id);
     if (result != null) {
       return result;
     }

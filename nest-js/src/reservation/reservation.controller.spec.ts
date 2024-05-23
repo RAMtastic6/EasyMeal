@@ -161,7 +161,7 @@ describe('ReservationController', () => {
 
   describe('findOne', () => {
     it('should return a reservation by id', async () => {
-      const id = '1';
+      const id = 1;
       const expectedResult = { id: 1 } as Reservation;
 
       jest.spyOn(service, 'findOne').mockResolvedValue(expectedResult);
@@ -173,7 +173,7 @@ describe('ReservationController', () => {
     });
 
     it('should throw NotFoundException if reservation is not found', async () => {
-      const id = '1';
+      const id = 1;
 
       jest.spyOn(service, 'findOne').mockResolvedValue(null);
 

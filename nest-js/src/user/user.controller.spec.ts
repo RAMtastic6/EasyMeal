@@ -77,13 +77,13 @@ describe('UserController', () => {
 
     it('should call the service findOne method with the correct parameter', async () => {
       jest.spyOn(service, 'findOne').mockResolvedValueOnce(user);
-      await controller.findOne(userId.toString());
+      await controller.findOne(userId);
       expect(service.findOne).toHaveBeenCalledWith(userId);
     });
 
     it('should return the result of the service findOne method', async () => {
       jest.spyOn(service, 'findOne').mockResolvedValueOnce(user);
-      expect(await controller.findOne(userId.toString())).toBe(user);
+      expect(await controller.findOne(userId)).toBe(user);
     });
   });
 

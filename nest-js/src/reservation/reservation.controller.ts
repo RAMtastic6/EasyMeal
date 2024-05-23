@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UnauthorizedException, ParseIntPipe } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { AddCustomerDTO } from './dto/add-customer.dto';
 
 @Controller('reservation')
 export class ReservationController {
@@ -30,8 +31,9 @@ export class ReservationController {
   }
 
   @Post('addCustomer')
-  async addCustomer(@Body() params: {customer_id: number, reservation_id: number}) {
-    const result = await this.reservationService.addCustomer(params);
+  // {customer_id: number, reservation_id: number}
+  async addCustomer(@Body() body: AddCustomerDTO) {
+    const result = await this.reservationService.addCustomer(body);
     if(result == null) {
       throw new NotFoundException('Reservation not found');
     }
@@ -48,7 +50,7 @@ export class ReservationController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     const result = await this.reservationService.findOne(+id);
     if(result == null) {
       throw new NotFoundException('Reservation not found');
@@ -57,7 +59,7 @@ export class ReservationController {
   }
 
   @Get(':id/orders')
-  async getMenuWithOrdersQuantityByIdReservation(@Param('id') id: number) {
+  async getMenuWithOrdersQuantityByIdReservation(@Param('id', ParseIntPipe) id: number) {
     const result = await this.reservationService.getMenuWithOrdersQuantityByIdReservation(id);
     if(result == null) {
       throw new NotFoundException('Reservation not found');
@@ -66,7 +68,7 @@ export class ReservationController {
   }
 
   @Get('restaurant/:restaurantId')
-  async getReservationsByRestaurantId(@Param('restaurantId') restaurantId: number) {
+  async getReservationsByRestaurantId(@Param('restaurantId', ParseIntPipe) restaurantId: number) {
     return await this.reservationService.getReservationsByRestaurantId(restaurantId);
   }
 
@@ -78,7 +80,7 @@ export class ReservationController {
 
 
   @Post(':id/accept')
-  async acceptReservation(@Param('id') id: number) {
+  async acceptReservation(@Param('id', ParseIntPipe) id: number) {
     const result = await this.reservationService.acceptReservation(id);
     if (result == null)
       throw new NotFoundException('Reservation not found');
@@ -86,7 +88,7 @@ export class ReservationController {
   }
 
   @Post(':id/reject')
-  async rejectReservation(@Param('id') id: number) {
+  async rejectReservation(@Param('id', ParseIntPipe) id: number) {
     const result = await this.reservationService.rejectReservation(id);
     if (result == null)
       throw new NotFoundException('Reservation not found');
