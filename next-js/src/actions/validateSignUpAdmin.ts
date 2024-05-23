@@ -2,6 +2,7 @@
 import { createAdmin } from "../lib/database/user"
 import { getFormData } from "@/src/lib/utils"
 import { Day, DaySchedule, daysOfWeek } from "@/src/lib/types/definitions"
+import { redirect } from "next/navigation";
 
 export async function validateSignUpAdmin(prevState: any, formData: FormData) {
 
@@ -79,5 +80,5 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   if (result == null) {
     return { message: 'Registration failed' }
   }
-  return { message: 'Registration successful' }
+  redirect("login?signup=success");
 }
