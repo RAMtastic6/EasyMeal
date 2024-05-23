@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { RestaurantService } from './restaurant.service';
 import { Restaurant } from './entities/restaurant.entity';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
@@ -10,6 +10,7 @@ import { Daysopen } from '../daysopen/entities/daysopen.entity';
 describe('RestaurantService', () => {
   let service: RestaurantService;
   let repo: Repository<Restaurant>;
+  let manager: EntityManager;
   const tokenRestaurant = getRepositoryToken(Restaurant);
 
   beforeEach(async () => {
@@ -27,11 +28,20 @@ describe('RestaurantService', () => {
             findAndCount: jest.fn(),
           },
         },
+        {
+          provide: EntityManager,
+          useValue: {
+            save: jest.fn(),
+            findOne: jest.fn(),
+            create: jest.fn()
+          },
+        },
       ],
     }).compile();
 
     service = module.get<RestaurantService>(RestaurantService);
     repo = module.get<Repository<Restaurant>>(tokenRestaurant);
+    manager = module.get<EntityManager>(EntityManager);
   });
 
   it('service should be defined', () => {
@@ -76,7 +86,7 @@ describe('RestaurantService', () => {
       name: 'restaurant',
       phone_number: 'phone_number',
       tables: 1,
-      id: 0
+      description: ''
     };
 
     const restaurant: Restaurant = {
@@ -238,6 +248,46 @@ describe('RestaurantService', () => {
       const result = await service.getNumberOfFilteredRestaurants(query);
       expect(repo.createQueryBuilder).toHaveBeenCalled();
       expect(result).toBe(5);
+    });
+  });
+
+  describe('createManager', () => {
+    const createRestaurantDto: CreateRestaurantDto = {
+      address: 'address',
+      city: 'city',
+      cuisine: 'cuisine',
+      email: 'email',
+      name: 'restaurant',
+      phone_number: 'phone_number',
+      tables: 1,
+      description: ''
+    };
+
+
+    const restaurant: Restaurant = {
+      address: 'address',
+      city: 'city',
+      cuisine: 'cuisine',
+      email: 'email',
+      name: 'restaurant',
+      phone_number: 'phone_number',
+      id: 0,
+      menu_id: 0,
+      tables: 0,
+      daysOpen: [],
+      reservations: [],
+    } as Restaurant;
+
+    it('should create a restaurant manager', async () => {
+      jest.spyOn(manager, 'save').mockResolvedValueOnce(restaurant);
+      const result = await service.createManager(createRestaurantDto, manager);
+      expect(manager.save).toHaveBeenCalled();
+      expect(result).toEqual(restaurant);
+    });
+
+    it('should throw an error if the input is invalid', async () => {
+      delete createRestaurantDto.name;
+      expect(await service.createManager(createRestaurantDto, manager)).toBe(null);
     });
   });
 });

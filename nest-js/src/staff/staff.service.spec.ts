@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StaffService } from './staff.service';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Staff, StaffRole } from './enities/staff.entity';
 import { StaffDto } from './dto/create-staff.dto';
@@ -11,6 +11,7 @@ describe('StaffService', () => {
   let service: StaffService;
   let staffRepository: Repository<Staff>;
   const staffToken = getRepositoryToken(Staff);
+  let manager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,11 +25,19 @@ describe('StaffService', () => {
             save: jest.fn(),
           },
         },
+        {
+          provide: EntityManager,
+          useValue: {
+            create: jest.fn(),
+            save: jest.fn(),
+          },
+        }
       ],
     }).compile();
 
     service = module.get<StaffService>(StaffService);
     staffRepository = module.get<Repository<Staff>>(staffToken);
+    manager = module.get<EntityManager>(EntityManager);
   });
 
   it('should be defined', () => {
@@ -99,4 +108,33 @@ describe('StaffService', () => {
     });
   });
 
+  describe('create_manager', () => {
+    const staffDto: StaffDto = {
+      restaurant_id: 1,
+      user_id: 1,
+      role: StaffRole.ADMIN,
+    };
+  
+    beforeEach(() => {
+      jest.spyOn(staffRepository, 'findOne').mockResolvedValueOnce(null);
+      jest.spyOn(manager, 'create').mockReturnValueOnce({} as any);
+      jest.spyOn(manager, 'save').mockResolvedValueOnce({} as any);
+    });
+  
+    it('should create a new manager staff member', async () => {
+      const createdStaff = await service.create_manager(staffDto, manager);
+      expect(manager.create).toHaveBeenCalledWith(Staff, staffDto);
+      expect(manager.save).toHaveBeenCalledWith(createdStaff);
+    });
+  
+    it('should return null if staffDto is invalid', async () => {
+      staffDto.user_id = null;
+      expect(await service.create_manager(staffDto, manager)).toBeNull();
+    });
+  
+    it('should return null if staff already exists', async () => {
+      jest.spyOn(staffRepository, 'findOne').mockResolvedValueOnce(staffDto as Staff);
+      expect(await service.create_manager(staffDto, manager)).toBeNull();
+    });
+  });
 });

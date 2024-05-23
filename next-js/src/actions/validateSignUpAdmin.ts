@@ -1,14 +1,11 @@
 'use server'
-import { createUser } from "../lib/database/user"
-import { createRestaurant } from "../lib/database/restaurant"
-import { createStaff } from "../lib/database/staff"
-import { createDaysOpen } from "../lib/database/daysopen"
+import { createAdmin } from "../lib/database/user"
 import { getFormData } from "@/src/lib/utils"
 import { Day, DaySchedule, daysOfWeek } from "@/src/lib/types/definitions"
+import { redirect } from "next/navigation";
 
 export async function validateSignUpAdmin(prevState: any, formData: FormData) {
-  //TODO: validate the form data
-  console.log('validateSignUpAdmin', formData);
+
   // Get the form data
   const data = getFormData([
     'email',
@@ -18,9 +15,6 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     'city',
     'indirizzo',
     'descrizione',
-    ...daysOfWeek.map(day => `${day}-isOpen`),
-    ...daysOfWeek.map(day => `${day}-apertura`),
-    ...daysOfWeek.map(day => `${day}-chiusura`),
     'coperti',
     'numero',
     'email-ristorante',
@@ -28,7 +22,6 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     'password',
     'password_confirmation',
   ], formData);
-  console.log('data', data);
   
   if (!data['email'] || !String(data['email']).includes('@')) return { message: 'Email must be valid' };
   if (!data['nome']) return { message: 'First name is required' };
@@ -46,15 +39,9 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
   
   // Get the days open
   const daysOpenData = daysOfWeek.map((day: Day, index: number) => {
-    console.log('day', day);
-    const isOpen = data[`${day}-isOpen`] === 'on';
-    console.log('day', data[`${day}-isOpen`]);
-    console.log('day', data[`${day}-apertura`]);
-    console.log('day', data[`${day}-chiusura`]);
-
-    console.log('isOpen', day, isOpen);
-    const opening = data[`${day}-apertura`];
-    const closing = data[`${day}-chiusura`];
+    const isOpen = formData.get(`${day}-isOpen`) === 'on';
+    const opening = formData.get(`${day}-apertura`);
+    const closing = formData.get(`${day}-chiusura`);
     if (isOpen ) {
       return {
         day_open: index,
@@ -64,43 +51,34 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     }
     return null;
   });
-  console.log('daysOpenData', daysOpenData);
-  
-  // Create the user
-  const user = await createUser({
+
+  const json = {
     email: data['email'],
     name: data['nome'],
     surname: data['cognome'],
     password: data['password'],
-  })
+    restaurant: {
+      name: data['nome-ristorante'],
+      address: data['indirizzo'],
+      city: data['city'],
+      cuisine: data['cucina'],
+      tables: parseInt(data['coperti']),
+      phone_number: data['numero'],
+      email: data['email-ristorante'],
+      description: data['descrizione'],
+    },
+    staff: {
+      role: 'admin',
+    },
+    dayopen: {
+      days_open: daysOpenData.filter(day => day !== null),
+    },
+  };
 
-  // Create the restaurant
-  const restaurant = await createRestaurant({
-    name: data['nome-ristorante'],
-    address: data['indirizzo'],
-    city: data['city'],
-    cuisine: data['cucina'],
-    tables: parseInt(data['coperti']),
-    phone_number: data['numero'],
-    email: data['email-ristorante'],
-    description: data['descrizione'],
-  })
-  // Create the staff
-  const staff = await createStaff({
-    restaurant_id: restaurant.id,
-    role: 'admin',
-    user_id: user.id
-  })
+  const result = await createAdmin(json);
   
-  //create days open
-  const daysOpen = await createDaysOpen({
-    restaurant_id: restaurant.id,
-    days_open: daysOpenData.filter(day => day !== null)
-  })
-  
-  if (!user || !restaurant || !staff || !daysOpen) {
+  if (result == null) {
     return { message: 'Registration failed' }
   }
-  return { message: 'Registration successful' }
-  
+  redirect("login?signup=success");
 }

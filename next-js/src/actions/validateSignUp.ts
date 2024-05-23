@@ -1,4 +1,5 @@
 'use server'
+import { redirect } from "next/navigation"
 import { createUser } from "../lib/database/user"
 
 export async function validateSignUp(prevState:any, formData: FormData) {
@@ -37,8 +38,8 @@ export async function validateSignUp(prevState:any, formData: FormData) {
 
     // Create the customer
     const response = await createUser({ email: email, name: firstName, surname: lastName, password: password })
-    if (!response) {
-        return { message: 'Registration failed' }
+    if (response == null) {
+        return { message: 'Registration failed, credenziali non valide!' }
     }
-    return { message: 'Registration successful' }
+    redirect('/login?signup=success')
 }
