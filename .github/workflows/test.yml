@@ -1,7 +1,10 @@
 name: Code Coverage
-  
+
 on: 
   push:
+    branches:
+      - 'develop'
+  pull_request:
     branches:
       - 'develop'
 
@@ -36,7 +39,7 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --job-flag backend
 
       - name: Convert coverage to MD
         id: coverage
@@ -45,11 +48,6 @@ jobs:
           echo "### Backend Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-      
-      - name: Add coverage report to the PR
-        uses: mshick/add-pr-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.MD_REPORT }}
 
       - name: Add coverage report to the job summary
         run: |
@@ -73,7 +71,7 @@ jobs:
         with: 
           node-version: 21
 
-      - name:  Install NPM dependencies
+      - name: Install NPM dependencies
         run: npm ci
 
       - name: Run tests
@@ -86,7 +84,7 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --job-flag frontend
 
       - name: Convert coverage to MD
         id: coverage
@@ -95,11 +93,6 @@ jobs:
           echo "### Frontend Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-      
-      - name: Add coverage report to the PR
-        uses: mshick/add-pr-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.MD_REPORT }}
 
       - name: Add coverage report to the job summary
         run: |
@@ -135,25 +128,28 @@ jobs:
           coveralls --version
 
       - name: Send coverage to Coveralls
-        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: coveralls report ./coverage/lcov.info -r ${{ secrets.COVERALLS_REPO_TOKEN }} --job-flag websocket
 
       - name: Convert coverage to MD
         id: coverage
         run: |
           echo 'MD_REPORT<<EOF' >> $GITHUB_OUTPUT
-          echo "### Backend Code Coverage" >> $GITHUB_OUTPUT
+          echo "### Websocket Code Coverage" >> $GITHUB_OUTPUT
           cat "./coverage/coverage.txt" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-      
-      - name: Add coverage report to the PR
-        uses: mshick/add-pr-comment@v2
-        with:
-          message: ${{ steps.coverage.outputs.MD_REPORT }}
 
       - name: Add coverage report to the job summary
         run: |
           echo "${{ steps.coverage.outputs.MD_REPORT }}" >> $GITHUB_STEP_SUMMARY
 
-
-          
-      
+  finalize:
+    needs: [backend-test, frontend-test, websocket-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Coveralls
+        run: |
+          curl -L https://coveralls.io/coveralls-linux.tar.gz | tar -xz -C /usr/local/bin
+          chmod +x /usr/local/bin/coveralls
+          coveralls --version
+      - name: Finalize Coveralls
+        run: coveralls done -r ${{ secrets.COVERALLS_REPO_TOKEN }}

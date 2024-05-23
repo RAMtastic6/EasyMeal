@@ -124,6 +124,12 @@ export class ReservationService {
     return reservations;
   }
 
+
+  async getReservationsByUserId(userId: number) {
+    const reservations = await this.reservationRepository.find({ where: { users:{id:userId}  }, relations:{users:true} });
+    return reservations;
+  }
+
   async acceptReservation(id: number) {
     if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } }) == null) {
       return null;
