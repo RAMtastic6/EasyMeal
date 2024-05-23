@@ -8,7 +8,10 @@ export async function login(email: string, password: string) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email: email, password: password }),
+      body: JSON.stringify({
+        email: email, 
+        password: password 
+      }),
     });
     if (response.status != 200) {
       return null;

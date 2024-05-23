@@ -1,6 +1,6 @@
 'use client';
 import { createSession } from "../lib/session";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 
@@ -9,6 +9,7 @@ export default function login() {
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const router = useRouter();
+	const params = useSearchParams();
 
 	const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -31,7 +32,9 @@ export default function login() {
 						<h2 className="text-center text-xl font-bold leading-9 tracking-tight text-red-950">
 							Accedi al tuo account
 						</h2>
-
+						<h3>
+							{params.get('signup') == 'success' && <p className="text-green-500">Registrazione avvenuta con successo!</p>}
+						</h3>
 						<div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
 							<form className="space-y-6" action="#" method="POST" onSubmit={handleLogin}>
 								<div>
