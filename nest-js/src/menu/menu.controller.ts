@@ -10,5 +10,4 @@ export class MenuController {
     async create(@Body() createMenuDto: CreateMenuDto) {
         return await this.menuRepository.create(createMenuDto);
     }
-   
 }

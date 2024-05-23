@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, NotFoundException, BadRequestException, ParseIntPipe } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto as RestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
@@ -56,18 +56,18 @@ export class RestaurantController {
   }
   
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.restaurantService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.restaurantService.findOne(id);
   }
 
   @Get(':id/booked-tables')
-  async getBookedTables(@Param('id') id: string, @Query('date') date: string) {
-    return await this.restaurantService.getBookedTables(+id, date);
+  async getBookedTables(@Param('id', ParseIntPipe) id: number, @Query('date') date: string) {
+    return await this.restaurantService.getBookedTables(id, date);
   }
 
   @Get(':id/menu')
-  async getRestaurantAndMenuByRestaurantId(@Param('id') id: string) {
-    const result = await this.restaurantService.getRestaurantAndMenuByRestaurantId(+id);
+  async getRestaurantAndMenuByRestaurantId(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.restaurantService.getRestaurantAndMenuByRestaurantId(id);
     if (result == null) {
       throw new NotFoundException('Reservation not found');
     }

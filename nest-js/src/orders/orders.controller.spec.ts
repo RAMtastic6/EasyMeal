@@ -387,7 +387,7 @@ describe('OrdersController', () => {
   describe('getReservationOrders', () => {
     it('should get the orders for a reservation', async () => {
       // Arrange
-      const reservationId = '1';
+      const reservationId = 1;
       const orders = [{ id: 1 }, { id: 2 }] as Orders[];
       jest.spyOn(ordersService, 'getReservationOrders').mockResolvedValue(orders);
   
@@ -401,7 +401,7 @@ describe('OrdersController', () => {
   
     it('should throw NotFoundException if no orders found for the reservation', async () => {
       // Arrange
-      const reservationId = '1';
+      const reservationId = 1;
       jest.spyOn(ordersService, 'getReservationOrders').mockResolvedValue([]);
 
 

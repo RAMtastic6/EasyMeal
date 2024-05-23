@@ -56,7 +56,6 @@ describe('RestaurantController', () => {
     it('should call restaurantService.create with the provided createRestaurantDto',
     async () => {
       const createRestaurantDto: CreateRestaurantDto = {
-        id: 0,
         name: 'test',
         address: 'test',
         city: 'test',
@@ -64,6 +63,7 @@ describe('RestaurantController', () => {
         phone_number: 'test',
         email: 'test',
         tables: 1,
+        description: ''
       };
       jest.spyOn(service, 'create').mockResolvedValueOnce({} as any);
       await controller.create(createRestaurantDto);
@@ -72,7 +72,6 @@ describe('RestaurantController', () => {
 
     it('should throw BadRequestException if result is null', async () => {
       const createRestaurantDto: CreateRestaurantDto = {
-        id: 0,
         name: '',
         address: '',
         city: '',
@@ -80,6 +79,7 @@ describe('RestaurantController', () => {
         phone_number: '',
         email: '',
         tables: 0,
+        description: ''
       };
       jest.spyOn(service, 'create').mockReturnValueOnce(null);
       await expect(controller.create(createRestaurantDto)).rejects.toThrow(BadRequestException);
@@ -123,36 +123,36 @@ describe('RestaurantController', () => {
 
   describe('findOne', () => {
     it('should call restaurantService.findOne with the provided id', async () => {
-      const id = '1';
+      const id = 1;
       await controller.findOne(id);
-      expect(service.findOne).toHaveBeenCalledWith(+id);
+      expect(service.findOne).toHaveBeenCalledWith(id);
     });
   });
 
   describe('getBookedTables', () => {
     it('should call restaurantService.getBookedTables with the provided id and date', 
     async () => {
-      const id = '1';
+      const id = 1;
       const date = '2022-01-01';
       await controller.getBookedTables(id, date);
-      expect(service.getBookedTables).toHaveBeenCalledWith(+id, date);
+      expect(service.getBookedTables).toHaveBeenCalledWith(id, date);
     });
   });
 
   describe('getRestaurantAndMenuByRestaurantId', () => {
     it('should call restaurantService.getRestaurantAndMenuByRestaurantId with the provided id', async () => {
-      const id = '1';
+      const id = 1;
       const result = {} as Restaurant;
       jest.spyOn(service, 'getRestaurantAndMenuByRestaurantId').mockResolvedValueOnce(result);
       await expect(controller.getRestaurantAndMenuByRestaurantId(id)).resolves.toBe(result);
-      expect(service.getRestaurantAndMenuByRestaurantId).toHaveBeenCalledWith(+id);
+      expect(service.getRestaurantAndMenuByRestaurantId).toHaveBeenCalledWith(id);
     });
 
     it('should throw NotFoundException if result is null', async () => {
-      const id = '1';
+      const id = 1;
       jest.spyOn(service, 'getRestaurantAndMenuByRestaurantId').mockResolvedValue(null);
       await expect(controller.getRestaurantAndMenuByRestaurantId(id)).rejects.toThrow(NotFoundException);
-      expect(service.getRestaurantAndMenuByRestaurantId).toHaveBeenCalledWith(+id);
+      expect(service.getRestaurantAndMenuByRestaurantId).toHaveBeenCalledWith(id);
     });
   });
 });
