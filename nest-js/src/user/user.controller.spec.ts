@@ -2,9 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserDto } from './dto/create-user.dto';
-import { AdminDto } from './dto/create-admin.dto';
-import { User, UserRole } from './entities/user.entity';
 import { HttpException } from '@nestjs/common';
+import { User } from './entities/user.entity';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -18,9 +17,7 @@ describe('UserController', () => {
           provide: UserService,
           useValue: {
             create_user: jest.fn(),
-            create_admin: jest.fn(),
             findOne: jest.fn(),
-            login: jest.fn()
           }
         }
       ],
@@ -38,42 +35,6 @@ describe('UserController', () => {
     expect(service).toBeDefined();
   });
 
-  describe('createAdmin', () => {
-    const createAdminDto: AdminDto = {
-      name: 'admin',
-      email: 'admin@test.com',
-      password: 'admin123',
-      surname: 'admin',
-      restaurant_name: '',
-      restaurant_address: '',
-      restaurant_city: '',
-      restaurant_cuisine: '',
-      restaurant_tables: 0,
-      restaurant_phone_number: '',
-      restaurant_email: ''
-    };
-    const admin: User = {
-      name: 'admin',
-      email: 'admin@test.com',
-      password: 'admin123',
-      surname: 'admin',
-      id: 1,
-      role: UserRole.USER,
-      orders: [],
-      reservations: []
-    };
-
-    it('should call the method with correct parameters', async () => {
-      await controller.createAdmin(createAdminDto);
-      expect(service.create_admin).toHaveBeenCalledWith(createAdminDto);
-    });
-
-    it('should return the result of the service createAdmin method', async () => {
-      jest.spyOn(service, 'create_admin').mockResolvedValueOnce(admin);
-      expect(await controller.createAdmin(createAdminDto)).toBe(admin);
-    });
-  });
-
   describe('create', () => {
     const createUserDto: UserDto = {
       name: 'user',
@@ -81,18 +42,16 @@ describe('UserController', () => {
       password: 'user123',
       surname: 'user',
     };
-    const user: User = {
+    const user = {
       name: 'user',
       email: 'user@test.com',
       password: 'user123',
       surname: 'user',
       id: 1,
-      role: UserRole.USER,
-      orders: [],
-      reservations: []
-    };
+    } as User;
 
     it('should call the service create method with the correct parameters', async () => {
+      jest.spyOn(service, 'create_user').mockResolvedValueOnce(user);
       await controller.create(createUserDto);
       expect(service.create_user).toHaveBeenCalledWith(createUserDto);
     });
@@ -105,18 +64,16 @@ describe('UserController', () => {
 
   describe('findOne', () => {
     const userId = 1;
-    const user: User = {
+    const user = {
       name: 'user',
       email: 'user@test.com',
       password: 'user123',
       surname: 'user',
       id: userId,
-      role: UserRole.USER,
-      orders: [],
-      reservations: []
-    };
+    } as User;
 
     it('should call the service findOne method with the correct parameter', async () => {
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(user);
       await controller.findOne(userId.toString());
       expect(service.findOne).toHaveBeenCalledWith(userId);
     });
@@ -124,40 +81,6 @@ describe('UserController', () => {
     it('should return the result of the service findOne method', async () => {
       jest.spyOn(service, 'findOne').mockResolvedValueOnce(user);
       expect(await controller.findOne(userId.toString())).toBe(user);
-    });
-  });
-
-  describe('login', () => {
-    const loginDto = {
-      email: 'user@test.com',
-      password: 'user123',
-    };
-
-    const result = {
-      token: 'token',
-      userName: 'user',
-      role: UserRole.USER
-    }
-
-    it('should call the service login method with the correct parameters', async () => {
-      jest.spyOn(service, 'login').mockResolvedValueOnce(result);
-      await controller.login(loginDto);
-      expect(service.login).toHaveBeenCalledWith(loginDto.email, loginDto.password);
-    });
-
-    it('should return the result of the service login method', async () => {
-      jest.spyOn(service, 'login').mockResolvedValueOnce(result);
-      expect(await controller.login(loginDto)).toBe(result);
-    });
-
-    it('should throw an HttpException if the service login method returns null', async () => {
-      jest.spyOn(service, 'login').mockResolvedValueOnce(null);
-      expect(async () => {
-        await controller.login(loginDto);
-      }).rejects.toThrow(HttpException).catch((e) => {
-        expect(e.message).toBe('Invalid credentials');
-        expect(e.getStatus()).toBe(401);
-      });
     });
   });
 });

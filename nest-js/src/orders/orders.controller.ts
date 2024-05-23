@@ -25,7 +25,6 @@ export class OrdersController {
     food_id: number,
     token: string 
   }) {
-    console.log(body);
     const user = await this.authService.verifyToken(body.token);
     if (user == null) {
       throw new BadRequestException('Invalid token');

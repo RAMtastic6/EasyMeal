@@ -8,9 +8,9 @@ export class FoodController {
   constructor(private readonly foodService: FoodService) {}
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    const result = this.foodService.findOne(id);
-    if (result) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.foodService.findOne(id);
+    if (result != null) {
       return result;
     }
     throw new NotFoundException(`Food with id ${id} not found`);

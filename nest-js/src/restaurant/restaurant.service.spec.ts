@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { RestaurantService } from './restaurant.service';
 import { Restaurant } from './entities/restaurant.entity';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
-import { skip } from 'node:test';
+import { Daysopen } from '../daysopen/entities/daysopen.entity';
 
 describe('RestaurantService', () => {
   let service: RestaurantService;
@@ -50,14 +50,17 @@ describe('RestaurantService', () => {
         city: 'city',
         cuisine: 'cuisine',
       };
-      jest.spyOn(repo, 'createQueryBuilder').mockReturnValue({
-        innerJoin: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockReturnValueOnce([]),
-        skip: jest.fn().mockReturnValueOnce(() => ({
-          take: jest.fn().mockReturnThis(),
-        })),
-      } as any);
+      const queryBuilder = {
+        innerJoin: () => queryBuilder,
+        andWhere: () => queryBuilder,
+        getMany: jest.fn().mockReturnValue([]),
+        skip: () => ({
+          take: () => queryBuilder
+        })
+      };
+      jest.spyOn(repo, 'createQueryBuilder').mockImplementation(
+        () => queryBuilder as any
+      );
       const result = await service.getFilteredRestaurants(query, 1, 1);
       expect(repo.createQueryBuilder).toHaveBeenCalled();
       expect(result).toEqual([]);
@@ -72,8 +75,8 @@ describe('RestaurantService', () => {
       email: 'email',
       name: 'restaurant',
       phone_number: 'phone_number',
-      id: 0,
-      daysOpen: '',
+      tables: 1,
+      id: 0
     };
 
     const restaurant: Restaurant = {
@@ -103,16 +106,12 @@ describe('RestaurantService', () => {
 
     it('should throw an error if the restaurant already exists', async () => {
       jest.spyOn(repo, 'findOne').mockResolvedValueOnce(restaurant);
-      await expect(service.create(createRestaurantDto)).rejects.toThrow(HttpException).catch((e) =>
-        expect(e.message).toBe('Restaurant already exists')
-      );
+      await expect(service.create(createRestaurantDto)).resolves.toBe(null);
     });
 
     it('should throw an error if the input is invalid', async () => {
       delete createRestaurantDto.name;
-      await expect(service.create(createRestaurantDto)).rejects.toThrow(HttpException).catch((e) =>
-        expect(e.message).toBe('Invalid input')
-      );
+      expect(await service.create(createRestaurantDto)).toBe(null);
     });
   });
 
@@ -219,6 +218,26 @@ describe('RestaurantService', () => {
         },
       });
       expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe('getNumberOfFilteredRestaurants', () => {
+    it('should return the number of filtered restaurants', async () => {
+      const query = {
+        date: '2021-06-01',
+        name: 'restaurant',
+        city: 'city',
+        cuisine: 'cuisine',
+      };
+      jest.spyOn(repo, 'createQueryBuilder').mockReturnValue({
+        where: jest.fn().mockReturnThis(),
+        getCount: jest.fn().mockResolvedValueOnce(5),
+        innerJoin: jest.fn().mockReturnThis(),
+        andWhere: jest.fn().mockReturnThis(),
+      } as any);
+      const result = await service.getNumberOfFilteredRestaurants(query);
+      expect(repo.createQueryBuilder).toHaveBeenCalled();
+      expect(result).toBe(5);
     });
   });
 });

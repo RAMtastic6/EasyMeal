@@ -72,6 +72,13 @@ export class ReservationController {
     return await this.reservationService.getReservationsByRestaurantId(restaurantId);
   }
 
+  @Get('user/:userId')
+  async getReservationsByUserId(@Param('userId') userId: number) {
+    return await this.reservationService.getReservationsByUserId(userId);
+  }
+
+
+
   @Post(':id/accept')
   async acceptReservation(@Param('id', ParseIntPipe) id: number) {
     const result = await this.reservationService.acceptReservation(id);

@@ -8,7 +8,7 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) { }
 
   @Get('filter')
-  getFilteredRestaurants(
+  async getFilteredRestaurants(
     @Query() query: {
       date?: string,
       name?: string,
@@ -18,12 +18,12 @@ export class RestaurantController {
     @Query('currentPage') currentPage: number,
     @Query('ITEMS_PER_PAGE') ITEMS_PER_PAGE: number
   ) {
-    return this.restaurantService.getFilteredRestaurants(query, currentPage, ITEMS_PER_PAGE);
+    return await this.restaurantService.getFilteredRestaurants(query, currentPage, ITEMS_PER_PAGE);
   }
 
   @Post()
-  create(@Body() createRestaurantDto: RestaurantDto) {
-    const result = this.restaurantService.create(createRestaurantDto);
+  async create(@Body() createRestaurantDto: RestaurantDto) {
+    const result = await this.restaurantService.create(createRestaurantDto);
     if (result == null) {
       throw new BadRequestException('Invalid restaurant');
     }
@@ -31,18 +31,18 @@ export class RestaurantController {
   }
 
   @Get()
-  findAll() {
-    return this.restaurantService.findAll();
+  async findAll() {
+    return await this.restaurantService.findAll();
   }
 
   @Get('cuisines')
-  findAllCuisines() {
-    return this.restaurantService.findAllCuisines();
+  async findAllCuisines() {
+    return await this.restaurantService.findAllCuisines();
   }
 
   @Get('cities')
-  findAllCities() {
-    return this.restaurantService.findAllCities();
+  async findAllCities() {
+    return await this.restaurantService.findAllCities();
   }
 
   @Get('count')
@@ -56,13 +56,13 @@ export class RestaurantController {
   }
   
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.restaurantService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.restaurantService.findOne(id);
   }
 
   @Get(':id/booked-tables')
-  getBookedTables(@Param('id', ParseIntPipe) id: number, @Query('date') date: string) {
-    return this.restaurantService.getBookedTables(id, date);
+  async getBookedTables(@Param('id', ParseIntPipe) id: number, @Query('date') date: string) {
+    return await this.restaurantService.getBookedTables(id, date);
   }
 
   @Get(':id/menu')
