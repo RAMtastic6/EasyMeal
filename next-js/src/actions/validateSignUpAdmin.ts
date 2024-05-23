@@ -1,14 +1,12 @@
 'use server'
-import { createUser } from "../lib/database/user"
-import { createRestaurant } from "../lib/database/restaurant"
-import { createStaff } from "../lib/database/staff"
-import { DaysopenDto, createDaysOpen } from "../lib/database/daysopen"
+import { AdminDto, createAdmin } from "../lib/database/user"
+import { DaysopenDto } from "../lib/database/daysopen"
 import { getFormData } from "@/src/lib/utils"
-import { Day, DaySchedule, daysOfWeek } from "@/src/lib/types/definitions"
+import { Day, daysOfWeek } from "@/src/lib/types/definitions"
+import { redirect } from "next/navigation";
 
 export async function validateSignUpAdmin(prevState: any, formData: FormData) {
-  //TODO: validate the form data
-  console.log('validateSignUpAdmin', formData);
+
   // Get the form data
   const data = getFormData([
     'email',
@@ -18,9 +16,6 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     'city',
     'indirizzo',
     'descrizione',
-    ...daysOfWeek.map(day => `${day}-isOpen`),
-    ...daysOfWeek.map(day => `${day}-apertura`),
-    ...daysOfWeek.map(day => `${day}-chiusura`),
     'coperti',
     'numero',
     'email-ristorante',
@@ -28,7 +23,6 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     'password',
     'password_confirmation',
   ], formData);
-  console.log('data', data);
   
   if (!data['email'] || !String(data['email']).includes('@')) return { message: 'Email must be valid' };
   if (!data['nome']) return { message: 'First name is required' };
@@ -64,7 +58,8 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     }
     return null;
   });*/
-  let daysOpenData: {
+
+  const daysOpenData: {
     day_open: number;
     opening: string;
     closing: string;
@@ -81,42 +76,39 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
       });
     }
   });
-  console.log('daysOpenData', daysOpenData);
-  
-  // Create the user
-  const user = await createUser({
+
+  const json: AdminDto = {
     email: data['email'],
     name: data['nome'],
     surname: data['cognome'],
     password: data['password'],
-  })
+    restaurant: {
+      name: data['nome-ristorante'],
+      address: data['indirizzo'],
+      city: data['city'],
+      cuisine: data['cucina'],
+      tables: parseInt(data['coperti']),
+      phone_number: data['numero'],
+      email: data['email-ristorante'],
+      description: data['descrizione'],
+    },
+    staff: {
+      role: 'admin',
+    },
+    dayopen: {
+      days_open: daysOpenData,
+    },
+  };
 
-  // Create the restaurant
-  const restaurant = await createRestaurant({
-    name: data['nome-ristorante'],
-    address: data['indirizzo'],
-    city: data['city'],
-    cuisine: data['cucina'],
-    tables: parseInt(data['coperti']),
-    phone_number: data['numero'],
-    email: data['email-ristorante'],
-  })
-  // Create the staff
-  const staff = await createStaff({
-    restaurant_id: restaurant.id,
-    role: 'admin',
-    user_id: user.id
-  })
+  const response = await createAdmin(json);
   
-  //create days open
-  const daysOpen = await createDaysOpen({
-    restaurant_id: restaurant.id,
-    days_open: daysOpenData
-  })
-  
-  if (!user || !restaurant || !staff || !daysOpen) {
-    return { message: 'Registration failed' }
+  if (!response.ok) {
+    const data = await response.json();
+    if(data.message && Array.isArray(data.message))
+      return { message: data.message.join(', ') };
+    if(data.message)
+      return { message: data.message };
+    return { message: 'Registration failed' };
   }
-  return { message: 'Registration successful' }
-  
+  redirect("login?signup=success");
 }

@@ -26,7 +26,7 @@ describe('FoodController', () => {
   describe('findOne', () => {
     it('should return the food with the given id', async () => {
       // Arrange
-      const id = '1';
+      const id = 1;
       const food = { id: 1, name: 'Pizza' } as Food;
       jest.spyOn(service, 'findOne').mockResolvedValueOnce(food);
 
@@ -40,7 +40,7 @@ describe('FoodController', () => {
 
     it('should throw NotFoundException if food is not found', async () => {
       // Arrange
-      const id = '1';
+      const id = 1;
       jest.spyOn(service, 'findOne').mockResolvedValueOnce(null);
 
       // Act & Assert

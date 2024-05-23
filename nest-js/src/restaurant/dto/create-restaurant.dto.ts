@@ -23,4 +23,7 @@ export class CreateRestaurantDto {
 
     @IsNumberString()
     phone_number: string;
+
+    @IsNotEmpty()
+    description: string;
 }

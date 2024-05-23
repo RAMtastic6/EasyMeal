@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, HttpCode, BadRequestException, NotFoundException, ParseIntPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/create-user.dto';
+import { AdminDto } from './dto/create-admin.dto';
 
 @Controller('user')
 export class UserController {
@@ -9,6 +10,15 @@ export class UserController {
   @Post('user')
   async create(@Body() createCustomerDto: UserDto) {
     const result = await this.userService.create_user(createCustomerDto);
+    if (result == null) {
+      throw new BadRequestException('Invalid user');
+    }
+    return result;
+  }
+
+  @Post('admin')
+  async createAdmin(@Body() createCustomerDto: AdminDto) {
+    const result = await this.userService.create_admin(createCustomerDto);
     if (result == null) {
       throw new BadRequestException('Invalid user');
     }

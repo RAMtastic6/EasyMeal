@@ -107,6 +107,7 @@ export async function createRestaurant(data: {
 	tables: number,
 	phone_number: string,
 	email: string,
+	description: string
 }) {
 	const response = await fetch(`${Endpoints.restaurant}`, {
 		method: 'POST',
