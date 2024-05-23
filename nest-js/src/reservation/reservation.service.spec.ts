@@ -10,6 +10,7 @@ import { Restaurant } from '../restaurant/entities/restaurant.entity';
 import { NotificationService } from '../notification/notification.service';
 import { StaffService } from '../staff/staff.service';
 import { Staff } from '../staff/enities/staff.entity';
+import { UserService } from '../user/user.service';
 
 describe('ReservationService', () => {
   let service: ReservationService;
@@ -17,6 +18,7 @@ describe('ReservationService', () => {
   let reservationRepo: Repository<Reservation>;
   let notificationService: NotificationService;
   let staffService: StaffService;
+  let userService: UserService;
   const reservationToken = getRepositoryToken(Reservation);
 
   beforeEach(async () => {
@@ -51,6 +53,12 @@ describe('ReservationService', () => {
           useValue: {
             getAdminByRestaurantId: jest.fn(),
           },
+        },
+        {
+          provide: UserService,
+          useValue: {
+            findOne: jest.fn(),
+          },
         }
       ],
     }).compile();
@@ -60,6 +68,7 @@ describe('ReservationService', () => {
     reservationRepo = module.get<Repository<Reservation>>(reservationToken);
     notificationService = module.get<NotificationService>(NotificationService);
     staffService = module.get<StaffService>(StaffService);
+    userService = module.get<UserService>(UserService);
   });
 
   it('service should be defined', () => {
@@ -106,7 +115,7 @@ describe('ReservationService', () => {
       jest.spyOn(staffService, 'getAdminByRestaurantId').mockResolvedValueOnce(
         {user_id: 1} as Staff
       );
-  
+      jest.spyOn(userService, 'findOne').mockResolvedValueOnce({ id: userId } as any);
       jest.spyOn(notificationService, 'create').mockResolvedValueOnce(undefined);
     });
   
@@ -153,7 +162,7 @@ describe('ReservationService', () => {
 
   describe('addCustomer', () => {
     const params = {
-      customer_id: 1,
+      user_id: 1,
       reservation_id: 1,
     };
 

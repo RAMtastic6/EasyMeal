@@ -4,7 +4,7 @@ export class AddCustomerDTO {
     
     @IsNotEmpty()
     @IsNumberString()
-    customer_id: number; 
+    user_id: number; 
 
     @IsNotEmpty()
     @IsNumberString()

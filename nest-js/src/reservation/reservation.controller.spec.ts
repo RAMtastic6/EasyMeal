@@ -117,7 +117,7 @@ describe('ReservationController', () => {
 
   describe('addCustomer', () => {
     it('should add a customer to a reservation', async () => {
-      const params = { customer_id: 1, reservation_id: 1 };
+      const params = { user_id: 1, reservation_id: 1 };
 
       const expectedResult = { id: 1, ...params };
 
@@ -130,7 +130,7 @@ describe('ReservationController', () => {
     });
 
     it('should throw NotFoundException if reservation is not found', async () => {
-      const params = { customer_id: 1, reservation_id: 1 };
+      const params = { user_id: 1, reservation_id: 1 };
 
       jest.spyOn(service, 'addCustomer').mockResolvedValue(null);
 
@@ -287,8 +287,8 @@ describe('ReservationController', () => {
 
   describe('verifyReservation', () => {
     it('should verify a reservation', async () => {
-      const reservationId = 1;
       const verifyReservationDto = {
+        id_prenotazione: 1,
         token: 'valid_token',
       } as verifyReservationDto;
   
@@ -297,37 +297,38 @@ describe('ReservationController', () => {
       jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: 1 } as any);
       jest.spyOn(service, 'verifyReservation').mockResolvedValue(expectedResult);
   
-      const result = await controller.verifyReservation(reservationId, verifyReservationDto);
+      const result = await controller.verifyReservation(verifyReservationDto);
   
       expect(authService.verifyToken).toHaveBeenCalledWith(verifyReservationDto.token);
-      expect(service.verifyReservation).toHaveBeenCalledWith(reservationId, 1);
+      expect(service.verifyReservation).toHaveBeenCalledWith(
+        verifyReservationDto.id_prenotazione, 1);
       expect(result).toEqual(expectedResult);
     });
   
     it('should throw UnauthorizedException if token is invalid', async () => {
-      const reservationId = 1;
       const verifyReservationDto = {
         token: 'invalid_token',
+        id_prenotazione: 1,
       } as verifyReservationDto;
   
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(null);
   
       await expect(
-        controller.verifyReservation(reservationId, verifyReservationDto)
+        controller.verifyReservation(verifyReservationDto)
       ).rejects.toThrow(UnauthorizedException);
     });
   
     it('should throw NotFoundException if reservation is not found', async () => {
-      const reservationId = 1;
       const verifyReservationDto = {
         token: 'valid_token',
+        id_prenotazione: 1,
       } as verifyReservationDto;
   
       jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: 1 } as any);
       jest.spyOn(service, 'verifyReservation').mockResolvedValue(null);
   
       await expect(
-        controller.verifyReservation(reservationId, verifyReservationDto)
+        controller.verifyReservation(verifyReservationDto)
       ).rejects.toThrow(NotFoundException);
     });
   });

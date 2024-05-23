@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UnauthorizedException, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UnauthorizedException, ParseIntPipe, HttpCode } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -78,16 +78,16 @@ export class ReservationController {
     return await this.reservationService.getReservationsByUserId(userId);
   }
 
-  @Post(':reservation_id/verify')
+  @Post('verify')
+  @HttpCode(200)
   async verifyReservation(
-    @Param('reservation_id', ParseIntPipe) reservation_id: number,
     @Body() data: verifyReservationDto,
   ) {
     const token = await this.authService.verifyToken(data.token);
     if(token == null)
       throw new UnauthorizedException('Invalid token');
     const result = await this.reservationService.verifyReservation(
-      reservation_id,
+      data.id_prenotazione,
       token.id
     );
     if (result == null)

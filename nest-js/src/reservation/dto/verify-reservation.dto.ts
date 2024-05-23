@@ -1,7 +1,10 @@
-import { IsJWT, IsNotEmpty, IsString } from "class-validator";
+import { IsJWT, IsNotEmpty, IsNumberString, IsString } from "class-validator";
 
 export class verifyReservationDto {
   
   @IsJWT()
   token: string;
+
+  @IsNumberString()
+  id_prenotazione: number;
 }
