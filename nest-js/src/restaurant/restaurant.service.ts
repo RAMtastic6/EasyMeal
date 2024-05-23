@@ -25,7 +25,7 @@ export class RestaurantService {
       queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
     }
     if (query.name) {
-      queryBuilder = queryBuilder.andWhere('restaurant.name = :name', { name: query.name });
+      queryBuilder = queryBuilder.andWhere('restaurant.name LIKE :name', { name: `%${query.name}%` });
     }
     if (query.city) {
       queryBuilder = queryBuilder.andWhere('restaurant.city = :city', { city: query.city });
@@ -119,7 +119,7 @@ export class RestaurantService {
       queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
     }
     if (query.name) {
-      queryBuilder = queryBuilder.andWhere('restaurant.name = :name', { name: query.name });
+      queryBuilder = queryBuilder.andWhere('restaurant.name LIKE :name', { name: `%${query.name}%` });
     }
     if (query.city) {
       queryBuilder = queryBuilder.andWhere('restaurant.city = :city', { city: query.city });
