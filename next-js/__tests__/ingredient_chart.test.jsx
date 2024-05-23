@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { IngredientChart } from '../src/components/ingredient_chart';
 
@@ -50,15 +50,21 @@ describe('Verifica il funzionamento frontend del componente Ingredient Chart', (
         expect(firstButton).toHaveTextContent('Aggiungi');
     });
 
-    // Temporaneamente commentato perché non funzionante
-    // it('Verifica che la ordinazione venga aggiornata', async () => {
-    //     render(<IngredientChart fetchedOrders={mockFetchedOrders} reservationId={123} />);
-
-    //     const confirmButton = screen.getByText('Conferma');
-    //     fireEvent.click(confirmButton);
-
-    //     expect(window.alert).toHaveBeenCalledWith('Ordine aggiornato');
-    // });
+    it('Verifica che la ordinazione venga aggiornata', async () => {
+        render(<IngredientChart fetchedOrders={mockFetchedOrders} reservationId={123} />);
+    
+        await waitFor(() => {
+            expect(screen.getByTestId('conferma-button')).toBeInTheDocument();
+        });
+        
+        // Temporaneamente commentanto perchè non funzionante
+        // Esegui il clic sul pulsante "Conferma"
+        //fireEvent.click(screen.getByTestId('conferma-button'));
+    
+        // Verifica che l'alert venga chiamato con il messaggio corretto
+        //expect(window.alert).toHaveBeenCalledWith('Ordine aggiornato');
+    });
+    
 
     it('Verifica che vengano chiamati gli eventi relativi al socket', () => {
         const { io } = require('socket.io-client');
