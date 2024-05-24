@@ -110,4 +110,12 @@ export class ReservationController {
       throw new NotFoundException('Reservation not found');
     return result;
   }
+
+  @Post(':id/complete')
+  async completeReservation(@Param('id') id: number) {
+    const result = await this.reservationService.completeReservation(id);
+    if (result == null)
+      throw new NotFoundException('Reservation not found');
+    return result;
+  }
 }

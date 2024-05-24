@@ -113,3 +113,17 @@ export async function rejectReservation(id: number): Promise<any> {
 		status: response.ok,
 	};
 }
+
+export async function completeReservation(id: number): Promise<any> {
+	const response = await fetch(`${Endpoints.reservation}${id}/complete`, {
+		method: "POST",
+		cache: "no-cache",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+	return {
+		body: await response.json(),
+		status: response.ok,
+	};
+}

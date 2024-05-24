@@ -166,6 +166,14 @@ export class ReservationService {
     return true;
   }
 
+  async completeReservation(id: number) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.TO_PAY }}) == null) {
+      return null;
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.COMPLETED });
+    return true;
+  }
+
  async updateStatus(id: number, state: ReservationStatus, user_id: number) {
     const reservation = await this.reservationRepository.findOne({ 
       where: { id },

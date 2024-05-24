@@ -28,6 +28,7 @@ describe('ReservationController', () => {
             getReservationsByRestaurantId: jest.fn(),
             acceptReservation: jest.fn(),
             rejectReservation: jest.fn(),
+            completeReservation: jest.fn(), 
             getReservationsByUserId: jest.fn(),
             verifyReservation: jest.fn(),
           },
@@ -66,7 +67,7 @@ describe('ReservationController', () => {
         id: expectedResult.id,
         data: expectedResult as any,
       });
-      jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: 1, role: StaffRole.ADMIN});
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: 1, role: StaffRole.ADMIN });
 
       const result = await controller.create(createReservationDto);
 
@@ -107,7 +108,7 @@ describe('ReservationController', () => {
       };
 
       jest.spyOn(service, 'create').mockResolvedValue(null);
-      jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: 1, role: StaffRole.ADMIN});
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: 1, role: StaffRole.ADMIN });
 
       await expect(controller.create(createReservationDto)).rejects.toThrowError(
         BadRequestException,
@@ -277,10 +278,38 @@ describe('ReservationController', () => {
     });
   });
 
-  describe('getReservationsByUserId', () => {
-    it('should return reservations by user Id', async () =>{
+  describe('completeReservation', () => {
+    it('should complete a reservation', async () => {
+      const id = 1;
+      const expectedResult = { id: 1 };
 
-      jest.spyOn(service,'getReservationsByUserId').mockResolvedValue([])
+      // Mocking the completeReservation method of the service
+      jest.spyOn(service, 'completeReservation').mockResolvedValue(true);
+
+      const result = await controller.completeReservation(id);
+
+      // Checking if the completeReservation method was called with the correct id
+      expect(service.completeReservation).toHaveBeenCalledWith(id);
+      // Checking if the result matches the expected result
+      expect(result).toEqual(true);
+    });
+
+    it('should throw NotFoundException if reservation is not found', async () => {
+      const id = 1;
+
+      // Mocking the completeReservation method of the service to return null
+      jest.spyOn(service, 'completeReservation').mockResolvedValue(null);
+
+      // Checking if the controller throws NotFoundException when completeReservation returns null
+      await expect(controller.completeReservation(id)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+
+  describe('getReservationsByUserId', () => {
+    it('should return reservations by user Id', async () => {
+
+      jest.spyOn(service, 'getReservationsByUserId').mockResolvedValue([])
       expect(await controller.getReservationsByUserId(1)).toEqual([])
     })
   })
