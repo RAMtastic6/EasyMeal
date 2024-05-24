@@ -21,7 +21,6 @@ export class NotificationService {
         id: result.id,
         title: result.title,
         message: result.message,
-        status: result.status,
         id_receiver: [result.id_receiver],
       }),
       headers: {

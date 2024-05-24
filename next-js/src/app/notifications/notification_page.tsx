@@ -21,10 +21,11 @@ export function NotificationPage({ notificationsList }: {
   }
 
   useEffect(() => {
-    if(!socket) return;
-    socket.on("onNotification", addNotification);
+    if(!socket.current) return;
+    console.log("Setting up notification listener")
+    socket.current.on("onNotification", addNotification);
     return () => {
-      socket.off("onNotification", addNotification);
+      socket.current?.off("onNotification", addNotification);
     }
   }, [socket]);
 

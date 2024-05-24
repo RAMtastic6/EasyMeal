@@ -4,7 +4,7 @@ import { Socket, io } from "socket.io-client";
 import { Endpoints } from "../lib/database/endpoints";
 import { CustomNotification } from "../lib/types/definitions";
 
-const NotificationContext = createContext<{socket: Socket | null}>({socket: null});
+const NotificationContext = createContext<{socket: any | null}>({socket: null});
 export const useNotification = () => useContext(NotificationContext);
 
 export function NotificationProvider({ children, token }: {
@@ -32,7 +32,7 @@ export function NotificationProvider({ children, token }: {
   }, [token]);
 
   return (
-    <NotificationContext.Provider value={{socket: socketRef.current}}>
+    <NotificationContext.Provider value={{socket: socketRef}}>
       {children}
     </NotificationContext.Provider>
   );
