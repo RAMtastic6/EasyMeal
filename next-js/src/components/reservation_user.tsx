@@ -158,7 +158,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                   </p>
                 </div>
                 <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md text-center">
-                  <h2 className="text-2xl mb-2">Totale: €{Object.keys(orders).map((key: string) => orders[key as keyof typeof orders].reduce((acc: number, order: any) => acc + (order.quantity * order.food.price), 0)).reduce((acc, val) => acc + val, 0).toFixed(2)}</h2>
+                  <h2 className="text-2xl mb-2">Totale: €{Object.keys(orders).map((key: string) => orders[key as keyof typeof orders].reduce((acc: number, order: any) => acc + (order.quantity * order.food.price), 0).toFixed(2))}</h2>
                 </div>
                 <div className="flex justify-center items-center mt-4">
                   <button onClick={handlePayment} className="bg-orange-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-orange-600 transition duration-300">

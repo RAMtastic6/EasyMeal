@@ -17,15 +17,15 @@ jest.mock('../src/lib/database/reservation', () => ({
   }),
 }));
 jest.mock('../src/lib/database/order', () => ({
-  getOrderByReservationId: jest.fn().mockResolvedValue([
-    {
-      id: 1,
-      user_id: 1,
-      food: { id: 1, name: 'Pizza', price: 10 },
-      ingredients: [{ id: 1, ingredient: { id: 1, name: 'Cheese' } }],
-      quantity: 2
-    },
-  ]),
+  getOrderByReservationId: jest.fn().mockResolvedValue({
+      "aperitivo": [{
+        id: 1,
+        user_id: 1,
+        food: { id: 1, name: 'Pizza', price: 10 },
+        ingredients: [{ id: 1, ingredient: { id: 1, name: 'Cheese' } }],
+        quantity: 2
+      }],
+    }),
 }));
 jest.mock('../src/lib/database/restaurant', () => ({
   getRestaurantById: jest.fn().mockResolvedValue({
@@ -51,7 +51,7 @@ describe('Visualizza i dettagli della prenotazione per diversi stati', () => {
     ['1', 'La prenotazione è in attesa di conferma da parte dell\'amministratore.'],
     ['2', 'La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.'],
     ['3', 'La prenotazione è stata rifiutata.'],
-   // ['4', 'Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.'], with state to_pay the test will fail, i don't know why
+    ['4', 'Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.'], 
     ['5', 'La prenotazione è stata pagata e completata.'],
   ])('Visualizza i dettagli della prenotazione per lo stato %s', async (id, expectedText) => {
     const { getByText, queryByText } = render(<ReservationUser params={{ id }} />);
