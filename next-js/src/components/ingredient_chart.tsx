@@ -5,6 +5,8 @@ import { Endpoints } from "../lib/database/endpoints";
 import { saveOrders, updateIngredientsOrder, updateListOrders } from "../lib/database/order";
 import { getToken } from "../lib/dal";
 
+
+
 export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrders: any, reservationId: number }) {
   const [orders, setOrders] = useState<any>(fetchedOrders);
   const socket = useRef<Socket>();

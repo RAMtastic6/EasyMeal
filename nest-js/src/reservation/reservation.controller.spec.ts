@@ -30,6 +30,7 @@ describe('ReservationController', () => {
             rejectReservation: jest.fn(),
             getReservationsByUserId: jest.fn(),
             verifyReservation: jest.fn(),
+            updateStatus: jest.fn(),
           },
         },
         {
@@ -234,11 +235,11 @@ describe('ReservationController', () => {
       const id = 1;
       const expectedResult = { id: 1 } as any;
 
-      jest.spyOn(service, 'acceptReservation').mockResolvedValue(expectedResult);
+      jest.spyOn(service, 'updateStatus').mockResolvedValue(expectedResult);
 
       const result = await controller.acceptReservation(id);
 
-      expect(service.acceptReservation).toHaveBeenCalledWith(
+      expect(service.updateStatus).toHaveBeenCalledWith(
         id, ReservationStatus.ACCEPTED
       );
       expect(result).toEqual(expectedResult);
@@ -247,7 +248,7 @@ describe('ReservationController', () => {
     it('should throw NotFoundException if reservation is not found', async () => {
       const id = 1;
 
-      jest.spyOn(service, 'acceptReservation').mockResolvedValue(null);
+      jest.spyOn(service, 'updateStatus').mockResolvedValue(null);
 
       await expect(controller.acceptReservation(id)).rejects.toThrowError(
         NotFoundException,
@@ -260,11 +261,11 @@ describe('ReservationController', () => {
       const id = 1;
       const expectedResult = { id: 1 };
 
-      jest.spyOn(service, 'rejectReservation').mockResolvedValue(true);
+      jest.spyOn(service, 'updateStatus').mockResolvedValue(true);
 
       const result = await controller.rejectReservation(id);
 
-      expect(service.rejectReservation).toHaveBeenCalledWith(
+      expect(service.updateStatus).toHaveBeenCalledWith(
         id, ReservationStatus.REJECTED
       );
       expect(result).toEqual(true);
@@ -273,7 +274,7 @@ describe('ReservationController', () => {
     it('should throw NotFoundException if reservation is not found', async () => {
       const id = 1;
 
-      jest.spyOn(service, 'rejectReservation').mockResolvedValue(null);
+      jest.spyOn(service, 'updateStatus').mockResolvedValue(null);
 
       await expect(controller.rejectReservation(id)).rejects.toThrow(
         NotFoundException,

@@ -1,7 +1,7 @@
-"use server";
+"use client";
 import Link from 'next/link';
 
-export default async function Header() {
+export default function Header() {
 	return (
 		<header className="bg-orange-500">
 			<div className="mx-auto max-w-screen-xxl px-4 sm:px-6 lg:px-8">

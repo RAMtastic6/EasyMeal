@@ -138,7 +138,7 @@ export class ReservationService {
     return reservations;
   }
 
-  async acceptReservation(id: number) {
+  /*async acceptReservation(id: number) {
     if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } }) == null) {
       return null;
     }
@@ -151,7 +151,7 @@ export class ReservationService {
     }
     await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
     return true;
-  }
+  }*/
 
  async updateStatus(id: number, state: ReservationStatus) {
     const reservation = await this.reservationRepository.findOne({ 

@@ -25,6 +25,7 @@ describe('NotificationGateway', () => {
       id_receiver: [1, 2, 3],
       title: 'Test Title',
       message: 'Test Message',
+      id: 1,
     };
 
     await gateway.emitAll(notification);
@@ -33,6 +34,8 @@ describe('NotificationGateway', () => {
     expect(emitSpy).toHaveBeenCalledWith(['1', '2', '3']);
 
     expect(emitToSpy).toHaveBeenCalled();
-    expect(emitToSpy).toHaveBeenCalledWith('onNotification', JSON.stringify({ title: notification.title, message: notification.message }));
+    expect(emitToSpy).toHaveBeenCalledWith('onNotification',{ 
+      title: notification.title, message: notification.message, id: notification.id
+    });
   });
 });

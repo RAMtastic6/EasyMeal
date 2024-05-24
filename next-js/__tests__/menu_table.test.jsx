@@ -6,6 +6,12 @@ import { io } from 'socket.io-client';
 
 // Mocking socket.io-client
 jest.mock('socket.io-client');
+jest.mock('../src/lib/dal', () => {
+    return {
+        verifySession: jest.fn().mockResolvedValue({}),
+        getToken: jest.fn().mockResolvedValue('token'),
+    }
+});
 
 const mockMenuData = {
     id: 1,
@@ -84,8 +90,10 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
         expect(totalPrice).toBeInTheDocument();
     });
 
-    it('Verifica che vengano chiamati gli eventi relativi al socket', () => {
-        render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+    it('Verifica che vengano chiamati gli eventi relativi al socket', async () => {
+        await waitFor(() => {
+            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        });
 
         expect(mockSocket.on).toHaveBeenCalledWith('onMessage', expect.any(Function));
     });

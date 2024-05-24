@@ -38,6 +38,7 @@ describe('NotificationService', () => {
         title: 'title',
       };
       const notification = new Notification();
+      jest.spyOn(global, 'fetch').mockResolvedValue({ json: async () => notification } as any);
       jest.spyOn(repository, 'create').mockReturnValue(notification);
       jest.spyOn(repository, 'save').mockResolvedValue(notification);
 

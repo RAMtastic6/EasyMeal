@@ -271,7 +271,7 @@ describe('ReservationService', () => {
     });
   });
 
-  describe('acceptReservation', () => {
+  /*describe('acceptReservation', () => {
     it('should accept a reservation', async () => {
       const id = 1;
       const reservation = { id: 1, state: 'PENDING' } as unknown as Reservation;
@@ -322,7 +322,7 @@ describe('ReservationService', () => {
 
       expect(result).toEqual(null);
     });
-  });
+  });*/
 
   describe('updateStatus', () => {
     it('should update the status of a reservation', async () => {
