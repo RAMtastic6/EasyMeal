@@ -61,14 +61,14 @@ describe('Verifica il funzionamento frontend del componente Reservation Admin', 
     });
   });
   */
- /*
+ 
  it('Verifica stato reject', async () => {
    const { getByText } = render(<ReservationAdmin params={{ id: '3' }} />);
    await waitFor(() => {
      expect(getByText('La prenotazione è stata rifiutata.')).toBeInTheDocument();
    });
  });
- */
+ 
  /*
   it('Verifica stato to_pay', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '4' }} />);
