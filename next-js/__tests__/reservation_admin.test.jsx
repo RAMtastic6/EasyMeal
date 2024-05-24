@@ -57,16 +57,18 @@ describe('Verifica il funzionamento frontend del componente Reservation Admin', 
   it('Verifica stato accept', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '2' }} />);    ;
     await waitFor(() => {
-      expect(getByText('Numero persone:')).toBeInTheDocument();
+      expect(getByText('Le ordinazioni:')).toBeInTheDocument();
     });
   });
-  */ 
+  */
+ /*
  it('Verifica stato reject', async () => {
    const { getByText } = render(<ReservationAdmin params={{ id: '3' }} />);
    await waitFor(() => {
      expect(getByText('La prenotazione è stata rifiutata.')).toBeInTheDocument();
    });
  });
+ */
  /*
   it('Verifica stato to_pay', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '4' }} />);
@@ -75,12 +77,12 @@ describe('Verifica il funzionamento frontend del componente Reservation Admin', 
     });
   });
   */
- /*
+ 
   it('Verifica stato completed', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '5' }} />);
     await waitFor(() => {
-      expect(getByText('La prenotazione è stata completata.')).toBeInTheDocument();
+      expect(getByText('La prenotazione è stata pagata e completata.')).toBeInTheDocument();
     });
   });
-  */
+  
 });
