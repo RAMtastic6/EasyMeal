@@ -11,6 +11,7 @@ services:
       POSTGRES_DB: easy-meal
     volumes:
       - ./postgres/:/docker-entrypoint-initdb.d
+      - db:/var/lib/postgresql/data
     ports:
       - "7070:7070"
     command: -p 7070
@@ -90,3 +91,7 @@ services:
 networks:
   webnet:
     driver: bridge
+
+volumes:
+  db:
+    driver: local

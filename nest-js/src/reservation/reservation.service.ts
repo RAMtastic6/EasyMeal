@@ -2,47 +2,85 @@ import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Reservation } from './entities/reservation.entity';
+import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { RestaurantService } from 'src/restaurant/restaurant.service';
+import { NotificationService } from '../notification/notification.service';
+import { StaffService } from '../staff/staff.service';
+import { AuthenticationService } from '../authentication/authentication.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ReservationService {
   constructor(
     @InjectRepository(Reservation)
-    private reservationRepository: Repository<Reservation>,
+    private readonly reservationRepository: Repository<Reservation>,
     private readonly restaurantService: RestaurantService,
+    private readonly notificationService: NotificationService,
+    private readonly staffService: StaffService,
+    private readonly userService: UserService
   ) {}
   
-  async create(createReservationDto: CreateReservationDto) {
-    const restaurant = await this.restaurantService.findOne(createReservationDto.restaurant_id);
+  async create(
+    restaurant_id: number,
+    date: string,
+    number_people: number,
+    user_id: number,
+  ) {
+    const restaurant = await this.restaurantService.findOne(restaurant_id);
     if(restaurant == null) {
-      throw new NotFoundException('Restaurant not found');
+      return null;
     }
-    const booked = await this.restaurantService.getBookedTables(createReservationDto.restaurant_id, createReservationDto.date);
+    const booked = await this.restaurantService.getBookedTables(restaurant_id, date);
     if(booked >= restaurant.tables) {
-      throw new HttpException('No tables available', 400);
+      return { status: false, message: 'Restaurant is full' };
     }
-    if(Date.now() > new Date(createReservationDto.date).getTime()) {
-      throw new HttpException('Invalid date', 400);
+    if(Date.now() > new Date(date).getTime()) {
+      return null;
     }
+
+    const user = await this.userService.findOne(user_id);
+
     const reservation = this.reservationRepository.create({
-      date: new Date(createReservationDto.date),
-      number_people: createReservationDto.number_people,
-      restaurant_id: createReservationDto.restaurant_id,
-      customers: [{ id: createReservationDto.customer_id }],
+      date: new Date(date),
+      number_people: number_people,
+      restaurant_id: restaurant_id,
+      users: [ user ],
     });
-    await this.reservationRepository.save(reservation);
-    return reservation;
+    const result = await this.reservationRepository.save(reservation);
+
+    // Notifiy the amministrator of the restaurant
+    const admin = await this.staffService.getAdminByRestaurantId(restaurant_id);
+    await this.notificationService.create({
+      message: `Nuova prenotazione per ${number_people} persone`,
+      title: 'Nuova prenotazione con id: ' + reservation.id,
+      id_receiver: admin.id,
+    });
+
+    return {
+      status: true,
+      id: reservation.id,
+      data: reservation
+    };
   }
 
-  async addCustomer(params: {customer_id: number, reservation_id: number}) {
+  async addCustomer(params: { 
+    user_id: number, 
+    reservation_id: number 
+  }) {
     const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
     if(reservation == null) {
-      throw new NotFoundException('Reservation not found');
+      return null
     }
     await this.reservationRepository.update({ id: params.reservation_id }, {
-      customers: [...reservation.customers, { id: params.customer_id }],
+      users: [...reservation.users, { id: params.user_id }],
+    });
+
+    // Notifiy the user of the restaurant
+    await this.notificationService.create({
+      message: `Partecipa alla prenotazione con id: ${params.reservation_id}`,
+      title: 'Sei stato invitato ad una prenotazione',
+      id_receiver: params.user_id,
     });
     return true;
   }
@@ -60,16 +98,14 @@ export class ReservationService {
   async getMenuWithOrdersQuantityByIdReservation(id: number) {
     //otteniamo il menu e i cibi ordinati per una prenotazione
     const result = await this.reservationRepository.findOne({
-      where: { 
-        id: id 
+      where: {
+        id: id
       },
       relations: {
         restaurant: {
           menu: {
             foods: {
-              foodIngredients: {
-                ingredient: true,
-              }
+              ingredients: true,
             }
           }
         },
@@ -79,15 +115,97 @@ export class ReservationService {
       },
     });
     if(result == null) {
-      throw new NotFoundException('Reservation not found');
+      return null;
     }
     //associamo la quantita del cibo direttamente al menu
-    // e rimuoviamo l'array degli ordini
+    // e rimuoviamo l'array degli ordinati
     result.restaurant.menu.foods.forEach((food: any) => {
       const orders = result.orders.filter(order => order.food.id === food.id);
-      food.quantity = orders.reduce((total, order) => total + order.quantity, 0);
+      food.quantity = orders.length;
     });
     delete result.orders;
     return result;
+  }
+
+  async getReservationsByRestaurantId(restaurantId: number) {
+    const reservations = await this.reservationRepository.find({ where: { restaurant_id: restaurantId } });
+    return reservations;
+  }
+
+
+  async getReservationsByUserId(userId: number) {
+    const reservations = await this.reservationRepository.find({ where: { users:{id:userId}  }, 
+    relations:
+    {
+      users:true, 
+      restaurant:true
+    }, 
+    select:
+    {
+      restaurant:
+      {
+       name:true
+      }
+    } 
+  });
+    return reservations;
+  }
+
+  async acceptReservation(id: number) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } }) == null) {
+      return null;
+    }
+    return await this.reservationRepository.update({ id }, { state: ReservationStatus.ACCEPTED });
+  }
+
+  async rejectReservation(id: number) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING }}) == null) {
+      return null;
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
+    return true;
+  }
+
+  async completeReservation(id: number) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.TO_PAY }}) == null) {
+      return null;
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.COMPLETED });
+    return true;
+  }
+
+ async updateStatus(id: number, state: ReservationStatus, user_id: number) {
+    const reservation = await this.reservationRepository.findOne({ 
+      where: { id },
+      relations: { users: true  },
+    });
+    if(reservation == null) {
+      return false;
+    }
+    await this.reservationRepository.update({ id }, { state });
+    //Notify all the users of the reservation changed status
+
+    for(const user of reservation.users) {
+      if(user.id === user_id) {
+        continue;
+      }
+      await this.notificationService.create({
+        message: `La tua prenotazione con id: ${id} è stata ${state}`,
+        title: 'Aggiornamento prenotazione',
+        id_receiver: user.id,
+      });
+    }
+    return true;
+  }
+
+  async verifyReservation(reservation_id: number, user_id: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservation_id, users: { id: user_id } },
+      relations: { users: true },
+    });
+    if(reservation == null) {
+      return null;
+    }
+    return reservation;
   }
 }

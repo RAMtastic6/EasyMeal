@@ -28,11 +28,14 @@
     "@nestjs/platform-express": "^10.3.8",
     "@nestjs/typeorm": "^10.0.2",
     "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "typeorm-transactional-cls-hooked": "^0.1.21"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.3.2",
@@ -78,6 +81,15 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
-    "coverageReporters": ["lcov", ["text", { "file": "coverage.txt", "path": "./" }]]
+    "coverageReporters": [
+      "lcov",
+      [
+        "text",
+        {
+          "file": "coverage.txt",
+          "path": "./"
+        }
+      ]
+    ]
   }
 }

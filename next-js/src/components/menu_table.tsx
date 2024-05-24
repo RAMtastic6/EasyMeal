@@ -4,8 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Endpoints } from '../lib/database/endpoints';
 import { Socket, io } from 'socket.io-client';
-import { verifySession } from '../lib/dal';
-import { saveOrders } from '../lib/database/order';
+import { getToken, verifySession } from '../lib/dal';
+import { deleteOrders, saveOrders } from '../lib/database/order';
 
 export default function MenuTable(
 	{ menuData, params }: {
@@ -21,16 +21,23 @@ export default function MenuTable(
 ) {
 	const socket = useRef<Socket>();
 	const [menu, setMenu] = useState(menuData);
+	const [token, setToken] = useState<string | null>(null);
 	const [price, setPrice] = useState(menuData.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 
-	const sendData = async (index: number, menu: any) => {
-		const user = await verifySession();
-		const data = await saveOrders({
-			customer_id: user.id,
-			reservation_id: parseInt(params.number),
-			food_id: menu.foods[index].id,
-			quantity: menu.foods[index].quantity,
-		});
+	const sendData = async (index: number, menu: any, add: boolean) => {
+		// Al db inviamo l'aumento o la dimuzione di 1
+		if (add) {
+			await saveOrders({
+				reservation_id: parseInt(params.number),
+				food_id: menu.foods[index].id,
+			});
+		} else {
+			await deleteOrders({
+				reservation_id: parseInt(params.number),
+				food_id: menu.foods[index].id,
+			});
+		}
+		// Al socket inviamo il dato aggiornato
 		socket.current?.emit('onMessage', {
 			id_prenotazione: params.number,
 			data: {
@@ -48,7 +55,22 @@ export default function MenuTable(
 	}
 
 	useEffect(() => {
-		const soc = io(Endpoints.socket + '?id_prenotazione=' + params.number);
+		getToken().then((token) => {
+			setToken(token);
+		});
+	}, []);
+
+	useEffect(() => {
+		if(!token) return;
+		console.log(token);
+		const soc = io(Endpoints.socket, {
+			query: {
+				id_prenotazione: params.number,
+			},
+			auth: {
+				token: token,
+			}
+		});
 		socket.current = soc;
 		socket.current.on('onMessage', handleMessage);
 		//Close the socket connection when the component is unmounted
@@ -56,13 +78,13 @@ export default function MenuTable(
 			socket.current?.off('onMessage', handleMessage);
 			socket.current?.disconnect();
 		}
-	}, []);
+	}, [token]);
 
 	const decreaseQuantity = (index: number) => {
 		const newMenu = { ...menu };
 		if (menu.foods[index].quantity > 0) {
 			newMenu.foods[index].quantity -= 1;
-			sendData(index, newMenu);
+			sendData(index, newMenu, false);
 			setMenu(newMenu);
 			setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 		}
@@ -71,7 +93,7 @@ export default function MenuTable(
 	const increaseQuantity = (index: number) => {
 		const newMenu = { ...menu };
 		newMenu.foods[index].quantity += 1;
-		sendData(index, newMenu);
+		sendData(index, newMenu, true);
 		setMenu(newMenu);
 		setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 	};
@@ -97,24 +119,25 @@ export default function MenuTable(
 								<p className="text-gray-700">{food.description}</p>
 							</div>
 							<div className="flex justify-center mt-4">
-								<button type="button" className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => decreaseQuantity(index)}>
+								<button type="button" data-testid={`decrease_${food.id}`} className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => decreaseQuantity(index)}>
 									-
 								</button>
 								<input
 									type="text"
 									value={food.quantity}
 									className="h-10 w-8 border-transparent text-center sm:text-sm"
+									data-testid={`display_${food.id}`}
 									readOnly
 								/>
-								<button type="button" className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => increaseQuantity(index)}>
+								<button type="button" data-testid={`increase_${food.id}`} className="size-10 leading-10 text-gray-600 transition hover:opacity-75" onClick={() => increaseQuantity(index)}>
 									+
 								</button>
 							</div>
 							<div className="mt-4">
 								<p className="text-gray-700 font-medium">Ingredienti:</p>
 								<ul className="list-disc list-inside">
-									{food.foodIngredients.map((element: any, index: number) => (
-										<li key={index} className="text-gray-700">{element.ingredient.name}</li>
+									{food.ingredients.map((ingredient: any, index: number) => (
+										<li key={index} className="text-gray-700">{ingredient.name}</li>
 									))}
 								</ul>
 							</div>
@@ -180,7 +203,7 @@ export default function MenuTable(
 
 								<div className="flex justify-end">
 									<div className="sm:flex sm:gap-4">
-										<Link className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" href="#"> Checkout </Link>
+										<Link className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" href={`${params.number}/checkout/`}> Checkout </Link>
 									</div>
 								</div>
 							</div>

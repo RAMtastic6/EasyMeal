@@ -7,6 +7,8 @@ export enum ReservationStatus {
     PENDING = 'pending',
     ACCEPTED = 'accept',
     REJECTED = 'reject',
+    COMPLETED = 'completed',
+    TO_PAY = 'to_pay',
 }
 
 @Entity()
@@ -23,6 +25,7 @@ export class Reservation {
     @Column()
     restaurant_id: number;
 
+    //TODO: change state
     @Column({ default: ReservationStatus.PENDING })
     state: ReservationStatus;
 
@@ -31,7 +34,7 @@ export class Reservation {
 
     @ManyToMany(() => User, customer => customer.reservations)
     @JoinTable()
-    customers: User[];
+    users: User[];
 
     @ManyToOne(() => Restaurant, restaurant => restaurant.reservations)
     @JoinColumn({ name: 'restaurant_id' })

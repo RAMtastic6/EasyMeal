@@ -1,23 +1,6 @@
 'use server';
-import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
-import { login } from './database/user';
-
-const secretKey = 'sgroi';
-const encodeKey = new TextEncoder().encode(secretKey);
-
-export async function decryptToken(token: string | undefined) {
-  if (!token) {
-    return null;
-  }
-  try {
-    const { payload } = await jwtVerify(token, encodeKey,
-      { algorithms: ['HS256'] });
-    return payload;
-  } catch (error) {
-    return null;
-  }
-}
+import { decodeToken, login } from './database/authentication';
 
 export async function createSession(email: string, password: string) {
   const token: string = await login(email, password);
@@ -34,11 +17,14 @@ export async function createSession(email: string, password: string) {
   return true;
 }
 
+//TODO: Implement this function
 export async function updateSession() {
   const session = cookies().get('session')?.value
-  const payload = await decryptToken(session)
-
-  if (!session || !payload) {
+  if (!session) {
+    return null
+  }
+  const payload = await decodeToken(session)
+  if (!payload) {
     return null
   }
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)

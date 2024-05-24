@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2
 -- Dumped by pg_dump version 15.2
 
--- Started on 2024-05-09 18:21:02
+-- Started on 2024-05-19 17:44:46
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -19,7 +19,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 894 (class 1247 OID 19876)
+-- TOC entry 897 (class 1247 OID 19876)
 -- Name: day_day_open_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -37,7 +37,7 @@ CREATE TYPE public.day_day_open_enum AS ENUM (
 ALTER TYPE public.day_day_open_enum OWNER TO postgres;
 
 --
--- TOC entry 873 (class 1247 OID 19302)
+-- TOC entry 876 (class 1247 OID 19302)
 -- Name: daysopen_day_open_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -55,7 +55,7 @@ CREATE TYPE public.daysopen_day_open_enum AS ENUM (
 ALTER TYPE public.daysopen_day_open_enum OWNER TO postgres;
 
 --
--- TOC entry 900 (class 1247 OID 19920)
+-- TOC entry 906 (class 1247 OID 19952)
 -- Name: food_type_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -74,7 +74,20 @@ CREATE TYPE public.food_type_enum AS ENUM (
 ALTER TYPE public.food_type_enum OWNER TO postgres;
 
 --
--- TOC entry 882 (class 1247 OID 19597)
+-- TOC entry 924 (class 1247 OID 20116)
+-- Name: notification_status_enum; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.notification_status_enum AS ENUM (
+    'read',
+    'unread'
+);
+
+
+ALTER TYPE public.notification_status_enum OWNER TO postgres;
+
+--
+-- TOC entry 885 (class 1247 OID 19597)
 -- Name: user_role_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -93,7 +106,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 222 (class 1259 OID 19167)
+-- TOC entry 221 (class 1259 OID 19167)
 -- Name: user; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -102,15 +115,14 @@ CREATE TABLE public."user" (
     name character varying(30) NOT NULL,
     surname character varying(30) NOT NULL,
     email character varying(256) NOT NULL,
-    password character varying(256) NOT NULL,
-    role character varying DEFAULT 'user'::character varying NOT NULL
+    password character varying(256) NOT NULL
 );
 
 
 ALTER TABLE public."user" OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 19166)
+-- TOC entry 220 (class 1259 OID 19166)
 -- Name: customer_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -125,7 +137,7 @@ ALTER TABLE public."user" ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- TOC entry 232 (class 1259 OID 19891)
+-- TOC entry 230 (class 1259 OID 19891)
 -- Name: day; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -140,7 +152,7 @@ CREATE TABLE public.day (
 ALTER TABLE public.day OWNER TO postgres;
 
 --
--- TOC entry 214 (class 1259 OID 19133)
+-- TOC entry 238 (class 1259 OID 20100)
 -- Name: daysopen; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -155,7 +167,7 @@ CREATE TABLE public.daysopen (
 ALTER TABLE public.daysopen OWNER TO postgres;
 
 --
--- TOC entry 218 (class 1259 OID 19145)
+-- TOC entry 217 (class 1259 OID 19145)
 -- Name: food; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -172,7 +184,7 @@ CREATE TABLE public.food (
 ALTER TABLE public.food OWNER TO postgres;
 
 --
--- TOC entry 217 (class 1259 OID 19144)
+-- TOC entry 216 (class 1259 OID 19144)
 -- Name: food_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -187,7 +199,7 @@ ALTER TABLE public.food ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- TOC entry 231 (class 1259 OID 19742)
+-- TOC entry 229 (class 1259 OID 19742)
 -- Name: food_ingredient; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -201,7 +213,20 @@ CREATE TABLE public.food_ingredient (
 ALTER TABLE public.food_ingredient OWNER TO postgres;
 
 --
--- TOC entry 230 (class 1259 OID 19732)
+-- TOC entry 236 (class 1259 OID 20051)
+-- Name: food_ingredients_ingredient; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.food_ingredients_ingredient (
+    "foodId" integer NOT NULL,
+    "ingredientId" integer NOT NULL
+);
+
+
+ALTER TABLE public.food_ingredients_ingredient OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 19732)
 -- Name: ingredient; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -214,7 +239,7 @@ CREATE TABLE public.ingredient (
 ALTER TABLE public.ingredient OWNER TO postgres;
 
 --
--- TOC entry 229 (class 1259 OID 19731)
+-- TOC entry 227 (class 1259 OID 19731)
 -- Name: ingredient_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -230,8 +255,8 @@ CREATE SEQUENCE public.ingredient_id_seq
 ALTER TABLE public.ingredient_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3449 (class 0 OID 0)
--- Dependencies: 229
+-- TOC entry 3527 (class 0 OID 0)
+-- Dependencies: 227
 -- Name: ingredient_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -239,7 +264,7 @@ ALTER SEQUENCE public.ingredient_id_seq OWNED BY public.ingredient.id;
 
 
 --
--- TOC entry 216 (class 1259 OID 19139)
+-- TOC entry 215 (class 1259 OID 19139)
 -- Name: menu; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -252,7 +277,7 @@ CREATE TABLE public.menu (
 ALTER TABLE public.menu OWNER TO postgres;
 
 --
--- TOC entry 215 (class 1259 OID 19138)
+-- TOC entry 214 (class 1259 OID 19138)
 -- Name: menu_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -267,22 +292,117 @@ ALTER TABLE public.menu ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- TOC entry 226 (class 1259 OID 19375)
+-- TOC entry 240 (class 1259 OID 20122)
+-- Name: notification; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.notification (
+    id integer NOT NULL,
+    message character varying NOT NULL,
+    status public.notification_status_enum DEFAULT 'unread'::public.notification_status_enum NOT NULL,
+    title character varying NOT NULL,
+    id_receiver integer NOT NULL
+);
+
+
+ALTER TABLE public.notification OWNER TO postgres;
+
+--
+-- TOC entry 239 (class 1259 OID 20121)
+-- Name: notification_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.notification_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.notification_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3528 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: notification_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.notification_id_seq OWNED BY public.notification.id;
+
+
+--
+-- TOC entry 224 (class 1259 OID 19375)
 -- Name: order_detail; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.order_detail (
     quantity integer DEFAULT 1 NOT NULL,
-    customer_id integer NOT NULL,
+    user_id integer NOT NULL,
     reservation_id integer NOT NULL,
-    food_id integer NOT NULL
+    food_id integer NOT NULL,
+    id integer NOT NULL,
+    customer_id integer
 );
 
 
 ALTER TABLE public.order_detail OWNER TO postgres;
 
 --
--- TOC entry 224 (class 1259 OID 19173)
+-- TOC entry 233 (class 1259 OID 19987)
+-- Name: order_detail_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.order_detail_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.order_detail_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3529 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: order_detail_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.order_detail_id_seq OWNED BY public.order_detail.id;
+
+
+--
+-- TOC entry 235 (class 1259 OID 20034)
+-- Name: order_detail_ingredients_ingredient; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.order_detail_ingredients_ingredient (
+    "orderDetailId" integer NOT NULL,
+    "ingredientId" integer NOT NULL
+);
+
+
+ALTER TABLE public.order_detail_ingredients_ingredient OWNER TO postgres;
+
+--
+-- TOC entry 237 (class 1259 OID 20068)
+-- Name: order_ingredients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.order_ingredients (
+    order_id integer NOT NULL,
+    ingredient_id integer NOT NULL,
+    removed boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.order_ingredients OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 19173)
 -- Name: reservation; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -291,27 +411,67 @@ CREATE TABLE public.reservation (
     date timestamp without time zone NOT NULL,
     number_people integer NOT NULL,
     restaurant_id integer NOT NULL,
-    state character varying DEFAULT 'pending'::character varying NOT NULL
+    state character varying DEFAULT 'accept'::character varying NOT NULL
 );
 
 
 ALTER TABLE public.reservation OWNER TO postgres;
 
 --
--- TOC entry 225 (class 1259 OID 19183)
--- Name: reservation_group; Type: TABLE; Schema: public; Owner: postgres
+-- TOC entry 234 (class 1259 OID 20016)
+-- Name: reservation_customers_user; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.reservation_group (
-    reservation_id integer NOT NULL,
-    customer_id integer NOT NULL
+CREATE TABLE public.reservation_customers_user (
+    "reservationId" integer NOT NULL,
+    "userId" integer NOT NULL
 );
 
 
-ALTER TABLE public.reservation_group OWNER TO postgres;
+ALTER TABLE public.reservation_customers_user OWNER TO postgres;
 
 --
--- TOC entry 223 (class 1259 OID 19172)
+-- TOC entry 232 (class 1259 OID 19944)
+-- Name: reservation_food; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.reservation_food (
+    id integer NOT NULL,
+    "reservationId" integer NOT NULL,
+    "foodId" integer NOT NULL,
+    quantity integer NOT NULL
+);
+
+
+ALTER TABLE public.reservation_food OWNER TO postgres;
+
+--
+-- TOC entry 231 (class 1259 OID 19943)
+-- Name: reservation_food_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.reservation_food_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.reservation_food_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 3530 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: reservation_food_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.reservation_food_id_seq OWNED BY public.reservation_food.id;
+
+
+--
+-- TOC entry 222 (class 1259 OID 19172)
 -- Name: reservation_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -326,7 +486,20 @@ ALTER TABLE public.reservation ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY 
 
 
 --
--- TOC entry 220 (class 1259 OID 19156)
+-- TOC entry 241 (class 1259 OID 20145)
+-- Name: reservation_users_user; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.reservation_users_user (
+    "reservationId" integer NOT NULL,
+    "userId" integer NOT NULL
+);
+
+
+ALTER TABLE public.reservation_users_user OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 19156)
 -- Name: restaurant; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -348,7 +521,7 @@ CREATE TABLE public.restaurant (
 ALTER TABLE public.restaurant OWNER TO postgres;
 
 --
--- TOC entry 219 (class 1259 OID 19155)
+-- TOC entry 218 (class 1259 OID 19155)
 -- Name: restaurant_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -363,7 +536,7 @@ ALTER TABLE public.restaurant ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 
 
 --
--- TOC entry 228 (class 1259 OID 19630)
+-- TOC entry 226 (class 1259 OID 19630)
 -- Name: staff; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -378,7 +551,7 @@ CREATE TABLE public.staff (
 ALTER TABLE public.staff OWNER TO postgres;
 
 --
--- TOC entry 227 (class 1259 OID 19629)
+-- TOC entry 225 (class 1259 OID 19629)
 -- Name: staff_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -394,8 +567,8 @@ CREATE SEQUENCE public.staff_id_seq
 ALTER TABLE public.staff_id_seq OWNER TO postgres;
 
 --
--- TOC entry 3450 (class 0 OID 0)
--- Dependencies: 227
+-- TOC entry 3531 (class 0 OID 0)
+-- Dependencies: 225
 -- Name: staff_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -403,7 +576,7 @@ ALTER SEQUENCE public.staff_id_seq OWNED BY public.staff.id;
 
 
 --
--- TOC entry 3242 (class 2604 OID 19735)
+-- TOC entry 3272 (class 2604 OID 19735)
 -- Name: ingredient id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -411,7 +584,31 @@ ALTER TABLE ONLY public.ingredient ALTER COLUMN id SET DEFAULT nextval('public.i
 
 
 --
--- TOC entry 3240 (class 2604 OID 19633)
+-- TOC entry 3275 (class 2604 OID 20125)
+-- Name: notification id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification ALTER COLUMN id SET DEFAULT nextval('public.notification_id_seq'::regclass);
+
+
+--
+-- TOC entry 3269 (class 2604 OID 19988)
+-- Name: order_detail id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_detail ALTER COLUMN id SET DEFAULT nextval('public.order_detail_id_seq'::regclass);
+
+
+--
+-- TOC entry 3273 (class 2604 OID 19947)
+-- Name: reservation_food id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_food ALTER COLUMN id SET DEFAULT nextval('public.reservation_food_id_seq'::regclass);
+
+
+--
+-- TOC entry 3270 (class 2604 OID 19633)
 -- Name: staff id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -419,54 +616,24 @@ ALTER TABLE ONLY public.staff ALTER COLUMN id SET DEFAULT nextval('public.staff_
 
 
 --
--- TOC entry 3443 (class 0 OID 19891)
--- Dependencies: 232
+-- TOC entry 3510 (class 0 OID 19891)
+-- Dependencies: 230
 -- Data for Name: day; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 
 
 --
--- TOC entry 3425 (class 0 OID 19133)
--- Dependencies: 214
+-- TOC entry 3518 (class 0 OID 20100)
+-- Dependencies: 238
 -- Data for Name: daysopen; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'lunedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'martedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'mercoledì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'giovedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'venerdì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'lunedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'martedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'mercoledì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'giovedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (1, 'venerdì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'lunedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'martedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'mercoledì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'giovedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'venerdì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'lunedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'martedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'mercoledì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'giovedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (2, 'venerdì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'lunedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'martedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'mercoledì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'giovedì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'venerdì', '12:00:00', '15:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'lunedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'martedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'mercoledì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'giovedì', '19:00:00', '23:00:00');
-INSERT INTO public.daysopen (restaurant_id, day_open, opening, closing) VALUES (3, 'venerdì', '19:00:00', '23:00:00');
 
 
 --
--- TOC entry 3429 (class 0 OID 19145)
--- Dependencies: 218
+-- TOC entry 3497 (class 0 OID 19145)
+-- Dependencies: 217
 -- Data for Name: food; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -476,14 +643,14 @@ INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING 
 INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (5, 2, 'Riso fritto', 9, '', 'apertivo');
 INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (7, 3, 'Pizza margherita', 10, '', 'apertivo');
 INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (8, 3, 'Pizza marinara', 9, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (9, 3, 'Pizza capricciosa', 8, '', 'pizza');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (6, 2, 'Riso saltato', 8, '', 'primo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (1, 1, 'Spaghetti alla carbonara', 10, '', 'secondo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (9, 3, 'Pizza capricciosa', 8, '', 'apertivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (6, 2, 'Riso saltato', 8, '', 'apertivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (1, 1, 'Spaghetti alla carbonara', 10, '', 'apertivo');
 
 
 --
--- TOC entry 3442 (class 0 OID 19742)
--- Dependencies: 231
+-- TOC entry 3509 (class 0 OID 19742)
+-- Dependencies: 229
 -- Data for Name: food_ingredient; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -529,8 +696,52 @@ INSERT INTO public.food_ingredient (id_food, id_ingredient, quantity) VALUES (9,
 
 
 --
--- TOC entry 3441 (class 0 OID 19732)
--- Dependencies: 230
+-- TOC entry 3516 (class 0 OID 20051)
+-- Dependencies: 236
+-- Data for Name: food_ingredients_ingredient; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (1, 72);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (2, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (2, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (2, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (2, 72);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (3, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (3, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (3, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (3, 72);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (4, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (4, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (4, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (4, 72);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (5, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (5, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (5, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (5, 72);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (6, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (6, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (6, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (6, 72);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (7, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (7, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (7, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (7, 72);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (8, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (8, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (8, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (8, 72);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (9, 10);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (9, 20);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (9, 30);
+INSERT INTO public.food_ingredients_ingredient ("foodId", "ingredientId") VALUES (9, 72);
+
+
+--
+-- TOC entry 3508 (class 0 OID 19732)
+-- Dependencies: 228
 -- Data for Name: ingredient; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -626,8 +837,8 @@ INSERT INTO public.ingredient (id, name) VALUES (89, 'Pepe nero in grani');
 
 
 --
--- TOC entry 3427 (class 0 OID 19139)
--- Dependencies: 216
+-- TOC entry 3495 (class 0 OID 19139)
+-- Dependencies: 215
 -- Data for Name: menu; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -637,22 +848,304 @@ INSERT INTO public.menu (id, name) OVERRIDING SYSTEM VALUE VALUES (3, 'Menu 3');
 
 
 --
--- TOC entry 3437 (class 0 OID 19375)
--- Dependencies: 226
+-- TOC entry 3520 (class 0 OID 20122)
+-- Dependencies: 240
+-- Data for Name: notification; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3504 (class 0 OID 19375)
+-- Dependencies: 224
 -- Data for Name: order_detail; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id) VALUES (1, 1, 1, 2);
-INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id) VALUES (1, 1, 1, 3);
-INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id) VALUES (20, 1, 1, 1);
-INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id) VALUES (30, 4, 11, 6);
-INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id) VALUES (3, 4, 11, 5);
-INSERT INTO public.order_detail (quantity, customer_id, reservation_id, food_id) VALUES (7, 4, 11, 4);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 1, 1, 2, 1, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 1, 1, 3, 2, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (20, 1, 1, 1, 3, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (3, 4, 14, 2, 54, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (4, 4, 14, 3, 55, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (4, 4, 14, 1, 56, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (3, 4, 15, 1, 59, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (4, 4, 11, 4, 17, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (6, 4, 15, 2, 57, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (4, 4, 11, 5, 18, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (4, 4, 11, 6, 19, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (7, 4, 12, 2, 48, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (4, 4, 12, 3, 49, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (11, 4, 15, 3, 58, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (4, 4, 12, 1, 50, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 22, 2, 60, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (3, 4, 13, 3, 52, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (4, 4, 18, 2, 61, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 23, 2, 62, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 23, 2, 63, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 23, 2, 64, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (3, 4, 13, 1, 53, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 23, 2, 65, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 24, 2, 66, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 24, 2, 67, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 24, 2, 68, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 24, 2, 69, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 25, 4, 70, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (8, 4, 13, 2, 51, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 25, 4, 71, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 25, 4, 72, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 25, 4, 73, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 25, 4, 74, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 26, 2, 75, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 26, 2, 76, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 26, 2, 77, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 26, 2, 78, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 26, 2, 79, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 27, 2, 80, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 27, 2, 81, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 27, 2, 82, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 27, 2, 83, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 27, 2, 84, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 28, 2, 85, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 28, 2, 86, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 29, 2, 87, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 29, 2, 88, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 101, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 102, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 103, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 104, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 105, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 106, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 107, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 108, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 109, NULL);
+INSERT INTO public.order_detail (quantity, user_id, reservation_id, food_id, id, customer_id) VALUES (1, 4, 30, 2, 110, NULL);
 
 
 --
--- TOC entry 3435 (class 0 OID 19173)
--- Dependencies: 224
+-- TOC entry 3515 (class 0 OID 20034)
+-- Dependencies: 235
+-- Data for Name: order_detail_ingredients_ingredient; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (17, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (17, 20);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (18, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (18, 72);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (19, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (19, 30);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (19, 72);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (48, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (48, 20);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (48, 30);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (48, 72);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (49, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (49, 20);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (49, 30);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (49, 72);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (50, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (50, 20);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (50, 30);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (50, 72);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (3, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (3, 20);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (2, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (2, 20);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (2, 30);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (2, 72);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (1, 10);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (1, 20);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (1, 30);
+INSERT INTO public.order_detail_ingredients_ingredient ("orderDetailId", "ingredientId") VALUES (1, 72);
+
+
+--
+-- TOC entry 3517 (class 0 OID 20068)
+-- Dependencies: 237
+-- Data for Name: order_ingredients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (1, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (1, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (1, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (1, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (2, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (2, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (2, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (2, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (3, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (3, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (57, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (57, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (57, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (57, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (58, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (88, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (58, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (58, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (88, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (88, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (88, 10, true);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (59, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (58, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (59, 10, true);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (59, 20, true);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (59, 30, true);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (60, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (60, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (60, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (60, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (61, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (61, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (61, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (61, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (62, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (62, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (62, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (62, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (63, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (63, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (63, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (63, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (64, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (64, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (64, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (64, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (65, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (65, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (65, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (65, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (66, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (66, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (66, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (66, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (67, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (67, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (67, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (67, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (68, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (68, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (68, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (68, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (69, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (69, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (69, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (69, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (70, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (70, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (70, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (70, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (71, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (71, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (71, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (71, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (72, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (72, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (72, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (72, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (73, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (73, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (73, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (73, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (74, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (74, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (74, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (74, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (75, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (75, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (75, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (75, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (76, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (101, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (102, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (102, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (102, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (102, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (103, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (103, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (103, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (76, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (76, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (76, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (77, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (77, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (77, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (77, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (78, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (78, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (78, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (78, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (79, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (79, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (79, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (79, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (80, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (80, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (80, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (80, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (81, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (81, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (81, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (81, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (82, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (82, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (82, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (82, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (83, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (83, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (83, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (83, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (84, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (84, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (84, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (84, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (85, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (85, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (85, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (85, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (86, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (86, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (86, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (86, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (87, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (87, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (87, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (87, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (103, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (104, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (104, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (104, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (104, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (105, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (105, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (105, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (105, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (106, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (106, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (106, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (106, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (107, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (107, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (107, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (107, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (108, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (108, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (108, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (108, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (109, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (109, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (109, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (109, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (110, 10, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (110, 20, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (110, 30, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (110, 72, false);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (101, 10, true);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (101, 20, true);
+INSERT INTO public.order_ingredients (order_id, ingredient_id, removed) VALUES (101, 30, true);
+
+
+--
+-- TOC entry 3503 (class 0 OID 19173)
+-- Dependencies: 223
 -- Data for Name: reservation; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -667,27 +1160,79 @@ INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) O
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (9, '2220-02-10 20:20:00', 1000000, 1, 'pending');
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (10, '2222-02-20 20:20:00', 20, 1, 'pending');
 INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (11, '2222-02-20 20:20:00', 20000, 2, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (12, '2222-02-20 20:20:00', 1000000, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (13, '2222-02-20 20:20:00', 222222, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (14, '2222-10-20 22:22:00', 22222, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (15, '2222-02-20 20:20:00', 222222, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (16, '2222-02-20 20:20:00', 20000, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (17, '2222-02-20 20:20:00', 2000, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (18, '2222-02-20 20:20:00', 22222, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (19, '2222-02-20 20:20:00', 222, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (20, '2222-02-20 20:20:00', 222, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (21, '2222-02-20 22:22:00', 20000, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (22, '2222-02-20 20:20:00', 222222, 1, 'pending');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (23, '2222-02-20 20:20:00', 2222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (24, '2222-02-20 20:20:00', 222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (25, '2222-02-20 20:20:00', 22222, 2, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (26, '2222-02-20 20:20:00', 222222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (27, '2222-02-20 20:20:00', 22222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (28, '2222-02-20 20:20:00', 222, 1, 'to_pay');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (29, '2222-02-20 20:20:00', 222, 1, 'to_pay');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (30, '2222-02-20 20:02:00', 2222, 1, 'to_pay');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (31, '2222-02-20 20:20:00', 222222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (32, '2222-02-20 20:20:00', 222222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (33, '2222-02-20 20:20:00', 222222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (34, '2222-02-20 20:20:00', 222222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (35, '2222-02-20 20:20:00', 222222, 1, 'accept');
+INSERT INTO public.reservation (id, date, number_people, restaurant_id, state) OVERRIDING SYSTEM VALUE VALUES (36, '2222-02-20 20:20:00', 222, 1, 'accept');
 
 
 --
--- TOC entry 3436 (class 0 OID 19183)
--- Dependencies: 225
--- Data for Name: reservation_group; Type: TABLE DATA; Schema: public; Owner: postgres
+-- TOC entry 3514 (class 0 OID 20016)
+-- Dependencies: 234
+-- Data for Name: reservation_customers_user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (4, 1);
-INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (5, 1);
-INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (6, 1);
-INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (7, 1);
-INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (8, 1);
-INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (9, 1);
-INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (10, 1);
-INSERT INTO public.reservation_group (reservation_id, customer_id) VALUES (11, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (12, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (13, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (14, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (15, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (16, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (17, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (18, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (19, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (20, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (21, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (22, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (23, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (24, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (25, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (26, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (27, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (28, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (29, 1);
+INSERT INTO public.reservation_customers_user ("reservationId", "userId") VALUES (30, 1);
 
 
 --
--- TOC entry 3431 (class 0 OID 19156)
--- Dependencies: 220
+-- TOC entry 3512 (class 0 OID 19944)
+-- Dependencies: 232
+-- Data for Name: reservation_food; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3521 (class 0 OID 20145)
+-- Dependencies: 241
+-- Data for Name: reservation_users_user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3499 (class 0 OID 19156)
+-- Dependencies: 219
 -- Data for Name: restaurant; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -697,37 +1242,41 @@ INSERT INTO public.restaurant (id, name, address, city, cuisine, menu_id, tables
 
 
 --
--- TOC entry 3439 (class 0 OID 19630)
--- Dependencies: 228
+-- TOC entry 3506 (class 0 OID 19630)
+-- Dependencies: 226
 -- Data for Name: staff; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.staff (id, restaurant_id, user_id, ruolo) VALUES (1, 1, 1, 'admin');
+INSERT INTO public.staff (id, restaurant_id, user_id, ruolo) VALUES (3, 3, 3, 'admin');
+INSERT INTO public.staff (id, restaurant_id, user_id, ruolo) VALUES (2, 2, 2, 'admin');
 
 
 --
--- TOC entry 3433 (class 0 OID 19167)
--- Dependencies: 222
+-- TOC entry 3501 (class 0 OID 19167)
+-- Dependencies: 221
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public."user" (id, name, surname, email, password, role) OVERRIDING SYSTEM VALUE VALUES (2, 'test', 'test', 'test@', '$2b$13$2Lq3jwxdtHBt2JEFPPp7defEUHaFy2LJMjRW.bpqeV6Nt01efkCVS', 'user');
-INSERT INTO public."user" (id, name, surname, email, password, role) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'user', '$2a$13$NW44gn3XjLD1FjWz9egcluOVhjYWn7dX/nCM4awO2JpjmLwAyYB46', 'user');
-INSERT INTO public."user" (id, name, surname, email, password, role) OVERRIDING SYSTEM VALUE VALUES (3, 'test', 'test', 'dc@dc', '$2b$13$zeeUkesLTm2PuYjK0HMpbO6Ior.9ODKWzaQYurI4Lm9sstu8R7jPq', 'user');
-INSERT INTO public."user" (id, name, surname, email, password, role) OVERRIDING SYSTEM VALUE VALUES (4, 'dc', 'dc', 'dc@', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG', 'user');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (2, 'test', 'test', 'test@', '$2b$13$2Lq3jwxdtHBt2JEFPPp7defEUHaFy2LJMjRW.bpqeV6Nt01efkCVS');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'user', '$2a$13$NW44gn3XjLD1FjWz9egcluOVhjYWn7dX/nCM4awO2JpjmLwAyYB46');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (3, 'test', 'test', 'dc@dc', '$2b$13$zeeUkesLTm2PuYjK0HMpbO6Ior.9ODKWzaQYurI4Lm9sstu8R7jPq');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (4, 'dc', 'dc', 'dc@', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (5, 's', 's', 'sas@sas', '$2b$13$igZzV4v/GS9ysbULdYwV.uzWS4BPwGlGc9K063kEbr21d9rgMcutK');
 
 
 --
--- TOC entry 3451 (class 0 OID 0)
--- Dependencies: 221
+-- TOC entry 3532 (class 0 OID 0)
+-- Dependencies: 220
 -- Name: customer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.customer_id_seq', 4, true);
+SELECT pg_catalog.setval('public.customer_id_seq', 5, true);
 
 
 --
--- TOC entry 3452 (class 0 OID 0)
--- Dependencies: 217
+-- TOC entry 3533 (class 0 OID 0)
+-- Dependencies: 216
 -- Name: food_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -735,8 +1284,8 @@ SELECT pg_catalog.setval('public.food_id_seq', 9, true);
 
 
 --
--- TOC entry 3453 (class 0 OID 0)
--- Dependencies: 229
+-- TOC entry 3534 (class 0 OID 0)
+-- Dependencies: 227
 -- Name: ingredient_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -744,8 +1293,8 @@ SELECT pg_catalog.setval('public.ingredient_id_seq', 89, true);
 
 
 --
--- TOC entry 3454 (class 0 OID 0)
--- Dependencies: 215
+-- TOC entry 3535 (class 0 OID 0)
+-- Dependencies: 214
 -- Name: menu_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -753,17 +1302,44 @@ SELECT pg_catalog.setval('public.menu_id_seq', 3, true);
 
 
 --
--- TOC entry 3455 (class 0 OID 0)
--- Dependencies: 223
+-- TOC entry 3536 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: notification_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.notification_id_seq', 1, true);
+
+
+--
+-- TOC entry 3537 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: order_detail_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.order_detail_id_seq', 110, true);
+
+
+--
+-- TOC entry 3538 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: reservation_food_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.reservation_food_id_seq', 1, false);
+
+
+--
+-- TOC entry 3539 (class 0 OID 0)
+-- Dependencies: 222
 -- Name: reservation_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.reservation_id_seq', 11, true);
+SELECT pg_catalog.setval('public.reservation_id_seq', 36, true);
 
 
 --
--- TOC entry 3456 (class 0 OID 0)
--- Dependencies: 219
+-- TOC entry 3540 (class 0 OID 0)
+-- Dependencies: 218
 -- Name: restaurant_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -771,16 +1347,79 @@ SELECT pg_catalog.setval('public.restaurant_id_seq', 3, true);
 
 
 --
--- TOC entry 3457 (class 0 OID 0)
--- Dependencies: 227
+-- TOC entry 3541 (class 0 OID 0)
+-- Dependencies: 225
 -- Name: staff_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.staff_id_seq', 1, false);
+SELECT pg_catalog.setval('public.staff_id_seq', 2, true);
 
 
 --
--- TOC entry 3268 (class 2606 OID 19895)
+-- TOC entry 3290 (class 2606 OID 20000)
+-- Name: order_detail PK_0afbab1fa98e2fb0be8e74f6b38; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_detail
+    ADD CONSTRAINT "PK_0afbab1fa98e2fb0be8e74f6b38" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3306 (class 2606 OID 20020)
+-- Name: reservation_customers_user PK_103fb00a81fd9b7f314e9e04c20; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_customers_user
+    ADD CONSTRAINT "PK_103fb00a81fd9b7f314e9e04c20" PRIMARY KEY ("reservationId", "userId");
+
+
+--
+-- TOC entry 3318 (class 2606 OID 20104)
+-- Name: daysopen PK_12e7b6073e49f559814db021c40; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.daysopen
+    ADD CONSTRAINT "PK_12e7b6073e49f559814db021c40" PRIMARY KEY (restaurant_id, day_open, opening);
+
+
+--
+-- TOC entry 3326 (class 2606 OID 20149)
+-- Name: reservation_users_user PK_189d9015e1e8ab6fb7cb8b72bf0; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_users_user
+    ADD CONSTRAINT "PK_189d9015e1e8ab6fb7cb8b72bf0" PRIMARY KEY ("reservationId", "userId");
+
+
+--
+-- TOC entry 3314 (class 2606 OID 20055)
+-- Name: food_ingredients_ingredient PK_1d68764db363359b029c43908f6; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.food_ingredients_ingredient
+    ADD CONSTRAINT "PK_1d68764db363359b029c43908f6" PRIMARY KEY ("foodId", "ingredientId");
+
+
+--
+-- TOC entry 3316 (class 2606 OID 20073)
+-- Name: order_ingredients PK_49c56bae35cbfa735f437c67c24; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_ingredients
+    ADD CONSTRAINT "PK_49c56bae35cbfa735f437c67c24" PRIMARY KEY (order_id, ingredient_id);
+
+
+--
+-- TOC entry 3320 (class 2606 OID 20130)
+-- Name: notification PK_705b6c7cdf9b2c2ff7ac7872cb7; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification
+    ADD CONSTRAINT "PK_705b6c7cdf9b2c2ff7ac7872cb7" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3300 (class 2606 OID 19895)
 -- Name: day PK_85468867ae69ba9a668eb33c184; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -789,7 +1428,34 @@ ALTER TABLE ONLY public.day
 
 
 --
--- TOC entry 3250 (class 2606 OID 19226)
+-- TOC entry 3302 (class 2606 OID 19949)
+-- Name: reservation_food PK_9114deef20afa4a92ca78422ec8; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_food
+    ADD CONSTRAINT "PK_9114deef20afa4a92ca78422ec8" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3310 (class 2606 OID 20038)
+-- Name: order_detail_ingredients_ingredient PK_927e8aa1c4dde72ef3e1c77b54e; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_detail_ingredients_ingredient
+    ADD CONSTRAINT "PK_927e8aa1c4dde72ef3e1c77b54e" PRIMARY KEY ("orderDetailId", "ingredientId");
+
+
+--
+-- TOC entry 3322 (class 2606 OID 20132)
+-- Name: notification REL_3c3129191b6361ccc34db61756; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification
+    ADD CONSTRAINT "REL_3c3129191b6361ccc34db61756" UNIQUE (id_receiver);
+
+
+--
+-- TOC entry 3282 (class 2606 OID 19226)
 -- Name: restaurant UQ_5a6420c3086d9d50d001cc01713; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -798,7 +1464,16 @@ ALTER TABLE ONLY public.restaurant
 
 
 --
--- TOC entry 3254 (class 2606 OID 19171)
+-- TOC entry 3292 (class 2606 OID 20134)
+-- Name: staff UQ_cec9365d9fc3a3409158b645f2e; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.staff
+    ADD CONSTRAINT "UQ_cec9365d9fc3a3409158b645f2e" UNIQUE (user_id);
+
+
+--
+-- TOC entry 3286 (class 2606 OID 19171)
 -- Name: user customer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -807,16 +1482,7 @@ ALTER TABLE ONLY public."user"
 
 
 --
--- TOC entry 3244 (class 2606 OID 19318)
--- Name: daysopen daysopen_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.daysopen
-    ADD CONSTRAINT daysopen_pkey PRIMARY KEY (restaurant_id, day_open, opening);
-
-
---
--- TOC entry 3266 (class 2606 OID 19747)
+-- TOC entry 3298 (class 2606 OID 19747)
 -- Name: food_ingredient food_ingredient_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -825,7 +1491,7 @@ ALTER TABLE ONLY public.food_ingredient
 
 
 --
--- TOC entry 3248 (class 2606 OID 19254)
+-- TOC entry 3280 (class 2606 OID 19254)
 -- Name: food food_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -834,7 +1500,7 @@ ALTER TABLE ONLY public.food
 
 
 --
--- TOC entry 3264 (class 2606 OID 19737)
+-- TOC entry 3296 (class 2606 OID 19737)
 -- Name: ingredient ingredient_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -843,7 +1509,7 @@ ALTER TABLE ONLY public.ingredient
 
 
 --
--- TOC entry 3246 (class 2606 OID 19143)
+-- TOC entry 3278 (class 2606 OID 19143)
 -- Name: menu menu_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -852,25 +1518,7 @@ ALTER TABLE ONLY public.menu
 
 
 --
--- TOC entry 3260 (class 2606 OID 19380)
--- Name: order_detail order_detail_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.order_detail
-    ADD CONSTRAINT order_detail_pkey PRIMARY KEY (customer_id, reservation_id, food_id);
-
-
---
--- TOC entry 3258 (class 2606 OID 19187)
--- Name: reservation_group reservation_group_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.reservation_group
-    ADD CONSTRAINT reservation_group_pkey PRIMARY KEY (reservation_id, customer_id);
-
-
---
--- TOC entry 3256 (class 2606 OID 19177)
+-- TOC entry 3288 (class 2606 OID 19177)
 -- Name: reservation reservation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -879,7 +1527,7 @@ ALTER TABLE ONLY public.reservation
 
 
 --
--- TOC entry 3252 (class 2606 OID 19160)
+-- TOC entry 3284 (class 2606 OID 19160)
 -- Name: restaurant restaurant_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -888,7 +1536,7 @@ ALTER TABLE ONLY public.restaurant
 
 
 --
--- TOC entry 3262 (class 2606 OID 19636)
+-- TOC entry 3294 (class 2606 OID 19636)
 -- Name: staff staff_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -897,7 +1545,80 @@ ALTER TABLE ONLY public.staff
 
 
 --
--- TOC entry 3269 (class 2606 OID 19323)
+-- TOC entry 3303 (class 1259 OID 20021)
+-- Name: IDX_36f40349ae6c124fd51b0f7d98; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_36f40349ae6c124fd51b0f7d98" ON public.reservation_customers_user USING btree ("reservationId");
+
+
+--
+-- TOC entry 3323 (class 1259 OID 20151)
+-- Name: IDX_376a3f0f6fe4a57449a91866b7; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_376a3f0f6fe4a57449a91866b7" ON public.reservation_users_user USING btree ("userId");
+
+
+--
+-- TOC entry 3311 (class 1259 OID 20056)
+-- Name: IDX_6a541cb9fe44226bebff2972ce; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_6a541cb9fe44226bebff2972ce" ON public.food_ingredients_ingredient USING btree ("foodId");
+
+
+--
+-- TOC entry 3324 (class 1259 OID 20150)
+-- Name: IDX_72ede4f9fe343f1bc62323e3ee; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_72ede4f9fe343f1bc62323e3ee" ON public.reservation_users_user USING btree ("reservationId");
+
+
+--
+-- TOC entry 3312 (class 1259 OID 20057)
+-- Name: IDX_7bde41301bbe525aab2cc76f63; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_7bde41301bbe525aab2cc76f63" ON public.food_ingredients_ingredient USING btree ("ingredientId");
+
+
+--
+-- TOC entry 3307 (class 1259 OID 20039)
+-- Name: IDX_7ece720c39593ae154e256117e; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_7ece720c39593ae154e256117e" ON public.order_detail_ingredients_ingredient USING btree ("orderDetailId");
+
+
+--
+-- TOC entry 3308 (class 1259 OID 20040)
+-- Name: IDX_ceefd0d362ae9392a133e6631a; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_ceefd0d362ae9392a133e6631a" ON public.order_detail_ingredients_ingredient USING btree ("ingredientId");
+
+
+--
+-- TOC entry 3304 (class 1259 OID 20022)
+-- Name: IDX_e4688651cafd7be671088e5737; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX "IDX_e4688651cafd7be671088e5737" ON public.reservation_customers_user USING btree ("userId");
+
+
+--
+-- TOC entry 3338 (class 2606 OID 19971)
+-- Name: reservation_food FK_0980b7bbd27281c66f652d5f887; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_food
+    ADD CONSTRAINT "FK_0980b7bbd27281c66f652d5f887" FOREIGN KEY ("reservationId") REFERENCES public.reservation(id);
+
+
+--
+-- TOC entry 3348 (class 2606 OID 20105)
 -- Name: daysopen FK_0a42a99a85bac74cdc4154d38a1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -906,7 +1627,7 @@ ALTER TABLE ONLY public.daysopen
 
 
 --
--- TOC entry 3275 (class 2606 OID 19402)
+-- TOC entry 3330 (class 2606 OID 20001)
 -- Name: order_detail FK_176c75e9405cb6cb95a6377af00; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -915,7 +1636,7 @@ ALTER TABLE ONLY public.order_detail
 
 
 --
--- TOC entry 3278 (class 2606 OID 19710)
+-- TOC entry 3333 (class 2606 OID 19710)
 -- Name: staff FK_1b1658ba3bb205874b325403b08; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -924,7 +1645,34 @@ ALTER TABLE ONLY public.staff
 
 
 --
--- TOC entry 3270 (class 2606 OID 19213)
+-- TOC entry 3340 (class 2606 OID 20023)
+-- Name: reservation_customers_user FK_36f40349ae6c124fd51b0f7d98e; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_customers_user
+    ADD CONSTRAINT "FK_36f40349ae6c124fd51b0f7d98e" FOREIGN KEY ("reservationId") REFERENCES public.reservation(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3350 (class 2606 OID 20157)
+-- Name: reservation_users_user FK_376a3f0f6fe4a57449a91866b73; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_users_user
+    ADD CONSTRAINT "FK_376a3f0f6fe4a57449a91866b73" FOREIGN KEY ("userId") REFERENCES public."user"(id);
+
+
+--
+-- TOC entry 3349 (class 2606 OID 20140)
+-- Name: notification FK_3c3129191b6361ccc34db617563; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notification
+    ADD CONSTRAINT "FK_3c3129191b6361ccc34db617563" FOREIGN KEY (id_receiver) REFERENCES public."user"(id);
+
+
+--
+-- TOC entry 3327 (class 2606 OID 19213)
 -- Name: food FK_5149a648c96d6c3c7c670b500d6; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -933,7 +1681,7 @@ ALTER TABLE ONLY public.food
 
 
 --
--- TOC entry 3271 (class 2606 OID 19227)
+-- TOC entry 3328 (class 2606 OID 20110)
 -- Name: restaurant FK_5a6420c3086d9d50d001cc01713; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -942,16 +1690,7 @@ ALTER TABLE ONLY public.restaurant
 
 
 --
--- TOC entry 3273 (class 2606 OID 19328)
--- Name: reservation_group FK_5e20008280cf4827cab610088b9; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.reservation_group
-    ADD CONSTRAINT "FK_5e20008280cf4827cab610088b9" FOREIGN KEY (reservation_id) REFERENCES public.reservation(id);
-
-
---
--- TOC entry 3280 (class 2606 OID 19780)
+-- TOC entry 3335 (class 2606 OID 19780)
 -- Name: food_ingredient FK_635a1bc3d64baddf1a2a29359f7; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -960,16 +1699,25 @@ ALTER TABLE ONLY public.food_ingredient
 
 
 --
--- TOC entry 3274 (class 2606 OID 19333)
--- Name: reservation_group FK_6c218069a2d6f54685067c744fc; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 3344 (class 2606 OID 20058)
+-- Name: food_ingredients_ingredient FK_6a541cb9fe44226bebff2972ce4; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.reservation_group
-    ADD CONSTRAINT "FK_6c218069a2d6f54685067c744fc" FOREIGN KEY (customer_id) REFERENCES public."user"(id);
+ALTER TABLE ONLY public.food_ingredients_ingredient
+    ADD CONSTRAINT "FK_6a541cb9fe44226bebff2972ce4" FOREIGN KEY ("foodId") REFERENCES public.food(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- TOC entry 3276 (class 2606 OID 19412)
+-- TOC entry 3351 (class 2606 OID 20152)
+-- Name: reservation_users_user FK_72ede4f9fe343f1bc62323e3ee7; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_users_user
+    ADD CONSTRAINT "FK_72ede4f9fe343f1bc62323e3ee7" FOREIGN KEY ("reservationId") REFERENCES public.reservation(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3331 (class 2606 OID 20011)
 -- Name: order_detail FK_73c5df246d4307f6abb1071be42; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -978,7 +1726,34 @@ ALTER TABLE ONLY public.order_detail
 
 
 --
--- TOC entry 3272 (class 2606 OID 19428)
+-- TOC entry 3345 (class 2606 OID 20063)
+-- Name: food_ingredients_ingredient FK_7bde41301bbe525aab2cc76f638; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.food_ingredients_ingredient
+    ADD CONSTRAINT "FK_7bde41301bbe525aab2cc76f638" FOREIGN KEY ("ingredientId") REFERENCES public.ingredient(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3346 (class 2606 OID 20084)
+-- Name: order_ingredients FK_7da4442195347fd0134422a8f6d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_ingredients
+    ADD CONSTRAINT "FK_7da4442195347fd0134422a8f6d" FOREIGN KEY (ingredient_id) REFERENCES public.ingredient(id);
+
+
+--
+-- TOC entry 3342 (class 2606 OID 20041)
+-- Name: order_detail_ingredients_ingredient FK_7ece720c39593ae154e256117e3; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_detail_ingredients_ingredient
+    ADD CONSTRAINT "FK_7ece720c39593ae154e256117e3" FOREIGN KEY ("orderDetailId") REFERENCES public.order_detail(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3329 (class 2606 OID 19428)
 -- Name: reservation FK_b8e66a59e3500c7a85cde4fb020; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -987,16 +1762,16 @@ ALTER TABLE ONLY public.reservation
 
 
 --
--- TOC entry 3277 (class 2606 OID 19407)
+-- TOC entry 3332 (class 2606 OID 20006)
 -- Name: order_detail FK_c2a7f2de6b58c7c5ccf4303e1aa; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.order_detail
-    ADD CONSTRAINT "FK_c2a7f2de6b58c7c5ccf4303e1aa" FOREIGN KEY (customer_id) REFERENCES public."user"(id);
+    ADD CONSTRAINT "FK_c2a7f2de6b58c7c5ccf4303e1aa" FOREIGN KEY (user_id) REFERENCES public."user"(id);
 
 
 --
--- TOC entry 3279 (class 2606 OID 19715)
+-- TOC entry 3334 (class 2606 OID 20135)
 -- Name: staff FK_cec9365d9fc3a3409158b645f2e; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1005,7 +1780,16 @@ ALTER TABLE ONLY public.staff
 
 
 --
--- TOC entry 3282 (class 2606 OID 19914)
+-- TOC entry 3343 (class 2606 OID 20046)
+-- Name: order_detail_ingredients_ingredient FK_ceefd0d362ae9392a133e6631a3; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_detail_ingredients_ingredient
+    ADD CONSTRAINT "FK_ceefd0d362ae9392a133e6631a3" FOREIGN KEY ("ingredientId") REFERENCES public.ingredient(id);
+
+
+--
+-- TOC entry 3337 (class 2606 OID 19914)
 -- Name: day FK_d12113dbb319e40a89b0989a006; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1014,7 +1798,34 @@ ALTER TABLE ONLY public.day
 
 
 --
--- TOC entry 3281 (class 2606 OID 19775)
+-- TOC entry 3339 (class 2606 OID 19976)
+-- Name: reservation_food FK_d637437b54202dd983be7d82063; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_food
+    ADD CONSTRAINT "FK_d637437b54202dd983be7d82063" FOREIGN KEY ("foodId") REFERENCES public.food(id);
+
+
+--
+-- TOC entry 3341 (class 2606 OID 20028)
+-- Name: reservation_customers_user FK_e4688651cafd7be671088e5737e; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.reservation_customers_user
+    ADD CONSTRAINT "FK_e4688651cafd7be671088e5737e" FOREIGN KEY ("userId") REFERENCES public."user"(id);
+
+
+--
+-- TOC entry 3347 (class 2606 OID 20095)
+-- Name: order_ingredients FK_f8b1304cce6d30e5bcb7abcc08c; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.order_ingredients
+    ADD CONSTRAINT "FK_f8b1304cce6d30e5bcb7abcc08c" FOREIGN KEY (order_id) REFERENCES public.order_detail(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 3336 (class 2606 OID 19775)
 -- Name: food_ingredient FK_f9553e6a77da903d8c6915a336a; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1022,7 +1833,7 @@ ALTER TABLE ONLY public.food_ingredient
     ADD CONSTRAINT "FK_f9553e6a77da903d8c6915a336a" FOREIGN KEY (id_food) REFERENCES public.food(id);
 
 
--- Completed on 2024-05-09 18:21:02
+-- Completed on 2024-05-19 17:44:47
 
 --
 -- PostgreSQL database dump complete

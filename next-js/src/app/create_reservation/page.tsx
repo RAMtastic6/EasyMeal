@@ -4,17 +4,32 @@ import RestaurantSearch from '@/src/components/restaurant_search';
 import Pagination from '@/src/components/pagination';
 import { getAllCities, getAllCuisines, getRestaurantsTotalPages } from "@/src/lib/database/restaurant";
 import { RestaurantFilter } from "@/src/lib/database/restaurant";
+import { query } from "firebase/database";
 
-export default async function Page({ restaurantFilter }: { restaurantFilter: RestaurantFilter }) {
+export default async function Page({ searchParams }: {
+  searchParams?: {
+    date?: string,
+    nameRestaurant?: string,
+    city?: string,
+    cuisine?: string,
+    page?: string
+  }
+}) {
   const ITEMS_PER_PAGE = 1;
   const cuisines = await getAllCuisines();
   const cities = await getAllCities();
-  const totalPages = await getRestaurantsTotalPages(restaurantFilter, ITEMS_PER_PAGE);
+  const query: RestaurantFilter = {
+    date: searchParams?.date || "",
+    name: searchParams?.nameRestaurant || "",
+    city: searchParams?.city || "",
+    cuisine: searchParams?.cuisine || ""
+  }
+  const totalPages = await getRestaurantsTotalPages(query, ITEMS_PER_PAGE);
+  console.log('Total pages:', totalPages);
 
   return (
     <>
       <div className="w-full">
-        <Header />
         <div className="container mx-auto mt-4 space-y-4">
           <h1 className="text-lg font-bold text-center text-red-950"> Effettua una prenotazione se sei un chad </h1>
           <RestaurantSearch cuisines={cuisines} cities={cities} />

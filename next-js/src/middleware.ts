@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { decryptToken } from './lib/session'
+import { decodeToken } from './lib/database/authentication';
  
 // 1. Specify protected and public routes
 const protectedRoutes = ['/create_reservation', '/create_reservation/\\d+/view', 'order/\\d+/view'];
@@ -14,7 +14,7 @@ export default async function middleware(req: NextRequest) {
  
   // 3. Decrypt the session from the cookie
   const cookie = cookies().get('session')?.value;
-  const session = await decryptToken(cookie);
+  const session = await decodeToken(cookie ?? '');
 
   // 4. Redirect to /login if the user is not authenticated
   if (isProtectedRoute && !session?.id) {

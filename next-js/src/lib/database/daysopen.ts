@@ -1,6 +1,15 @@
 import { Endpoints } from "./endpoints";
 
-export async function createDaysOpen(data: any): Promise<any> {
+export type DaysopenDto = {
+    days_open: {
+        day_open: number;
+        opening: string;
+        closing: string;
+    }[],
+    restaurant_id: number;
+}
+
+export async function createDaysOpen(data: DaysopenDto): Promise<any> {
     const response = await fetch(Endpoints.daysopen, {
         method: 'POST',
         headers: {

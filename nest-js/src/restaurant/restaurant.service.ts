@@ -3,7 +3,8 @@ import { CreateRestaurantDto as RestaurantDto } from './dto/create-restaurant.dt
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { Restaurant } from './entities/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { StaffRole } from '../staff/enities/staff.entity';
 
 @Injectable()
 export class RestaurantService {
@@ -24,7 +25,7 @@ export class RestaurantService {
       queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
     }
     if (query.name) {
-      queryBuilder = queryBuilder.andWhere('restaurant.name = :name', { name: query.name });
+      queryBuilder = queryBuilder.andWhere('restaurant.name LIKE :name', { name: `%${query.name}%` });
     }
     if (query.city) {
       queryBuilder = queryBuilder.andWhere('restaurant.city = :city', { city: query.city });
@@ -43,13 +44,15 @@ export class RestaurantService {
   async create(createRestaurantDto: RestaurantDto) {
     const { name, address, city, cuisine, tables, email, phone_number } = createRestaurantDto;
     // Check if the restaurant already exists
-    const existingRestaurant = await this.restaurantRepo.findOne({ where: { name: createRestaurantDto.name } });
+    const existingRestaurant = await this.restaurantRepo.findOne({ 
+      where: { name: createRestaurantDto.name } 
+    });
     if (existingRestaurant) {
-      throw new HttpException('Restaurant already exists', HttpStatus.CONFLICT);
+      return null;
     }
-
+    
     if (!name || !address || !city || !cuisine || !tables || !email || !phone_number) {
-      throw new HttpException('Invalid input', HttpStatus.BAD_REQUEST);
+      return null;
     }
     
     const restaurant = this.restaurantRepo.create({
@@ -62,6 +65,30 @@ export class RestaurantService {
       phone_number: phone_number
     });
     return await this.restaurantRepo.save(restaurant);
+  }
+
+  async createManager(createRestaurantDto: RestaurantDto, manager: EntityManager) {
+    const { name, address, city, cuisine, tables, email, phone_number } = createRestaurantDto;
+    // Check if the restaurant already exists
+    const existingRestaurant = await manager.findOne(Restaurant, { where: { name: createRestaurantDto.name } });
+    if (existingRestaurant) {
+      return null;
+    }
+
+    if (!name || !address || !city || !cuisine || !tables || !email || !phone_number) {
+      return null;
+    }
+    
+    const restaurant = manager.create(Restaurant, {
+      name: name,
+      address: address,
+      city: city,
+      cuisine: cuisine,
+      tables: tables,
+      email: email,
+      phone_number: phone_number
+    });
+    return await manager.save(restaurant);
   }
 
   async findAll(): Promise<Restaurant[]> {
@@ -84,7 +111,9 @@ export class RestaurantService {
   }
 
   async findOne(id: number) {
-    const restaurant = await this.restaurantRepo.findOne({ where: { id } });
+    const restaurant = await this.restaurantRepo.findOne({ 
+      where: { id },
+    });
     return restaurant;
   }
 
@@ -114,7 +143,7 @@ export class RestaurantService {
       queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
     }
     if (query.name) {
-      queryBuilder = queryBuilder.andWhere('restaurant.name = :name', { name: query.name });
+      queryBuilder = queryBuilder.andWhere('restaurant.name LIKE :name', { name: `%${query.name}%` });
     }
     if (query.city) {
       queryBuilder = queryBuilder.andWhere('restaurant.city = :city', { city: query.city });
@@ -136,4 +165,6 @@ export class RestaurantService {
     });
     return result;
   }
+
+
 }
