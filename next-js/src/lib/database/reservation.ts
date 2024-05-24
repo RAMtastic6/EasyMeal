@@ -80,6 +80,20 @@ export async function getReservationsByAdminId(): Promise<[]> {
 	return data;
 }
 
+export async function getReservationsByUserId(UserId: number): Promise<[]> {
+	const response = await fetch(`${Endpoints.reservation}user/${UserId}`, {
+		method: "GET",
+		cache: "no-cache",
+	});
+	if (!response.ok) {
+		throw new Error('Error fetching reservations from the database');
+	}
+	console.log(response);
+	const data = await response.json();
+	console.log(data);
+	return data;
+}
+
 export async function acceptReservation(id: number): Promise<any> {
 	const response = await fetch(`${Endpoints.reservation}${id}/accept`, {
 		method: "POST",
@@ -96,6 +110,20 @@ export async function acceptReservation(id: number): Promise<any> {
 
 export async function rejectReservation(id: number): Promise<any> {
 	const response = await fetch(`${Endpoints.reservation}${id}/reject`, {
+		method: "POST",
+		cache: "no-cache",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+	return {
+		body: await response.json(),
+		status: response.ok,
+	};
+}
+
+export async function completeReservation(id: number): Promise<any> {
+	const response = await fetch(`${Endpoints.reservation}${id}/complete`, {
 		method: "POST",
 		cache: "no-cache",
 		headers: {

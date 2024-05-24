@@ -84,20 +84,20 @@ describe('ReservationService', () => {
     const date = '2025-01-01';
     const numberPeople = 4;
     const userId = 1;
-  
+
     const createReservationDto: CreateReservationDto = {
       restaurant_id: restaurantId,
       date: date,
       number_people: numberPeople,
       token: 'token'
     };
-  
+
     const restaurant = {
       id: restaurantId,
       name: 'Test Restaurant',
       tables: 5,
     } as Restaurant;
-  
+
     const reservation = {
       id: 1,
       restaurant: restaurant,
@@ -108,22 +108,22 @@ describe('ReservationService', () => {
         name: 'Test User',
       },
     } as unknown as Reservation;
-  
+
     beforeEach(async () => {
       jest.spyOn(reservationRepo, 'create').mockReturnValueOnce(reservation);
       jest.spyOn(reservationRepo, 'save').mockResolvedValueOnce(reservation);
       jest.spyOn(staffService, 'getAdminByRestaurantId').mockResolvedValueOnce(
-        {user_id: 1} as Staff
+        { user_id: 1 } as Staff
       );
-      jest.spyOn(userService, 'findOne').mockResolvedValueOnce({ id: userId } as any);
+    jest.spyOn(userService, 'findOne').mockResolvedValueOnce({ id: userId } as any);
       jest.spyOn(notificationService, 'create').mockResolvedValueOnce(undefined);
     });
-  
+
     it('should create a reservation', async () => {
       jest.spyOn(restaurantService, 'findOne').mockResolvedValueOnce(restaurant);
       jest.spyOn(restaurantService, 'getBookedTables').mockResolvedValueOnce(3);
       const result = await service.create(restaurantId, date, numberPeople, userId);
-  
+
       expect(restaurantService.findOne).toHaveBeenCalledWith(restaurantId);
       expect(restaurantService.getBookedTables).toHaveBeenCalledWith(restaurantId, date);
       expect(result).toEqual({
@@ -132,30 +132,30 @@ describe('ReservationService', () => {
         data: reservation
       });
     });
-  
+
     it('should return null if restaurant is not found', async () => {
       jest.spyOn(restaurantService, 'findOne').mockResolvedValueOnce(null);
-  
+
       const result = await service.create(restaurantId, date, numberPeople, userId);
-  
+
       expect(result).toBe(null);
     });
-  
+
     it('should return { status: false, message: "Restaurant is full" } if restaurant is fully booked', async () => {
       jest.spyOn(restaurantService, 'findOne').mockResolvedValueOnce(restaurant);
       jest.spyOn(restaurantService, 'getBookedTables').mockResolvedValueOnce(5);
-  
+
       const result = await service.create(restaurantId, date, numberPeople, userId);
-  
+
       expect(result).toEqual({ status: false, message: 'Restaurant is full' });
     });
-  
+
     it('should return null if date is in the past', async () => {
       jest.spyOn(restaurantService, 'getBookedTables').mockResolvedValueOnce(3);
       jest.spyOn(restaurantService, 'findOne').mockResolvedValueOnce(restaurant);
       jest.spyOn(Date, 'now').mockReturnValueOnce(new Date('2026-01-02').getTime());
       const result = await service.create(restaurantId, date, numberPeople, userId);
-  
+
       expect(result).toBe(null);
     });
   });
@@ -324,6 +324,33 @@ describe('ReservationService', () => {
     });
   });*/
 
+  describe('completeReservation', () => {
+
+    it('should complete a reservation', async () => {
+      const id = 1;
+      const reservation = { id: 1, state: 'TO_PAY' } as unknown as Reservation;
+
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(reservation);
+      jest.spyOn(reservationRepo, 'update').mockResolvedValueOnce(undefined);
+
+      const result = await service.completeReservation(id);
+
+      expect(reservationRepo.findOne).toHaveBeenCalled();
+      expect(reservationRepo.update).toHaveBeenCalled();
+      expect(result).toEqual(true);
+    });
+    it('should return null if reservation is not found', async () => {
+      const id = 1;
+
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValue(null);
+
+      const result = await service.completeReservation(id);
+
+      expect(result).toEqual(null);
+    }
+    );
+  });
+
   describe('updateStatus', () => {
     it('should update the status of a reservation', async () => {
       const id = 1;
@@ -354,12 +381,12 @@ describe('ReservationService', () => {
     });
   });
 
-  describe('getReservationsByUserId',() => {
+  describe('getReservationsByUserId', () => {
     it('should return reservations by user Id', async () => {
       jest.spyOn(reservationRepo, 'find').mockResolvedValue([])
       expect(await service.getReservationsByUserId(1)).toEqual([])
     });
-  }); 
+  });
 
   describe('verifyReservation', () => {
     const reservationId = 1;

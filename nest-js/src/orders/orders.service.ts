@@ -162,12 +162,13 @@ export class OrdersService {
         food: true,
         ingredients: {
           ingredient: true
-        }
+        },
       },
       select: {
         food: {
           name: true,
           type: true,
+          price: true
         },
         ingredients: {
           ingredient: {
@@ -175,7 +176,7 @@ export class OrdersService {
             id: true
           },
           removed: true
-        }
+        },
       }
     });
     return orders;

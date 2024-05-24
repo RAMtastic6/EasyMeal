@@ -135,7 +135,20 @@ export class ReservationService {
 
 
   async getReservationsByUserId(userId: number) {
-    const reservations = await this.reservationRepository.find({ where: { users:{id:userId}  }, relations:{users:true} });
+    const reservations = await this.reservationRepository.find({ where: { users:{id:userId}  }, 
+    relations:
+    {
+      users:true, 
+      restaurant:true
+    }, 
+    select:
+    {
+      restaurant:
+      {
+       name:true
+      }
+    } 
+  });
     return reservations;
   }
 
@@ -153,6 +166,14 @@ export class ReservationService {
     await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
     return true;
   }*/
+
+  async completeReservation(id: number) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.TO_PAY }}) == null) {
+      return null;
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.COMPLETED });
+    return true;
+  }
 
  async updateStatus(id: number, state: ReservationStatus) {
     const reservation = await this.reservationRepository.findOne({ 
