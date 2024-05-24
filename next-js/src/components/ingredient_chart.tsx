@@ -3,10 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { Endpoints } from "../lib/database/endpoints";
 import { saveOrders, updateIngredientsOrder, updateListOrders } from "../lib/database/order";
+import { getToken } from "../lib/dal";
 
 export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrders: any, reservationId: number }) {
   const [orders, setOrders] = useState<any>(fetchedOrders);
   const socket = useRef<Socket>();
+  const [token, setToken] = useState<string | null>(null);
 
   function onIngredient(body: any) {
     const newOrders = { ...orders };
@@ -36,7 +38,21 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
   }
 
   useEffect(() => {
-    socket.current = io(Endpoints.socket + "?id_prenotazione=" + reservationId);
+    getToken().then((token) => {
+      setToken(token);
+    });
+  }, []);
+
+  useEffect(() => {
+    if(!token) return;
+    socket.current = io(Endpoints.socket, {
+      query: {
+        id_prenotazione: reservationId,
+      },
+      auth: {
+        token: token,
+      },
+    });
     socket.current.on('onIngredient', onIngredient);
     socket.current.on('onConfirm', onConfirm);
     return () => {
@@ -44,7 +60,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
       socket.current?.off('onConfirm', onConfirm);
       socket.current?.disconnect();
     };
-  }, []);
+  }, [token]);
 
   async function submit() {
     const result = await updateListOrders({
