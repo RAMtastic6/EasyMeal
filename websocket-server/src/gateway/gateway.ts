@@ -32,9 +32,9 @@ export class MyGateway implements OnModuleInit {
       return;
     }
     socket.join(socket.handshake.query.id_prenotazione);
-    console.log(socket.id + " connected to room: " + socket.handshake.query.id_prenotazione);
+    console.log(socket.id + " connected to ordinazione room: " + socket.handshake.query.id_prenotazione);
     socket.on('disconnect', () => {
-      console.log(socket.id + " disconnected from room: " + socket.handshake.query.id_prenotazione);
+      console.log(socket.id + " disconnected from ordinazione room: " + socket.handshake.query.id_prenotazione);
     });
   }
 
