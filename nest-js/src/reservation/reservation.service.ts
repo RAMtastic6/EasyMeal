@@ -177,7 +177,7 @@ export class ReservationService {
 
  async updateStatus(id: number, state: ReservationStatus) {
     const reservation = await this.reservationRepository.findOne({ 
-      where: { id, state: ReservationStatus.PENDING },
+      where: { id },
       relations: { users: true  },
     });
     if(reservation == null) {
