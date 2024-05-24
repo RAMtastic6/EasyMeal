@@ -4,7 +4,7 @@ import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { AuthenticationService } from '../authentication/authentication.service';
-import { Reservation } from './entities/reservation.entity';
+import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import { StaffRole } from '../staff/enities/staff.entity';
 
 describe('ReservationController', () => {
@@ -236,7 +236,9 @@ describe('ReservationController', () => {
 
       const result = await controller.acceptReservation(id);
 
-      expect(service.acceptReservation).toHaveBeenCalledWith(id);
+      expect(service.acceptReservation).toHaveBeenCalledWith(
+        id, ReservationStatus.ACCEPTED
+      );
       expect(result).toEqual(expectedResult);
     });
 
@@ -260,7 +262,9 @@ describe('ReservationController', () => {
 
       const result = await controller.rejectReservation(id);
 
-      expect(service.rejectReservation).toHaveBeenCalledWith(id);
+      expect(service.rejectReservation).toHaveBeenCalledWith(
+        id, ReservationStatus.REJECTED
+      );
       expect(result).toEqual(true);
     });
 

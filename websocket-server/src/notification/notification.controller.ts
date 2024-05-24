@@ -10,5 +10,6 @@ export class NotificationController {
     @Post('send')
     async getNotification(@Body() body: NotificationDto)  {
         await this.notificationGateway.emitAll(body);
+        return true;
     }
 }

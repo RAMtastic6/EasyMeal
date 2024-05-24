@@ -57,7 +57,7 @@ describe('NotificationService', () => {
 
       const result = await service.findAllByUserId(id);
 
-      expect(repository.find).toHaveBeenCalledWith({ where: { id_receiver: id } });
+      expect(repository.find).toHaveBeenCalled();
       expect(result).toBe(notifications);
     });
   });

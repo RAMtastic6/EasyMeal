@@ -1,0 +1,47 @@
+"use client";
+import { useEffect, useState } from "react";
+import { CustomNotification, NotificationStatus } from "../../lib/types/definitions";
+import Notification from "@/src/components/notification";
+import { useNotification } from "../../contexts/notification_context";
+
+export function NotificationPage({ notificationsList }: {
+  notificationsList: CustomNotification[]
+}) {
+  const [notifications , setNotifications] = 
+    useState<CustomNotification[]>(notificationsList);
+
+  const { socket } = useNotification();
+
+  const addNotification = (notification: CustomNotification) => {
+    setNotifications([notification, ...notifications]);
+  }
+
+  const deleteNotification = (id: number) => {
+    setNotifications(notifications.filter((notification) => notification.id !== id));
+  }
+
+  useEffect(() => {
+    if(!socket) return;
+    socket.on("onNotification", addNotification);
+    return () => {
+      socket.off("onNotification", addNotification);
+    }
+  }, [socket]);
+
+  return (
+    <>
+      {notifications.map((notification) => 
+        <Notification 
+          key={notification.id}
+          id={notification.id} 
+          title={notification.title} 
+          description={notification.message} 
+          status={notification.status}
+          hook={deleteNotification}>
+        </Notification>
+      )}
+      {notifications.length === 0 && 
+      <p className="text-center text-gray-500"> Nessuna notifica </p>}
+    </>
+  );
+}

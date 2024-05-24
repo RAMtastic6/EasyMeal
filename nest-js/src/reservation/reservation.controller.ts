@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UnauthorizedException, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UnauthorizedException, ParseIntPipe, Res } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AddCustomerDTO } from './dto/add-customer.dto';
+import { ReservationStatus } from './entities/reservation.entity';
 
 @Controller('reservation')
 export class ReservationController {
@@ -78,10 +79,12 @@ export class ReservationController {
   }
 
 
-
   @Post(':id/accept')
   async acceptReservation(@Param('id', ParseIntPipe) id: number) {
-    const result = await this.reservationService.acceptReservation(id);
+    const result = await this.reservationService.updateStatus(
+      id,
+      ReservationStatus.ACCEPTED,
+    );
     if (result == null)
       throw new NotFoundException('Reservation not found');
     return result;
@@ -89,7 +92,10 @@ export class ReservationController {
 
   @Post(':id/reject')
   async rejectReservation(@Param('id', ParseIntPipe) id: number) {
-    const result = await this.reservationService.rejectReservation(id);
+    const result = await this.reservationService.updateStatus(
+      id,
+      ReservationStatus.REJECTED,
+    );
     if (result == null)
       throw new NotFoundException('Reservation not found');
     return result;

@@ -46,7 +46,7 @@ describe('NotificationController', () => {
       });
       jest.spyOn(notificationService, 'findAllByUserId').mockResolvedValue(notifications as any);
 
-      const result = await controller.findAllByUserId({ userId, token });
+      const result = await controller.findAllByUserId({ token });
 
       expect(authenticationService.verifyToken).toHaveBeenCalledWith(token);
       expect(notificationService.findAllByUserId).toHaveBeenCalledWith(userId);
@@ -59,7 +59,7 @@ describe('NotificationController', () => {
 
       jest.spyOn(authenticationService, 'verifyToken').mockResolvedValue(null);
 
-      await expect(controller.findAllByUserId({ userId, token })).rejects.toThrow(UnauthorizedException);
+      await expect(controller.findAllByUserId({ token })).rejects.toThrow(UnauthorizedException);
       expect(authenticationService.verifyToken).toHaveBeenCalledWith(token);
       expect(notificationService.findAllByUserId).not.toHaveBeenCalled();
     });

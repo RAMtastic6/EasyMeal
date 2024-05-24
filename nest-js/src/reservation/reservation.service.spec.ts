@@ -325,7 +325,7 @@ describe('ReservationService', () => {
       jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(reservation);
       jest.spyOn(reservationRepo, 'update').mockResolvedValueOnce(undefined);
 
-      const result = await service.updateStatus(id, state, userId);
+      const result = await service.updateStatus(id, state);
 
       expect(reservationRepo.findOne).toHaveBeenCalled();
       expect(reservationRepo.update).toHaveBeenCalled();
@@ -339,7 +339,7 @@ describe('ReservationService', () => {
 
       jest.spyOn(reservationRepo, 'findOne').mockResolvedValue(null);
 
-      const result = await service.updateStatus(id, state, userId);
+      const result = await service.updateStatus(id, state);
 
       expect(result).toEqual(false);
     });

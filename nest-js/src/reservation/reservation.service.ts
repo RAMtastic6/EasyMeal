@@ -70,8 +70,8 @@ export class ReservationService {
 
     // Notifiy the user of the restaurant
     await this.notificationService.create({
-      message: `Partecipa alla prenotazione con id: ${params.reservation_id}`,
-      title: 'Sei stato invitato ad una prenotazione',
+      message: `Stai partecipando alla prenotazione con id: ${params.reservation_id}`,
+      title: 'Hai accettato la prenotazione: ' + params.reservation_id,
       id_receiver: params.customer_id,
     });
     return true;
@@ -145,9 +145,9 @@ export class ReservationService {
     return true;
   }
 
- async updateStatus(id: number, state: ReservationStatus, user_id: number) {
+ async updateStatus(id: number, state: ReservationStatus) {
     const reservation = await this.reservationRepository.findOne({ 
-      where: { id },
+      where: { id, state: ReservationStatus.PENDING },
       relations: { users: true  },
     });
     if(reservation == null) {
@@ -157,11 +157,11 @@ export class ReservationService {
     //Notify all the users of the reservation changed status
 
     for(const user of reservation.users) {
-      if(user.id === user_id) {
+      /*if(user.id === user_id) {
         continue;
-      }
+      }*/
       await this.notificationService.create({
-        message: `La tua prenotazione con id: ${id} è stata ${state}`,
+        message: `La tua prenotazione con id: ${id} è in: ${state}`,
         title: 'Aggiornamento prenotazione',
         id_receiver: user.id,
       });

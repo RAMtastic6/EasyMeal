@@ -15,4 +15,6 @@ export class Endpoints {
     static readonly menu = Endpoints.host + "menu/";
     static readonly notification = Endpoints.host + "notification/";
     static readonly authentication = Endpoints.host + "authentication/";
+
+    static readonly socketNotfication = Endpoints.socket + "notification";
 }

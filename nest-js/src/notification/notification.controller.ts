@@ -19,7 +19,7 @@ export class NotificationController {
     if (!auth) {
       throw new UnauthorizedException('Invalid token');
     }
-    return await this.notificationService.findAllByUserId(body.userId);
+    return await this.notificationService.findAllByUserId(auth.id);
   }
 
   @Post('update')
