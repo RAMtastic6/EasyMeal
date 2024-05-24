@@ -16,12 +16,9 @@ describe('Verifica il funzionamento frontend del componente HomePageCards', () =
     render(<HomePageCards />);
 
     expect(screen.getByText('Sei un utente?')).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: /Sign-up/i})).toBeInTheDocument();
-    expect(screen.getByText('Ti sei già registrato?')).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: /Login/i})).toBeInTheDocument();
     expect(screen.getByText('Sei un ristoratore?')).toBeInTheDocument();
-    expect(screen.getAllByRole('button', {name: /Sign-up/i})).toHaveLenght(2);
-    expect(screen.getAllByRole('button', {name: /Login/i})).toHaveLenght(2);
-    expect(screen.getAllByText('Ti sei già registrato?')).toHaveLenght(2);
+    expect(screen.getAllByRole('button', {name: /Sign-up/i})).toHaveLength(2);
+    expect(screen.getAllByRole('button', {name: /Login/i})).toHaveLength(2);
+    expect(screen.getAllByText('Ti sei già registrato?')).toHaveLength(2);
   });
 });

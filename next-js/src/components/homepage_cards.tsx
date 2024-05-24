@@ -28,6 +28,7 @@ export default function homePageCards() {
           <form action="/sign_up" method="GET" onSubmit={handleUserSignUp}>
             <div>
               <button
+                id="user-sign-up"
                 name="user-sign-in"
                 type="submit"
                 className="flex w-2/3 justify-center rounded bg-orange-950 px-9 py-3 mb-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring mx-auto"
@@ -42,6 +43,7 @@ export default function homePageCards() {
           <form action="/login" method="GET" onSubmit={handleLogin}>
             <div>
               <button
+                id="user-login"
                 type="submit"
                 className="flex w-2/3 justify-center rounded bg-orange-950 px-9 py-3 mb-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring mx-auto"
                 >
@@ -54,9 +56,10 @@ export default function homePageCards() {
           <h3 className="text-center text-xl font-bold leading-9 tracking-tight text-red-950">
             Sei un ristoratore?
           </h3>
-          <form action="/login" method="GET" onSubmit={handleAdminSignUp}>
+          <form action="/sign_up_admin" method="GET" onSubmit={handleAdminSignUp}>
             <div>
               <button
+                id="admin-sign-up"
                 type="submit"
                 className="flex w-2/3 justify-center rounded bg-orange-950 px-9 py-3 mb-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring mx-auto"
               >
@@ -70,6 +73,7 @@ export default function homePageCards() {
           <form action="/login" method="GET" onSubmit={handleLogin}>
             <div>
               <button
+                id="admin-login"
                 type="submit"
                 className="flex w-2/3 justify-center rounded bg-orange-950 px-9 py-3 mb-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring mx-auto"
               >
