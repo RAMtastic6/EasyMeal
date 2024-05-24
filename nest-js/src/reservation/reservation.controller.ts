@@ -5,7 +5,8 @@ import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AddCustomerDTO } from './dto/add-customer.dto';
 import { verifyReservationDto } from './dto/verify-reservation.dto';
-import { ReservationStatus } from './entities/reservation.entity';
+import { Reservation, ReservationStatus } from './entities/reservation.entity';
+import { ReservationAdminDTO } from './dto/reservation-admin.dto';
 
 @Controller('reservation')
 export class ReservationController {
@@ -94,6 +95,14 @@ export class ReservationController {
     if (result == null)
       throw new NotFoundException('Reservation not found');
     return result;
+  }
+
+  @Post('admin')
+  async getReservationsByAdminId(@Body() data: ReservationAdminDTO) {
+    const token = await this.authService.verifyToken(data.token);
+    if(token == null)
+      throw new UnauthorizedException('Invalid token');
+    return await this.reservationService.getReservationsByAdminId(token.id);
   }
 
   @Post(':id/accept')

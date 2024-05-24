@@ -9,6 +9,7 @@ import { NotificationService } from '../notification/notification.service';
 import { StaffService } from '../staff/staff.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { UserService } from '../user/user.service';
+import { StaffRole } from '../staff/enities/staff.entity';
 
 @Injectable()
 export class ReservationService {
@@ -186,5 +187,14 @@ export class ReservationService {
       return null;
     }
     return reservation;
+  }
+
+  async getReservationsByAdminId(adminId: number) {
+    return await this.reservationRepository.find({ 
+      where: { restaurant: { staff: { id: adminId, role: StaffRole.ADMIN }}},
+      relations: {
+        restaurant: {staff: true}
+      },
+    });
   }
 }

@@ -1,31 +1,33 @@
 'use client';
-import { getReservationsByRestaurantId } from "@/src/lib/database/reservation";
+import { getReservationsByAdminId } from "@/src/lib/database/reservation";
 import { join } from "path";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from 'next/link';
 import { stateMessage } from "@/src/lib/types/definitions";
 import { getRestaurantIdByAdminId } from "../lib/database/staff";
 
-export default function ReservationsAdmin({ userId }: { userId: number}) {
-  const restaurantId = 1; // TO DO: get restaurant id from user
+export default function ReservationsAdmin() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const interval = useRef<any>(null);
+
   useEffect(() => {
-    async function fetchReservations() {
-      try {
-        //const restaurantId = await getRestaurantIdByAdminId(userId);
-        const json = await getReservationsByRestaurantId(1);
-        setReservations(json);
-      } catch (error) {
-        console.error("Error fetching reservations", error);
-      }
-      finally {
-        setLoading(false);
-      }
-    }
-    setLoading(true);
-    fetchReservations();
-  }, [restaurantId]);
+    getReservationsByAdminId().then((json) => {
+      setReservations(json);
+      setLoading(false);
+      interval.current = setInterval(async () => {
+        const data = await getReservationsByAdminId();
+        setReservations(data);
+      }, 5000);
+    }).catch((error) => {
+      console.error("Error fetching reservations", error);
+      setLoading(false);
+    });
+    return () => {
+      if(interval.current)
+        clearInterval(interval.current);
+    };
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;

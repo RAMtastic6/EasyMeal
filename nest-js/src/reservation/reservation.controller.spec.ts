@@ -7,6 +7,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import { StaffRole } from '../staff/enities/staff.entity';
 import { verifyReservationDto } from './dto/verify-reservation.dto';
+import { ReservationAdminDTO } from './dto/reservation-admin.dto';
 
 describe('ReservationController', () => {
   let controller: ReservationController;
@@ -31,6 +32,7 @@ describe('ReservationController', () => {
             getReservationsByUserId: jest.fn(),
             verifyReservation: jest.fn(),
             updateStatus: jest.fn(),
+            getReservationsByAdminId: jest.fn(),
           },
         },
         {
@@ -335,6 +337,36 @@ describe('ReservationController', () => {
       await expect(
         controller.verifyReservation(verifyReservationDto)
       ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('getReservationsByAdminId', () => {
+    it('should return reservations by admin id', async () => {
+      const token = { id: 1, role: StaffRole.ADMIN };
+      const data: ReservationAdminDTO = {
+        token: 'valid_token',
+      };
+  
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue(token);
+      jest.spyOn(service, 'getReservationsByAdminId').mockResolvedValue([]);
+  
+      const result = await controller.getReservationsByAdminId(data);
+  
+      expect(authService.verifyToken).toHaveBeenCalledWith(data.token);
+      expect(service.getReservationsByAdminId).toHaveBeenCalledWith(token.id);
+      expect(result).toEqual([]);
+    });
+  
+    it('should throw UnauthorizedException if token is invalid', async () => {
+      const data: ReservationAdminDTO = {
+        token: 'invalid_token',
+      };
+  
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue(null);
+  
+      await expect(controller.getReservationsByAdminId(data)).rejects.toThrowError(
+        UnauthorizedException,
+      );
     });
   });
 });

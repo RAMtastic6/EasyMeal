@@ -9,7 +9,7 @@ import { CreateReservationDto } from './dto/create-reservation.dto';
 import { Restaurant } from '../restaurant/entities/restaurant.entity';
 import { NotificationService } from '../notification/notification.service';
 import { StaffService } from '../staff/staff.service';
-import { Staff } from '../staff/enities/staff.entity';
+import { Staff, StaffRole } from '../staff/enities/staff.entity';
 import { UserService } from '../user/user.service';
 
 describe('ReservationService', () => {
@@ -384,4 +384,22 @@ describe('ReservationService', () => {
     });
   });
 
+  describe('getReservationsByAdminId', () => {
+    it('should return reservations by admin id', async () => {
+      const adminId = 1;
+      const reservations = [{ id: 1 }, { id: 2 }] as Reservation[];
+  
+      jest.spyOn(reservationRepo, 'find').mockResolvedValue(reservations);
+  
+      const result = await service.getReservationsByAdminId(adminId);
+  
+      expect(reservationRepo.find).toHaveBeenCalledWith({ 
+        where: { restaurant: { staff: { id: adminId, role: StaffRole.ADMIN }}},
+        relations: {
+          restaurant: {staff: true}
+        },
+      });
+      expect(result).toEqual(reservations);
+    });
+  });
 });
