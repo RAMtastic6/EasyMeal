@@ -8,6 +8,7 @@ import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { NotificationService } from '../notification/notification.service';
 import { StaffService } from '../staff/staff.service';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class ReservationService {
@@ -17,6 +18,7 @@ export class ReservationService {
     private readonly restaurantService: RestaurantService,
     private readonly notificationService: NotificationService,
     private readonly staffService: StaffService,
+    private readonly userService: UserService
   ) {}
   
   async create(
@@ -36,13 +38,16 @@ export class ReservationService {
     if(Date.now() > new Date(date).getTime()) {
       return null;
     }
+
+    const user = await this.userService.findOne(user_id);
+
     const reservation = this.reservationRepository.create({
       date: new Date(date),
       number_people: number_people,
       restaurant_id: restaurant_id,
-      users: [{ id: user_id }],
+      users: [ user ],
     });
-    await this.reservationRepository.save(reservation);
+    const result = await this.reservationRepository.save(reservation);
 
     // Notifiy the amministrator of the restaurant
     const admin = await this.staffService.getAdminByRestaurantId(restaurant_id);
@@ -59,20 +64,23 @@ export class ReservationService {
     };
   }
 
-  async addCustomer(params: { customer_id: number, reservation_id: number }) {
+  async addCustomer(params: { 
+    user_id: number, 
+    reservation_id: number 
+  }) {
     const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
     if(reservation == null) {
       return null
     }
     await this.reservationRepository.update({ id: params.reservation_id }, {
-      users: [...reservation.users, { id: params.customer_id }],
+      users: [...reservation.users, { id: params.user_id }],
     });
 
     // Notifiy the user of the restaurant
     await this.notificationService.create({
       message: `Partecipa alla prenotazione con id: ${params.reservation_id}`,
       title: 'Sei stato invitato ad una prenotazione',
-      id_receiver: params.customer_id,
+      id_receiver: params.user_id,
     });
     return true;
   }
@@ -167,5 +175,16 @@ export class ReservationService {
       });
     }
     return true;
+  }
+
+  async verifyReservation(reservation_id: number, user_id: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservation_id, users: { id: user_id } },
+      relations: { users: true },
+    });
+    if(reservation == null) {
+      return null;
+    }
+    return reservation;
   }
 }
