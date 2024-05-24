@@ -53,4 +53,8 @@ export class NotificationService {
     notification.status = NotificationStatus.READ;
     return await this.notificationRepository.save(notification);
   }
+
+  async findOne(id: number) {
+    return await this.notificationRepository.findOne({where: {id: id}});
+  }
 }

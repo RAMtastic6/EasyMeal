@@ -11,6 +11,7 @@ export async function getNotifications() {
   }
   const response = await fetch(Endpoints.notification, {
     method: "POST",
+    cache: "no-cache",
     headers: {
       "Content-Type": "application/json",
     },
@@ -29,6 +30,24 @@ export async function setReadNotification(data: { id: number }) {
     redirect("/login");
   }
   const response = await fetch(Endpoints.notification, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ 
+      token: token,
+      notificationId: data.id,
+    }),
+  });
+  return response.status;
+}
+
+export async function deleteNotification(data: { id: number }) {
+  const token = cookies().get("session")?.value;
+  if (!token) {
+    redirect("/login");
+  }
+  const response = await fetch(Endpoints.notification + 'update', {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

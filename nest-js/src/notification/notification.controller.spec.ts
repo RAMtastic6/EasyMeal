@@ -18,6 +18,7 @@ describe('NotificationController', () => {
           useValue: {
             findAllByUserId: jest.fn(),
             updateStatus: jest.fn(),
+            findOne: jest.fn(),
           },
         },
         {
@@ -76,6 +77,7 @@ describe('NotificationController', () => {
         role: 'customer',
       });
       jest.spyOn(notificationService, 'updateStatus').mockResolvedValue({ id: notificationId} as any);
+      jest.spyOn(notificationService, 'findOne').mockResolvedValue({ id_receiver: notificationId } as any);
 
       const result = await controller.updateStatus({ notificationId, token });
 

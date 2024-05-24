@@ -89,4 +89,17 @@ describe('NotificationService', () => {
       expect(result).toBeNull();
     });
   });
+
+  describe('findOne', () => {
+    it('should find a notification by id', async () => {
+      const id = 1;
+      const notification = new Notification();
+      jest.spyOn(repository, 'findOne').mockResolvedValue(notification);
+
+      const result = await service.findOne(id);
+
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id } });
+      expect(result).toBe(notification);
+    });
+  });
 });
