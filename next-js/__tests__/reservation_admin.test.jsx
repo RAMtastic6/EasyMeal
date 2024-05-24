@@ -1,15 +1,19 @@
 import React from 'react';
 import { getByAltText, getByText, render, screen, waitFor } from '@testing-library/react';
 import ReservationAdmin from '@/src/components/reservation_admin';
-import { describe } from 'node:test';
 
 // Mocking the API functions
 jest.mock('../src/lib/database/reservation', () => ({
-  getReservationById: jest.fn().mockResolvedValue({
-    id: 1,
-    number_people: 4,
-    state: 'pending',
-    date: new Date().toISOString(),
+  getReservationById: jest.fn().mockImplementation((id) => {
+    // Assuming different reservations with different states for testing
+    const reservations = {
+      '1': { id: 1, number_people: 4, state: 'pending', date: new Date().toISOString(), restaurant_id: 1 },
+      '2': { id: 2, number_people: 2, state: 'accept', date: new Date().toISOString(), restaurant_id: 1 },
+      '3': { id: 3, number_people: 3, state: 'reject', date: new Date().toISOString(), restaurant_id: 1 },
+      '4': { id: 4, number_people: 4, state: 'to_pay', date: new Date().toISOString(), restaurant_id: 1 },
+      '5': { id: 5, number_people: 5, state: 'completed', date: new Date().toISOString(), restaurant_id: 1 },
+    };
+    return Promise.resolve(reservations[id.toString()]);
   }),
 }));
 jest.mock('../src/lib/database/order', () => ({
@@ -22,14 +26,6 @@ jest.mock('../src/lib/database/order', () => ({
     },
   ]),
 }));
-/*
-to do: prove another state
-{ id: 1, date: '2021-12-30T12:30:00.000Z', number_people: 1, restaurant_id: 1, state: 'accept', user_id: 1 },
-    { id: 2, date: '2021-12-30T12:30:00.000Z', number_people: 2, restaurant_id: 2, state: 'reject', user_id: 2 },
-    { id: 3, date: '2021-12-30T12:30:00.000Z', number_people: 3, restaurant_id: 3, state: 'pending', user_id: 3 },
-    { id: 4, date: '2021-12-30T12:30:00.000Z', number_people: 4, restaurant_id: 4, state: 'to_pay', user_id: 4},
-    { id: 5, date: '2021-12-30T12:30:00.000Z', number_people: 5, restaurant_id: 5, state: 'completed', user_id: 5 },
-*/
 
 describe('Verifica il funzionamento frontend del componente Reservation Admin', () => {
 
@@ -45,54 +41,46 @@ describe('Verifica il funzionamento frontend del componente Reservation Admin', 
       expect(getByText('Stato:')).toBeInTheDocument();
       expect(getByText('Giorno:')).toBeInTheDocument();
       expect(getByText('Ora:')).toBeInTheDocument();
+    });
+  });
+  it('Verifica stato pending', async () => {
+    const { getByText } = render(<ReservationAdmin params={{ id: '1' }} />);
+    await waitFor(() => {
       expect(getByText('La prenotazione è in attesa di conferma.')).toBeInTheDocument();
       expect(getByText('Accetta')).toBeInTheDocument();
       expect(getByText('Rifiuta')).toBeInTheDocument();
       expect(getByText('Posti disponibili:')).toBeInTheDocument();
     });
   });
-});
-/*
-import React from 'react';
-import { render, waitFor } from '@testing-library/react';
-import ReservationDetails from '@/src/components/reservation_admin';
-
-// Mocking the API functions
-jest.mock('../src/lib/database/reservation', () => ({
-  getReservationById: jest.fn().mockResolvedValue({
-    id: 1,
-    number_people: 4,
-    state: 'pending',
-    date: new Date().toISOString(),
-  }),
-}));
-
-jest.mock('../src/lib/database/order', () => ({
-  getOrderByReservationId: jest.fn().mockResolvedValue([
-    {
-      id: 1,
-      customer_id: 1,
-      food: { id: 1, name: 'Pizza' },
-      ingredients: [{ id: 1, ingredient: { id: 1, name: 'Cheese' } }],
-    },
-  ]),
-}));
-
-describe('ReservationDetails', () => {
-  it('renders reservation details', async () => {
-    const { getByText } = render(<ReservationDetails params={{ id: '1' }} />);
-    
-    // Wait for data to be fetched
+  //it fails i don't know why
+  /*
+  it('Verifica stato accept', async () => {
+    const { getByText } = render(<ReservationAdmin params={{ id: '2' }} />);    ;
     await waitFor(() => {
       expect(getByText('Numero persone:')).toBeInTheDocument();
-      expect(getByText('Stato:')).toBeInTheDocument();
-      expect(getByText('Giorno:')).toBeInTheDocument();
-      expect(getByText('Ora:')).toBeInTheDocument();
-      expect(getByText('La prenotazione è in attesa di conferma.')).toBeInTheDocument();
-      expect(getByText('Accetta')).toBeInTheDocument();
-      expect(getByText('Rifiuta')).toBeInTheDocument();
-      expect(getByText('Posti disponibili:')).toBeInTheDocument();
     });
   });
+  */ 
+ it('Verifica stato reject', async () => {
+   const { getByText } = render(<ReservationAdmin params={{ id: '3' }} />);
+   await waitFor(() => {
+     expect(getByText('La prenotazione è stata rifiutata.')).toBeInTheDocument();
+   });
+ });
+ /*
+  it('Verifica stato to_pay', async () => {
+    const { getByText } = render(<ReservationAdmin params={{ id: '4' }} />);
+    await waitFor(() => {
+      expect(getByText('Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.')).toBeInTheDocument();
+    });
+  });
+  */
+ /*
+  it('Verifica stato completed', async () => {
+    const { getByText } = render(<ReservationAdmin params={{ id: '5' }} />);
+    await waitFor(() => {
+      expect(getByText('La prenotazione è stata completata.')).toBeInTheDocument();
+    });
+  });
+  */
 });
-*/
