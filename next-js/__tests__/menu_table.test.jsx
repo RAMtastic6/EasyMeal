@@ -51,8 +51,10 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
         io.mockReturnValue(mockSocket);
     });
 
-    it('Verifica della visualizzazione', () => {
-        render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+    it('Verifica della visualizzazione', async () => {
+        await waitFor(() => {
+            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        });
 
         expect(screen.getByText('Pasta')).toBeInTheDocument();
         expect(screen.getByText('Pizza')).toBeInTheDocument();
@@ -65,7 +67,9 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
     });
 
     it('Verifica di aumento e diminuzione quantità', async () => {
-        render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        await waitFor(() => {
+            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        });
 
         const decreaseButton = screen.getByTestId('decrease_1');
         const increaseButton = screen.getByTestId('increase_1');
@@ -83,7 +87,9 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
 
 
     it('Verifica che venga mostrato il prezzo totale corretto', async () => {
-        render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        await waitFor(() => {
+            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        });
 
         const totalPrice = screen.getByText('€34');
 
