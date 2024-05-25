@@ -60,6 +60,15 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
     }
   }
 
+  if(reservation.date < new Date().toISOString()) {
+    return (
+      <div className="container mx-auto mt-4 p-6 bg-100 rounded-lg shadow-lg">
+        <div className="text-2xl font-semibold text-gray-800">Errore</div>
+        <p className="text-gray-700">Non è possibile visualizzare la prenotazione selezionata poiché la data è passata.</p>
+      </div>
+    );
+  }
+
   if (loading) return (<p>Loading...</p>);
 
   return (
