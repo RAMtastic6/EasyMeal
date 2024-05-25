@@ -37,3 +37,12 @@ export const getFormData = (keys: string[], formData: FormData) => {
   });
   return formDataValues;
 };
+
+export function filterAndFormatReservations(reservations: any[]) {
+  return reservations
+    .filter((reservation) => new Date(reservation.date) > new Date())
+    .map((reservation) => ({
+      ...reservation,
+      date: new Date(reservation.date), 
+    }));
+}

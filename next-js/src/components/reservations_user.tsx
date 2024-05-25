@@ -1,23 +1,20 @@
 'use client';
 import { getReservationsByUserId } from "@/src/lib/database/reservation";
-import { getReservationById } from "@/src/lib/database/reservation";
-import { getRestaurantById } from "@/src/lib/database/restaurant";
-import { join } from "path";
 import { useEffect, useState } from "react";
 import Link from 'next/link';
 import { stateMessage } from "@/src/lib/types/definitions";
+import { filterAndFormatReservations } from "../lib/utils";
 
 export default function ReservationsUser({ userId}: { userId: number} ) {
 
   const [reservations, setReservations] = useState<any[]>([]);
-  const [restaurants, setRestaurants] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     async function fetchReservations() {
       try {
         //const restaurantId = await getRestaurantIdByAdminId(userId);
         const json = await getReservationsByUserId(userId);
-        setReservations(json);
+        setReservations(filterAndFormatReservations(json));
 
 
       } catch (error) {
