@@ -9,23 +9,24 @@ import { getRestaurantIdByAdminId } from "../lib/database/staff";
 export default function ReservationsAdmin() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const interval = useRef<any>(null);
 
   useEffect(() => {
-    getReservationsByAdminId().then((json) => {
-      setReservations(json);
-      setLoading(false);
-      interval.current = setInterval(async () => {
-        const data = await getReservationsByAdminId();
-        setReservations(data);
-      }, 5000);
-    }).catch((error) => {
-      console.error("Error fetching reservations", error);
-      setLoading(false);
-    });
+    const fetchReservations = async () => {
+      try {
+        const json = await getReservationsByAdminId();
+        setReservations(json);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching reservations", error);
+        setLoading(false);
+      }
+    };
+
+    fetchReservations();
+    const interval = setInterval(fetchReservations, 10000);
+
     return () => {
-      if(interval.current)
-        clearInterval(interval.current);
+      clearInterval(interval);
     };
   }, []);
 
