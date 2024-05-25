@@ -21,7 +21,6 @@ export default function MenuTable(
 ) {
 	const socket = useRef<Socket>();
 	const [menu, setMenu] = useState(menuData);
-	const [token, setToken] = useState<string | null>(null);
 	const [price, setPrice] = useState(menuData.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 
 	const sendData = async (index: number, menu: any, add: boolean) => {
@@ -56,29 +55,23 @@ export default function MenuTable(
 
 	useEffect(() => {
 		getToken().then((token) => {
-			setToken(token);
+			const soc = io(Endpoints.socket, {
+				query: {
+					id_prenotazione: params.number,
+				},
+				auth: {
+					token: token,
+				}
+			});
+			socket.current = soc;
+			socket.current.on('onMessage', handleMessage);
 		});
-	}, []);
-
-	useEffect(() => {
-		if(!token) return;
-		console.log(token);
-		const soc = io(Endpoints.socket, {
-			query: {
-				id_prenotazione: params.number,
-			},
-			auth: {
-				token: token,
-			}
-		});
-		socket.current = soc;
-		socket.current.on('onMessage', handleMessage);
 		//Close the socket connection when the component is unmounted
 		return () => {
 			socket.current?.off('onMessage', handleMessage);
 			socket.current?.disconnect();
 		}
-	}, [token]);
+	}, []);
 
 	const decreaseQuantity = (index: number) => {
 		const newMenu = { ...menu };

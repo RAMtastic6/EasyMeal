@@ -197,7 +197,7 @@ export class OrdersService {
         });
       }
     };
-    await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY, order.user_id);
+    await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY);
     return true;
   }
 }

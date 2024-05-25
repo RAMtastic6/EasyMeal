@@ -1,6 +1,7 @@
 "use server";
 import { cookies } from "next/headers";
 import { Endpoints } from "./endpoints";
+import { getToken } from "../dal";
 
 export async function getReservation(): Promise<JSON> {
 	const response = await fetch(Endpoints.reservation);
@@ -58,10 +59,19 @@ export async function createReservation(reservation: {
 	};
 }
 
-export async function getReservationsByRestaurantId(restaurantId: number): Promise<[]> {
-	const response = await fetch(`${Endpoints.reservation}restaurant/${restaurantId}`, {
-		method: "GET",
+/** FUNZIONI ADMIN **/
+
+export async function getReservationsByAdminId(): Promise<[]> {
+	const token = await getToken();
+	const response = await fetch(`${Endpoints.reservation}admin`, {
+		method: "POST",
 		cache: "no-cache",
+		body: JSON.stringify({
+			token: token,
+		}),
+		headers: {
+			"Content-Type": "application/json",
+		},
 	});
 	if (!response.ok) {
 		throw new Error('Error fetching reservations from the database');
@@ -83,8 +93,6 @@ export async function getReservationsByUserId(UserId: number): Promise<[]> {
 	console.log(data);
 	return data;
 }
-
-/* FUNZIONI ADMIN */
 
 export async function acceptReservation(id: number): Promise<any> {
 	const response = await fetch(`${Endpoints.reservation}${id}/accept`, {

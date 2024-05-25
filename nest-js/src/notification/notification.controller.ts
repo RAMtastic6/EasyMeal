@@ -19,14 +19,15 @@ export class NotificationController {
     if (!auth) {
       throw new UnauthorizedException('Invalid token');
     }
-    return await this.notificationService.findAllByUserId(body.userId);
+    return await this.notificationService.findAllByUserId(auth.id);
   }
 
   @Post('update')
   @HttpCode(200)
   async updateStatus(@Body() body: UpdateStatusDTO ) {
     const auth = await this.authenticationService.verifyToken(body.token);
-    if (!auth || auth.id !== body.notificationId) {
+    const notification = await this.notificationService.findOne(body.notificationId);
+    if (!auth || !notification || auth.id !== notification.id_receiver) {
       throw new UnauthorizedException('Invalid token');
     }
     return await this.notificationService.updateStatus(body.notificationId);

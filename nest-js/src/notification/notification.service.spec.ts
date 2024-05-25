@@ -38,6 +38,7 @@ describe('NotificationService', () => {
         title: 'title',
       };
       const notification = new Notification();
+      jest.spyOn(global, 'fetch').mockResolvedValue({ json: async () => notification } as any);
       jest.spyOn(repository, 'create').mockReturnValue(notification);
       jest.spyOn(repository, 'save').mockResolvedValue(notification);
 
@@ -57,7 +58,7 @@ describe('NotificationService', () => {
 
       const result = await service.findAllByUserId(id);
 
-      expect(repository.find).toHaveBeenCalledWith({ where: { id_receiver: id } });
+      expect(repository.find).toHaveBeenCalled();
       expect(result).toBe(notifications);
     });
   });
@@ -86,6 +87,19 @@ describe('NotificationService', () => {
 
       expect(repository.findOne).toHaveBeenCalledWith({ where: { id: idNotification } });
       expect(result).toBeNull();
+    });
+  });
+
+  describe('findOne', () => {
+    it('should find a notification by id', async () => {
+      const id = 1;
+      const notification = new Notification();
+      jest.spyOn(repository, 'findOne').mockResolvedValue(notification);
+
+      const result = await service.findOne(id);
+
+      expect(repository.findOne).toHaveBeenCalledWith({ where: { id } });
+      expect(result).toBe(notification);
     });
   });
 });

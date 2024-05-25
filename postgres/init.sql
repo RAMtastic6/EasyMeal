@@ -1258,9 +1258,9 @@ INSERT INTO public.staff (id, restaurant_id, user_id, ruolo) VALUES (2, 2, 2, 'a
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (2, 'test', 'test', 'test@', '$2b$13$2Lq3jwxdtHBt2JEFPPp7defEUHaFy2LJMjRW.bpqeV6Nt01efkCVS');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'user', '$2a$13$NW44gn3XjLD1FjWz9egcluOVhjYWn7dX/nCM4awO2JpjmLwAyYB46');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (3, 'test', 'test', 'dc@dc', '$2b$13$zeeUkesLTm2PuYjK0HMpbO6Ior.9ODKWzaQYurI4Lm9sstu8R7jPq');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (2, 'test', 'test', 'admin2@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'admin1@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (3, 'test', 'test', 'admin3@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
 INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (4, 'dc', 'dc', 'dc@', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
 INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (5, 's', 's', 'sas@sas', '$2b$13$igZzV4v/GS9ysbULdYwV.uzWS4BPwGlGc9K063kEbr21d9rgMcutK');
 

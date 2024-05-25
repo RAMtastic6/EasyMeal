@@ -9,6 +9,7 @@ import { NotificationService } from '../notification/notification.service';
 import { StaffService } from '../staff/staff.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { UserService } from '../user/user.service';
+import { StaffRole } from '../staff/enities/staff.entity';
 
 @Injectable()
 export class ReservationService {
@@ -78,8 +79,8 @@ export class ReservationService {
 
     // Notifiy the user of the restaurant
     await this.notificationService.create({
-      message: `Partecipa alla prenotazione con id: ${params.reservation_id}`,
-      title: 'Sei stato invitato ad una prenotazione',
+      message: `Stai partecipando alla prenotazione con id: ${params.reservation_id}`,
+      title: 'Hai accettato la prenotazione: ' + params.reservation_id,
       id_receiver: params.user_id,
     });
     return true;
@@ -151,7 +152,7 @@ export class ReservationService {
     return reservations;
   }
 
-  async acceptReservation(id: number) {
+  /*async acceptReservation(id: number) {
     if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } }) == null) {
       return null;
     }
@@ -164,7 +165,7 @@ export class ReservationService {
     }
     await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
     return true;
-  }
+  }*/
 
   async completeReservation(id: number) {
     if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.TO_PAY }}) == null) {
@@ -174,7 +175,7 @@ export class ReservationService {
     return true;
   }
 
- async updateStatus(id: number, state: ReservationStatus, user_id: number) {
+ async updateStatus(id: number, state: ReservationStatus) {
     const reservation = await this.reservationRepository.findOne({ 
       where: { id },
       relations: { users: true  },
@@ -186,11 +187,11 @@ export class ReservationService {
     //Notify all the users of the reservation changed status
 
     for(const user of reservation.users) {
-      if(user.id === user_id) {
+      /*if(user.id === user_id) {
         continue;
-      }
+      }*/
       await this.notificationService.create({
-        message: `La tua prenotazione con id: ${id} è stata ${state}`,
+        message: `La tua prenotazione con id: ${id} è in: ${state}`,
         title: 'Aggiornamento prenotazione',
         id_receiver: user.id,
       });
@@ -207,5 +208,14 @@ export class ReservationService {
       return null;
     }
     return reservation;
+  }
+
+  async getReservationsByAdminId(adminId: number) {
+    return await this.reservationRepository.find({ 
+      where: { restaurant: { staff: { id: adminId, role: StaffRole.ADMIN }}},
+      relations: {
+        restaurant: {staff: true}
+      },
+    });
   }
 }

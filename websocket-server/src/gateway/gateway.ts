@@ -12,6 +12,7 @@ export class MyGateway implements OnModuleInit {
     const token = socket.handshake.auth.token;
     const id_prenotazione = socket.handshake.query.id_prenotazione;
     if (!token || !id_prenotazione) {
+      console.log("token is missing");
       socket.disconnect();
       return;
     }
@@ -28,6 +29,7 @@ export class MyGateway implements OnModuleInit {
       }),
     });
     if (response.status != 200) {
+      console.log("Unauthorized connection");
       socket.disconnect();
       return;
     }
@@ -46,12 +48,14 @@ export class MyGateway implements OnModuleInit {
   async onIncrement(@MessageBody() body: any) {
     const id_prenotazione: string = body["id_prenotazione"];
     this.server.to(id_prenotazione).emit('onMessage', body.data);
+    console.log("onMessage: " + JSON.stringify(body));
   }
 
   @SubscribeMessage('onIngredient')
   async onIngredient(@MessageBody() body: any) {
     const id_prenotazione: string = body["id_prenotazione"];
     this.server.to(id_prenotazione).emit('onIngredient', body.data);
+    console.log("onIngredient: " + JSON.stringify(body));
   }
 
   @SubscribeMessage('onConfirm')

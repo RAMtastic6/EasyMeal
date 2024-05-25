@@ -33,6 +33,7 @@ describe('NotificationController', () => {
       id_receiver: [1, 2, 3],
       title: 'Test Title',
       message: 'Test Message',
+      id: 1,
     };
 
     await controller.getNotification(notification);

@@ -37,7 +37,7 @@ export async function decodeToken(token: string) {
     if (response.status != 200) {
       return null;
     }
-    return await response.json();
+    return await response.json() as { id: number, role: string };
   } catch (error) {
     console.log(error);
     return null;

@@ -4,9 +4,10 @@ import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { AuthenticationService } from '../authentication/authentication.service';
-import { Reservation } from './entities/reservation.entity';
+import { Reservation, ReservationStatus } from './entities/reservation.entity';
 import { StaffRole } from '../staff/enities/staff.entity';
 import { verifyReservationDto } from './dto/verify-reservation.dto';
+import { ReservationAdminDTO } from './dto/reservation-admin.dto';
 
 describe('ReservationController', () => {
   let controller: ReservationController;
@@ -31,6 +32,8 @@ describe('ReservationController', () => {
             completeReservation: jest.fn(), 
             getReservationsByUserId: jest.fn(),
             verifyReservation: jest.fn(),
+            updateStatus: jest.fn(),
+            getReservationsByAdminId: jest.fn(),
           },
         },
         {
@@ -235,18 +238,20 @@ describe('ReservationController', () => {
       const id = 1;
       const expectedResult = { id: 1 } as any;
 
-      jest.spyOn(service, 'acceptReservation').mockResolvedValue(expectedResult);
+      jest.spyOn(service, 'updateStatus').mockResolvedValue(expectedResult);
 
       const result = await controller.acceptReservation(id);
 
-      expect(service.acceptReservation).toHaveBeenCalledWith(id);
+      expect(service.updateStatus).toHaveBeenCalledWith(
+        id, ReservationStatus.ACCEPTED
+      );
       expect(result).toEqual(expectedResult);
     });
 
     it('should throw NotFoundException if reservation is not found', async () => {
       const id = 1;
 
-      jest.spyOn(service, 'acceptReservation').mockResolvedValue(null);
+      jest.spyOn(service, 'updateStatus').mockResolvedValue(null);
 
       await expect(controller.acceptReservation(id)).rejects.toThrowError(
         NotFoundException,
@@ -259,18 +264,20 @@ describe('ReservationController', () => {
       const id = 1;
       const expectedResult = { id: 1 };
 
-      jest.spyOn(service, 'rejectReservation').mockResolvedValue(true);
+      jest.spyOn(service, 'updateStatus').mockResolvedValue(true);
 
       const result = await controller.rejectReservation(id);
 
-      expect(service.rejectReservation).toHaveBeenCalledWith(id);
+      expect(service.updateStatus).toHaveBeenCalledWith(
+        id, ReservationStatus.REJECTED
+      );
       expect(result).toEqual(true);
     });
 
     it('should throw NotFoundException if reservation is not found', async () => {
       const id = 1;
 
-      jest.spyOn(service, 'rejectReservation').mockResolvedValue(null);
+      jest.spyOn(service, 'updateStatus').mockResolvedValue(null);
 
       await expect(controller.rejectReservation(id)).rejects.toThrow(
         NotFoundException,
@@ -359,6 +366,36 @@ describe('ReservationController', () => {
       await expect(
         controller.verifyReservation(verifyReservationDto)
       ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('getReservationsByAdminId', () => {
+    it('should return reservations by admin id', async () => {
+      const token = { id: 1, role: StaffRole.ADMIN };
+      const data: ReservationAdminDTO = {
+        token: 'valid_token',
+      };
+  
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue(token);
+      jest.spyOn(service, 'getReservationsByAdminId').mockResolvedValue([]);
+  
+      const result = await controller.getReservationsByAdminId(data);
+  
+      expect(authService.verifyToken).toHaveBeenCalledWith(data.token);
+      expect(service.getReservationsByAdminId).toHaveBeenCalledWith(token.id);
+      expect(result).toEqual([]);
+    });
+  
+    it('should throw UnauthorizedException if token is invalid', async () => {
+      const data: ReservationAdminDTO = {
+        token: 'invalid_token',
+      };
+  
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue(null);
+  
+      await expect(controller.getReservationsByAdminId(data)).rejects.toThrowError(
+        UnauthorizedException,
+      );
     });
   });
 });

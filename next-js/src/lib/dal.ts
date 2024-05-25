@@ -12,7 +12,7 @@ export const verifySession = cache(async () => {
     if(!session?.id) {
         redirect('/login');
     }
-    return { isAuth: true, id: session.id as number}
+    return session;
 });
 
 export const getToken = async () => {

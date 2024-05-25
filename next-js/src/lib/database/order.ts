@@ -127,6 +127,7 @@ export async function updateListOrders(data: any) {
 			}),
 	});
 	if(request.status !== 200) {
+		console.log(request.status);
 		return false; 
 	}
 	const result = await request.json();
