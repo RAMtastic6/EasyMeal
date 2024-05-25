@@ -5,10 +5,11 @@ import { Endpoints } from "../lib/database/endpoints";
 import { saveOrders, updateIngredientsOrder, updateListOrders } from "../lib/database/order";
 import { getToken } from "../lib/dal";
 
+
+
 export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrders: any, reservationId: number }) {
   const [orders, setOrders] = useState<any>(fetchedOrders);
   const socket = useRef<Socket>();
-  const [token, setToken] = useState<string | null>(null);
 
   function onIngredient(body: any) {
     const newOrders = { ...orders };
@@ -39,28 +40,24 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
 
   useEffect(() => {
     getToken().then((token) => {
-      setToken(token);
+      if(!token) return;
+      socket.current = io(Endpoints.socket, {
+        query: {
+          id_prenotazione: reservationId,
+        },
+        auth: {
+          token: token,
+        },
+      });
+      socket.current.on('onIngredient', onIngredient);
+      socket.current.on('onConfirm', onConfirm);
     });
-  }, []);
-
-  useEffect(() => {
-    if (!token) return;
-    socket.current = io(Endpoints.socket, {
-      query: {
-        id_prenotazione: reservationId,
-      },
-      auth: {
-        token: token,
-      },
-    });
-    socket.current.on('onIngredient', onIngredient);
-    socket.current.on('onConfirm', onConfirm);
     return () => {
       socket.current?.off('onIngredient', onIngredient);
       socket.current?.off('onConfirm', onConfirm);
       socket.current?.disconnect();
     };
-  }, [token]);
+  }, []);
 
   async function submit() {
     const result = await updateListOrders({
