@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { LoginLogout } from './dynamic_login';
+import { Navbar } from './nav_bar';
 
 export default function Header({ login }: { login: boolean}) {
 	return (
@@ -26,6 +27,7 @@ export default function Header({ login }: { login: boolean}) {
 									</svg>
 								</span>
 							</Link>
+							<Navbar />
 							<LoginLogout isLogin={login} />
 						</div>
 					</div>

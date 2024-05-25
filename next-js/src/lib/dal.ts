@@ -20,3 +20,10 @@ export const getToken = async () => {
     if(!cookie) redirect('/login');
     return cookie;
 };
+
+export const roleAdmin = cache(async () => {
+    const cookie = cookies().get('session')?.value;
+    if(!cookie) return false;
+    const session = await decodeToken(cookie);
+    return session?.role === 'admin';
+});
