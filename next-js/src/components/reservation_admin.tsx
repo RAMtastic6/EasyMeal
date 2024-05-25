@@ -186,12 +186,14 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                                   <p>Cliente {order.customer_id}</p>
                                   <h2 className="text-xl font-semibold mb-2">{order.food.name}</h2>
                                   <ul>
-                                    {order.ingredients.map((ingredient: any, ingredientIndex: number) => (
-                                      <li key={ingredientIndex} className="flex justify-between items-center mb-2">
-                                        <span>{ingredient.ingredient.name}</span>
-                                        <span>{ingredient.quantity}</span>
-                                      </li>
-                                    ))}
+                                    {order.ingredients
+                                      .filter((ingredient: any) => !ingredient.removed) // Filtra gli ingredienti non rimossi
+                                      .map((ingredient: any, ingredientIndex: number) => (
+                                        <li key={ingredientIndex} className="flex justify-between items-center mb-2">
+                                          <span>{ingredient.ingredient.name}</span>
+                                          <span>{ingredient.quantity}</span>
+                                        </li>
+                                      ))}
                                   </ul>
                                 </div>
                               ))}

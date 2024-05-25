@@ -190,11 +190,14 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                                 <p className="text-gray-700 mb-2">Utente: <span className="font-medium">{order.user_id}</span></p>
                                 <h2 className="text-xl font-semibold mb-2 text-gray-800">{order.food.name} - €{order.food.price.toFixed(2)}</h2>
                                 <ul className="text-gray-700">
-                                  {order.ingredients.map((ingredient: any, ingredientIndex: number) => (
-                                    <li key={ingredientIndex} className="flex justify-between items-center mb-2">
-                                      <span>{ingredient.ingredient.name}</span>
-                                    </li>
-                                  ))}
+                                  {order.ingredients
+                                    .filter((ingredient: any) => !ingredient.removed) // Filtra gli ingredienti non rimossi
+                                    .map((ingredient: any, ingredientIndex: number) => (
+                                      <li key={ingredientIndex} className="flex justify-between items-center mb-2">
+                                        <span>{ingredient.ingredient.name}</span>
+                                        <span>{ingredient.quantity}</span>
+                                      </li>
+                                    ))}
                                 </ul>
                               </div>
                             ))}
