@@ -3,6 +3,16 @@ import { render, screen, waitFor } from '@testing-library/react'
 import Header from '../src/components/header';
 import { cookies } from 'next/headers';
 
+// Mock del componente Navbar
+jest.mock('../src/components/nav_bar', () => ({
+  __esModule: true,
+  Navbar: jest.fn(() => {
+    return (
+      <div data-testid="navbar-mock">Mocked Navbar</div>
+    );
+  }),
+}));
+
 describe('Header', () => {
 
 	it('should render the EasyMeal link', () => {
