@@ -15,9 +15,10 @@ export default function login() {
 		e.preventDefault();
 		const result = await createSession(email, password);
 		console.log(result);
-		if(result)
-			router.push('/create_reservation');
-		else
+		if(result) {
+			const path = params.get('callbackUrl') ?? '/create_reservation'
+			router.push(path);
+		} else
 			setError('Credenziali non corrette.');
 	}
 
