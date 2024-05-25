@@ -1,11 +1,7 @@
-"use server";
 import Link from 'next/link';
-import { getToken, verifySession } from '../lib/dal';
 import { LoginLogout } from './dynamic_login';
-import { cookies } from 'next/headers';
 
-export default async function Header() {
-	const login = cookies().get('session')?.value != undefined;
+export default function Header({ login }: { login: boolean}) {
 	return (
 		<header className="bg-orange-500">
 			<div className="mx-auto max-w-screen-xxl px-4 sm:px-6 lg:px-8">

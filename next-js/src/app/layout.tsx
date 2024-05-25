@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <NotificationProvider token={token}>
-          <Header />
+          <Header login={token != null}/>
           {children}
         </NotificationProvider>
       </body>
