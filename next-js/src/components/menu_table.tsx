@@ -98,11 +98,6 @@ export default function MenuTable(
 		setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 	};
 
-	const [selectedOption, setSelectedOption] = useState('AllaRomana');
-
-	const handleOptionChange = (option: string) => {
-		setSelectedOption(option);
-	};
 
 	return (
 		<>
@@ -165,41 +160,6 @@ export default function MenuTable(
 										<dd>€{price}</dd>
 									</div>
 								</dl>
-
-								<div className="flex justify-between !text-base font-medium">
-									<dt>La tua parte:</dt>
-								</div>
-								<div>
-									<label
-										htmlFor="AllaRomana"
-										className={`flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 ${selectedOption === 'AllaRomana' ? 'has-[:checked]:border-orange-700 has-[:checked]:ring-1 has-[:checked]:ring-orange-700' : ''}`}
-										onClick={() => handleOptionChange('AllaRomana')}
-									>
-										<p className="text-gray-700">Alla romana</p>
-										<input
-											type="radio"
-											className="sr-only"
-											id="AllaRomana"
-											checked={selectedOption === 'AllaRomana'}
-											onChange={() => handleOptionChange('AllaRomana')}
-										/>
-									</label>
-								</div>
-
-								<div>
-									<label
-										htmlFor="Ognuno"
-										className={`flex items-center justify-between gap-4 rounded-lg bg-gray-100 p-4 text-sm font-medium shadow-sm`}
-									>
-										<p className="text-gray-700">Ognun per sé (Coming Soon)</p>
-										<input
-											type="radio"
-											className="sr-only"
-											id="Ognuno"
-											disabled
-										/>
-									</label>
-								</div>
 
 								<div className="flex justify-end">
 									<div className="sm:flex sm:gap-4">
