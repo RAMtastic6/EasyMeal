@@ -1,16 +1,12 @@
 import ReservationsAdmin from '@/src/components/reservations_admin';
 import { getReservationsByAdminId } from '../../../lib/database/reservation';
 import { verifySession } from '../../../lib/dal';
+import { redirect } from 'next/navigation';
 
 export default async function ReservationsAdminPage() {
   const session = await verifySession();
   if(session == null || session.role !== 'admin') {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
+    redirect('/login');
   }
   return (
     <div className="w-full">
