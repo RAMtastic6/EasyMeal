@@ -32,7 +32,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
         console.log("Fetching orders data...");
         const reservation = await getReservationById(parseInt(params.id));
         setReservation(reservation);
-        if (reservation.state === 'accept' || reservation.state === 'to_pay') {
+        if (reservation.state === 'accept' || reservation.state === 'to_pay' || reservation.state === 'completed') {
           const orders = await getOrderByReservationId(parseInt(params.id));
           setOrders(orders);
         }
@@ -68,14 +68,18 @@ export default function ReservationDetails({ params }: { params: { id: string } 
 
     Object.keys(orders).forEach((key) => {
       orders[key].forEach((order: any) => {
-        order.ingredients.forEach((ingredient: any) => {
-          const name = ingredient.ingredient.name;
-          if (!totals[name]) {
-            totals[name] = 0;
-          }
-          totals[name] += 1;
-        });
-      });
+        {
+          order.ingredients
+            .filter((ingredient: any) => !ingredient.removed).forEach((ingredient: any) => {
+              const name = ingredient.ingredient.name;
+              if (!totals[name]) {
+                totals[name] = 0;
+              }
+              totals[name] += 1;
+            });
+        }
+      }
+      );
     });
 
     return totals;
@@ -149,7 +153,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                 La prenotazione è stata pagata e completata.
               </div>
             )}
-            {(reservation.state === "to_pay" || reservation.state === "accept") && (
+            {(reservation.state === "to_pay" || reservation.state === "accept" || reservation.state === "completed") && (
               <div>
                 {(!orders || orders.length === 0) ? (
                   <div className="bg-white p-6 rounded-lg shadow-lg">
