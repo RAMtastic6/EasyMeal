@@ -20,8 +20,8 @@ export class ReservationService {
     private readonly notificationService: NotificationService,
     private readonly staffService: StaffService,
     private readonly userService: UserService
-  ) {}
-  
+  ) { }
+
   async create(
     restaurant_id: number,
     date: string,
@@ -29,14 +29,14 @@ export class ReservationService {
     user_id: number,
   ) {
     const restaurant = await this.restaurantService.findOne(restaurant_id);
-    if(restaurant == null) {
+    if (restaurant == null) {
       return null;
     }
     const booked = await this.restaurantService.getBookedTables(restaurant_id, date);
-    if(booked >= restaurant.tables) {
+    if (booked >= restaurant.tables) {
       return { status: false, message: 'Restaurant is full' };
     }
-    if(Date.now() > new Date(date).getTime()) {
+    if (Date.now() > new Date(date).getTime()) {
       return null;
     }
 
@@ -46,7 +46,7 @@ export class ReservationService {
       date: new Date(date),
       number_people: number_people,
       restaurant_id: restaurant_id,
-      users: [ user ],
+      users: [user],
     });
     const result = await this.reservationRepository.save(reservation);
 
@@ -65,12 +65,12 @@ export class ReservationService {
     };
   }
 
-  async addCustomer(params: { 
-    user_id: number, 
-    reservation_id: number 
+  async addCustomer(params: {
+    user_id: number,
+    reservation_id: number
   }) {
     const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
-    if(reservation == null) {
+    if (reservation == null) {
       return null
     }
     await this.reservationRepository.update({ id: params.reservation_id }, {
@@ -92,7 +92,7 @@ export class ReservationService {
   }
 
   async findOne(id: number) {
-    const reservation = await this.reservationRepository.findOne({ where: { id } });
+    const reservation = await this.reservationRepository.findOne({ where: { id }, relations: { users: true }, select: { users: { id: true } } });
     return reservation;
   }
 
@@ -115,7 +115,7 @@ export class ReservationService {
         }
       },
     });
-    if(result == null) {
+    if (result == null) {
       return null;
     }
     //associamo la quantita del cibo direttamente al menu
@@ -135,20 +135,21 @@ export class ReservationService {
 
 
   async getReservationsByUserId(userId: number) {
-    const reservations = await this.reservationRepository.find({ where: { users:{id:userId}  }, 
-    relations:
-    {
-      users:true, 
-      restaurant:true
-    }, 
-    select:
-    {
-      restaurant:
+    const reservations = await this.reservationRepository.find({
+      where: { users: { id: userId } },
+      relations:
       {
-       name:true
+        users: true,
+        restaurant: true
+      },
+      select:
+      {
+        restaurant:
+        {
+          name: true
+        }
       }
-    } 
-  });
+    });
     return reservations;
   }
 
@@ -168,25 +169,25 @@ export class ReservationService {
   }*/
 
   async completeReservation(id: number) {
-    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.TO_PAY }}) == null) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.TO_PAY } }) == null) {
       return null;
     }
     await this.reservationRepository.update({ id }, { state: ReservationStatus.COMPLETED });
     return true;
   }
 
- async updateStatus(id: number, state: ReservationStatus) {
-    const reservation = await this.reservationRepository.findOne({ 
+  async updateStatus(id: number, state: ReservationStatus) {
+    const reservation = await this.reservationRepository.findOne({
       where: { id },
-      relations: { users: true  },
+      relations: { users: true },
     });
-    if(reservation == null) {
+    if (reservation == null) {
       return false;
     }
     await this.reservationRepository.update({ id }, { state });
     //Notify all the users of the reservation changed status
 
-    for(const user of reservation.users) {
+    for (const user of reservation.users) {
       /*if(user.id === user_id) {
         continue;
       }*/
@@ -204,17 +205,17 @@ export class ReservationService {
       where: { id: reservation_id, users: { id: user_id } },
       relations: { users: true },
     });
-    if(reservation == null) {
+    if (reservation == null) {
       return null;
     }
     return reservation;
   }
 
   async getReservationsByAdminId(adminId: number) {
-    return await this.reservationRepository.find({ 
-      where: { restaurant: { staff: { id: adminId, role: StaffRole.ADMIN }}},
+    return await this.reservationRepository.find({
+      where: { restaurant: { staff: { id: adminId, role: StaffRole.ADMIN } } },
       relations: {
-        restaurant: {staff: true}
+        restaurant: { staff: true }
       },
     });
   }

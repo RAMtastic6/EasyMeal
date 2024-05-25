@@ -17,7 +17,6 @@ export default function ReservationsUser({ userId}: { userId: number} ) {
       try {
         //const restaurantId = await getRestaurantIdByAdminId(userId);
         const json = await getReservationsByUserId(userId);
-        console.log(json);
         setReservations(json);
 
 
