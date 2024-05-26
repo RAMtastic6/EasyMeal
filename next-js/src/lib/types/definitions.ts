@@ -67,3 +67,15 @@ export interface User {
   email: string;
   password: string;
 }
+
+export enum NotificationStatus {
+  READ = 'read',
+  UNREAD = 'unread'
+}
+
+export type CustomNotification = {
+  id: number;
+  title: string;
+  message: string;
+  status: NotificationStatus;
+}

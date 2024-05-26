@@ -1,31 +1,34 @@
 'use client';
-import { getReservationsByRestaurantId } from "@/src/lib/database/reservation";
+import { getReservationsByAdminId } from "@/src/lib/database/reservation";
 import { join } from "path";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from 'next/link';
 import { stateMessage } from "@/src/lib/types/definitions";
 import { getRestaurantIdByAdminId } from "../lib/database/staff";
 
-export default function ReservationsAdmin({ userId }: { userId: number}) {
-  const restaurantId = 1; // TO DO: get restaurant id from user
+export default function ReservationsAdmin() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    async function fetchReservations() {
+    const fetchReservations = async () => {
       try {
-        //const restaurantId = await getRestaurantIdByAdminId(userId);
-        const json = await getReservationsByRestaurantId(1);
+        const json = await getReservationsByAdminId();
         setReservations(json);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching reservations", error);
-      }
-      finally {
         setLoading(false);
       }
-    }
-    setLoading(true);
+    };
+
     fetchReservations();
-  }, [restaurantId]);
+    const interval = setInterval(fetchReservations, 10000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;

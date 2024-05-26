@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UnauthorizedException, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, BadRequestException, UnauthorizedException, ParseIntPipe, HttpCode, Res } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { AddCustomerDTO } from './dto/add-customer.dto';
+import { verifyReservationDto } from './dto/verify-reservation.dto';
+import { Reservation, ReservationStatus } from './entities/reservation.entity';
+import { ReservationAdminDTO } from './dto/reservation-admin.dto';
 
 @Controller('reservation')
 export class ReservationController {
@@ -73,15 +76,41 @@ export class ReservationController {
   }
 
   @Get('user/:userId')
-  async getReservationsByUserId(@Param('userId') userId: number) {
+  async getReservationsByUserId(@Param('userId', ParseIntPipe) userId: number) {
     return await this.reservationService.getReservationsByUserId(userId);
   }
 
+  @Post('verify')
+  @HttpCode(200)
+  async verifyReservation(
+    @Body() data: verifyReservationDto,
+  ) {
+    const token = await this.authService.verifyToken(data.token);
+    if(token == null)
+      throw new UnauthorizedException('Invalid token');
+    const result = await this.reservationService.verifyReservation(
+      data.id_prenotazione,
+      token.id
+    );
+    if (result == null)
+      throw new NotFoundException('Reservation not found');
+    return result;
+  }
 
+  @Post('admin')
+  async getReservationsByAdminId(@Body() data: ReservationAdminDTO) {
+    const token = await this.authService.verifyToken(data.token);
+    if(token == null)
+      throw new UnauthorizedException('Invalid token');
+    return await this.reservationService.getReservationsByAdminId(token.id);
+  }
 
   @Post(':id/accept')
   async acceptReservation(@Param('id', ParseIntPipe) id: number) {
-    const result = await this.reservationService.acceptReservation(id);
+    const result = await this.reservationService.updateStatus(
+      id,
+      ReservationStatus.ACCEPTED,
+    );
     if (result == null)
       throw new NotFoundException('Reservation not found');
     return result;
@@ -89,7 +118,18 @@ export class ReservationController {
 
   @Post(':id/reject')
   async rejectReservation(@Param('id', ParseIntPipe) id: number) {
-    const result = await this.reservationService.rejectReservation(id);
+    const result = await this.reservationService.updateStatus(
+      id,
+      ReservationStatus.REJECTED,
+    );
+    if (result == null)
+      throw new NotFoundException('Reservation not found');
+    return result;
+  }
+
+  @Post(':id/complete')
+  async completeReservation(@Param('id') id: number) {
+    const result = await this.reservationService.completeReservation(id);
     if (result == null)
       throw new NotFoundException('Reservation not found');
     return result;

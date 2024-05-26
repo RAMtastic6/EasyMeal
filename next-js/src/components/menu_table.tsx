@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Endpoints } from '../lib/database/endpoints';
 import { Socket, io } from 'socket.io-client';
-import { verifySession } from '../lib/dal';
+import { getToken, verifySession } from '../lib/dal';
 import { deleteOrders, saveOrders } from '../lib/database/order';
 
 export default function MenuTable(
@@ -54,9 +54,18 @@ export default function MenuTable(
 	}
 
 	useEffect(() => {
-		const soc = io(Endpoints.socket + '?id_prenotazione=' + params.number);
-		socket.current = soc;
-		socket.current.on('onMessage', handleMessage);
+		getToken().then((token) => {
+			const soc = io(Endpoints.socket, {
+				query: {
+					id_prenotazione: params.number,
+				},
+				auth: {
+					token: token,
+				}
+			});
+			socket.current = soc;
+			socket.current.on('onMessage', handleMessage);
+		});
 		//Close the socket connection when the component is unmounted
 		return () => {
 			socket.current?.off('onMessage', handleMessage);

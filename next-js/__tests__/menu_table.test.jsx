@@ -21,6 +21,12 @@ jest.mock('../src/lib/database/order', () => ({
     saveOrders: jest.fn(),
     deleteOrders: jest.fn(),
 }));
+jest.mock('../src/lib/dal', () => {
+    return {
+        verifySession: jest.fn().mockResolvedValue({}),
+        getToken: jest.fn().mockResolvedValue('token'),
+    }
+});
 
 const mockMenuData = {
     id: 1,
@@ -52,8 +58,10 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
         jest.clearAllMocks();
     });
 
-    it('Verifica della visualizzazione', () => {
-        render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+    it('Verifica della visualizzazione', async () => {
+        await waitFor(() => {
+            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        });
 
         expect(screen.getByText('Pasta')).toBeInTheDocument();
         expect(screen.getByText('Pizza')).toBeInTheDocument();
@@ -66,7 +74,9 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
     });
 
     it('Verifica di aumento quantità', async () => {
-        render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        await waitFor(() => {
+            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        });
 
         const increaseButtons = screen.getAllByTestId('increase_1');
         const quantityDisplays = screen.getAllByTestId('display_1');
@@ -90,7 +100,9 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
     });
 
     it('Verifica di diminuzione quantità', async () => {
-        render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        await waitFor(() => {
+            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        });
 
         const decreaseButtons = screen.getAllByTestId('decrease_2');
         const quantityDisplays = screen.getAllByTestId('display_2');
@@ -137,8 +149,10 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
         expect(totalPrice3).toBe(30);
         
     });
-    it('Verifica che vengano chiamati gli eventi relativi al socket', () => {
-        render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+    it('Verifica che vengano chiamati gli eventi relativi al socket', async () => {
+        await waitFor(() => {
+            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+        });
 
         expect(io().on).toHaveBeenCalledWith('onMessage', expect.any(Function));
     });
