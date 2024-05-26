@@ -7,7 +7,7 @@ export default function Header() {
 			<div className="mx-auto max-w-screen-xxl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 items-center justify-between">
 					<div className="md:flex md:items-center md:gap-12">
-						<Link className="block text-white font-bold" href="/create_reservation" data-testid={"HomeLink"}> EasyMeal </Link>
+						<Link className="block text-white font-bold" href="" data-testid={"HomeLink"}> EasyMeal </Link>
 					</div>
 
 					<div className="flex items-center gap-4">
@@ -30,6 +30,10 @@ export default function Header() {
 								href="/login" data-testid={"LoginLink"}> Login </Link>
 						</div>
 					</div>
+				</div>
+				<div className="mt-4 flex items-center justify-center space-x-4 border-t-2 border-black">
+					<Link className="text-white font-medium hover:text-gray-800" href="/">Home</Link>
+					<Link className="text-white font-medium hover:text-gray-800" href="/create_reservation">Crea prenotazione</Link>
 				</div>
 			</div>
 		</header>

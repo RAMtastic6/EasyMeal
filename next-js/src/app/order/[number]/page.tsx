@@ -1,22 +1,15 @@
-'use client';
+"use server";
 import MenuTable from '@/src/components/menu_table';
-import Header from '@/src/components/header';
-import { getMenuWithOrdersQuantityByIdReservation } from '../../../lib/database/reservation';
-import { useEffect, useState } from 'react';
+import { getMenuWithOrdersQuantityByIdReservation, getUserOfReservation } from '../../../lib/database/reservation';
+import { UserInvite } from '../../../components/user_invite';
 
-export default function Page({ params }: { params: { number: string } }) {
+export default async function Page({ params }: { params: { number: string } }) {
 
-	const [data, setData] = useState<any>();
+	const data = (await getMenuWithOrdersQuantityByIdReservation(parseInt(params.number))).restaurant;
+	const isPresent = await getUserOfReservation(parseInt(params.number));
 
-	useEffect(() => {
-		getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)).then((data) => {
-			setData(data.restaurant);
-		});
-	}, []);
-
-	if (!data) {
-		return <div>Loading...</div>;
-	}
+	if(!isPresent)
+		return (<UserInvite reservationId={parseInt(params.number)}/>);
 
 	return (
 		<div className="w-full">
