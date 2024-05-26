@@ -27,7 +27,7 @@ describe('OrdersController', () => {
             updateIngredients: jest.fn(),
             remove: jest.fn(),
             getPartialBill: jest.fn(),
-            getTotalBill: jest.fn(),
+            getRomanBill: jest.fn(),
             updateListOrders: jest.fn(),
             getReservationOrders: jest.fn(),
             pay: jest.fn(),
@@ -326,7 +326,7 @@ describe('OrdersController', () => {
     });
   });
   
-  describe('fullBill', () => {
+  describe('RomanBill', () => {
     it('should calculate the full bill for a customer', async () => {
       // Arrange
       const requestBody = {
@@ -334,13 +334,13 @@ describe('OrdersController', () => {
         reservation_id: 1,
       };
       const bill = 100;
-      jest.spyOn(ordersService, 'getTotalBill').mockResolvedValue(bill);
+      jest.spyOn(ordersService, 'getRomanBill').mockResolvedValue(bill);
   
       // Act
       const result = await controller.fullBill(requestBody);
   
       // Assert
-      expect(ordersService.getTotalBill).toHaveBeenCalledWith(requestBody);
+      expect(ordersService.getRomanBill).toHaveBeenCalledWith(requestBody);
       expect(result).toEqual(bill);
     });
   });

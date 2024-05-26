@@ -8,7 +8,7 @@ import { AddQuantityDTO } from './dto/add-quantity.dto';
 import { UpdateIngredientsDTO } from './dto/update-ingredients.dto';
 import { RemoveDTO } from './dto/remove.dto';
 import { PartialBillDTO } from './dto/partial-bill.dto';
-import { FullBillDTO } from './dto/full-bill.dto';
+import { FullBillDTO as RomanBillDTO } from './dto/full-bill.dto';
 import { UpdateListOrdersDTO } from './dto/update-list-orders.dto';
 import { PayDTO } from './dto/pay.dto';
 
@@ -109,9 +109,9 @@ export class OrdersController {
     return await this.ordersService.getPartialBill(order);
   }
 
-  @Post('totalBill')
-  async fullBill(@Body() order: FullBillDTO) {
-    return await this.ordersService.getTotalBill(order);
+  @Post('romanBill')
+  async fullBill(@Body() order: RomanBillDTO) {
+    return await this.ordersService.getRomanBill(order);
   }
 
   @Post('pay')

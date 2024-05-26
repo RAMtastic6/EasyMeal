@@ -141,18 +141,26 @@ export class OrdersService {
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
   }
 
-  async getTotalBill(order: {
-    reservation_id: number,
-  }) {
+  // Conto alla romana
+  async getRomanBill(order: { reservation_id: number }) {
     const orders = await this.ordersRepository.find({
       where: {
         reservation_id: order.reservation_id,
       },
-      relations: { food: true}
+      relations: { food: true },
     });
-    return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+  
+    if (orders.length === 0) {
+      return 0;
+    }
+  
+    const totalCost = orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+    const uniqueUserIds = new Set(orders.map(order => order.user_id));
+    const perPersonCost = totalCost / uniqueUserIds.size;
+  
+    return perPersonCost;
   }
-
+  
   async pay(user_id: number, reservation_id: number) {
     const order = await this.ordersRepository.findOne({
       where: {

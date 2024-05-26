@@ -8,6 +8,7 @@ import { FoodService } from '../food/food.service';
 import { ReservationService } from '../reservation/reservation.service';
 import { Reservation, ReservationStatus } from '../reservation/entities/reservation.entity';
 import { NotificationService } from '../notification/notification.service';
+import { Food } from '../food/entities/food.entity';
 
 describe('OrdersService', () => {
   let ordersService: OrdersService;
@@ -209,37 +210,106 @@ describe('OrdersService', () => {
   });
 
   describe('getPartialBill', () => {
-    it('should return the partial bill for a specific customer and reservation', async () => {
-      // Mock the necessary dependencies and setup the test data
-      const mockOrder = {
-        customer_id: 1,
-        reservation_id: 1,
-      };
-      const mockPartialBill = 0;
-      jest.spyOn(ordersRepository, 'find').mockResolvedValue([] as any);
+    it('should return the total cost for a customer correctly', async () => {
+      const customer_id = 1;
+      const reservation_id = 1;
 
-      // Call the getPartialBill method
-      const result = await ordersService.getPartialBill(mockOrder);
+      const food1 = new Food();
+      food1.price = 10;
 
-      // Assert the result
-      expect(result).toEqual(mockPartialBill);
+      const food2 = new Food();
+      food2.price = 20;
+
+      const order1 = new Order();
+      order1.user_id = customer_id;
+      order1.reservation_id = reservation_id;
+      order1.quantity = 2;
+      order1.food = food1;
+
+      const order2 = new Order();
+      order2.user_id = customer_id;
+      order2.reservation_id = reservation_id;
+      order2.quantity = 1;
+      order2.food = food2;
+
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([order1, order2]);
+
+      const result = await ordersService.getPartialBill({ customer_id, reservation_id });
+
+      expect(ordersRepository.find).toHaveBeenCalledWith({
+        where: { user_id: customer_id, reservation_id },
+        relations: { food: true },
+      });
+      expect(result).toBe(2 * 10 + 1 * 20);
     });
-  });
 
-  describe('getTotalBill', () => {
-    it('should return the total bill for a specific reservation', async () => {
-      // Mock the necessary dependencies and setup the test data
-      const mockOrder = {
-        reservation_id: 1,
-      };
+    it('should return 0 if the customer has no orders for the reservation', async () => {
+      const customer_id = 1;
+      const reservation_id = 1;
 
       jest.spyOn(ordersRepository, 'find').mockResolvedValue([]);
 
-      // Call the getTotalBill method
-      const result = await ordersService.getTotalBill(mockOrder);
+      const result = await ordersService.getPartialBill({ customer_id, reservation_id });
 
-      // Assert the result
-      expect(result).toEqual(0);
+      expect(ordersRepository.find).toHaveBeenCalledWith({
+        where: { user_id: customer_id, reservation_id },
+        relations: { food: true },
+      });
+      expect(result).toBe(0);
+    });
+  });
+
+  describe('getRomanBill', () => {
+    it('should return the per person cost correctly', async () => {
+      const reservation_id = 1;
+
+      const food1 = new Food();
+      food1.price = 10;
+
+      const food2 = new Food();
+      food2.price = 20;
+
+      const order1 = new Order();
+      order1.user_id = 1;
+      order1.reservation_id = reservation_id;
+      order1.quantity = 2;
+      order1.food = food1;
+
+      const order2 = new Order();
+      order2.user_id = 2;
+      order2.reservation_id = reservation_id;
+      order2.quantity = 1;
+      order2.food = food2;
+
+      const order3 = new Order();
+      order3.user_id = 1;
+      order3.reservation_id = reservation_id;
+      order3.quantity = 1;
+      order3.food = food1;
+
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([order1, order2, order3]);
+
+      const result = await ordersService.getRomanBill({ reservation_id });
+
+      expect(ordersRepository.find).toHaveBeenCalledWith({
+        where: { reservation_id },
+        relations: { food: true },
+      });
+      expect(result).toBe((2 * 10 + 1 * 20 + 1 * 10) / 2);
+    });
+
+    it('should return 0 if there are no orders', async () => {
+      const reservation_id = 1;
+
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([]);
+
+      const result = await ordersService.getRomanBill({ reservation_id });
+
+      expect(ordersRepository.find).toHaveBeenCalledWith({
+        where: { reservation_id },
+        relations: { food: true },
+      });
+      expect(result).toBe(0);
     });
   });
 
