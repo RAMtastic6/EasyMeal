@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { OrdersController } from './orders.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Orders } from './entities/order.entity';
+import { Order } from './entities/order.entity';
 import { OrderIngredients } from './entities/order_ingredients';
 import { FoodModule } from '../food/food.module';
 import { ReservationModule } from '../reservation/reservation.module';
@@ -12,7 +12,7 @@ import { AuthenticationModule } from '../authentication/authentication.module';
   controllers: [OrdersController],
   providers: [OrdersService],
   imports: [
-    TypeOrmModule.forFeature([Orders, OrderIngredients]),
+    TypeOrmModule.forFeature([Order, OrderIngredients]),
     FoodModule,
     ReservationModule,
     AuthenticationModule

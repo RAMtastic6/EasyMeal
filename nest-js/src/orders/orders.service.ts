@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Orders } from './entities/order.entity';
+import { Order } from './entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderIngredients } from './entities/order_ingredients';
@@ -13,8 +13,8 @@ import { ReservationStatus } from '../reservation/entities/reservation.entity';
 export class OrdersService {
   
   constructor(
-    @InjectRepository(Orders)
-    private ordersRepository: Repository<Orders>,
+    @InjectRepository(Order)
+    private ordersRepository: Repository<Order>,
     @InjectRepository(OrderIngredients)
     private orderIngredientsRepository: Repository<OrderIngredients>,
     private readonly foodService: FoodService,
@@ -151,6 +151,21 @@ export class OrdersService {
       relations: { food: true}
     });
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+  }
+
+  async pay(user_id: number, reservation_id: number) {
+    const orders = await this.ordersRepository.findOne({
+      where: {
+        user_id,
+        reservation_id
+      }
+    });
+    if (orders == null) {
+      return null;
+    }
+    orders.paid = true;
+    await this.ordersRepository.save(orders);
+    return true;
   }
 
   async getReservationOrders(id: number) {

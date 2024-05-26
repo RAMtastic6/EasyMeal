@@ -10,6 +10,7 @@ import { RemoveDTO } from './dto/remove.dto';
 import { PartialBillDTO } from './dto/partial-bill.dto';
 import { FullBillDTO } from './dto/full-bill.dto';
 import { UpdateListOrdersDTO } from './dto/update-list-orders.dto';
+import { PayDTO } from './dto/pay.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -111,6 +112,11 @@ export class OrdersController {
   @Post('totalBill')
   async fullBill(@Body() order: FullBillDTO) {
     return await this.ordersService.getTotalBill(order);
+  }
+
+  @Post('pay')
+  async pay(@Body() order: PayDTO) {
+    return await this.ordersService.pay(order.user_id, order.reservation_id);
   }
 
   @Post('updateListOrders')

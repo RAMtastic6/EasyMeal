@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrdersService } from './orders.service';
-import { Orders } from './entities/order.entity';
+import { Order } from './entities/order.entity';
 import { OrderIngredients } from './entities/order_ingredients';
 import { FoodService } from '../food/food.service';
 import { ReservationService } from '../reservation/reservation.service';
@@ -11,7 +11,7 @@ import { NotificationService } from '../notification/notification.service';
 
 describe('OrdersService', () => {
   let ordersService: OrdersService;
-  let ordersRepository: Repository<Orders>;
+  let ordersRepository: Repository<Order>;
   let orderIngredientsRepository: Repository<OrderIngredients>;
   let foodService: FoodService;
   let reservationService: ReservationService;
@@ -36,7 +36,7 @@ describe('OrdersService', () => {
           }
         },
         {
-          provide: getRepositoryToken(Orders),
+          provide: getRepositoryToken(Order),
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
@@ -66,7 +66,7 @@ describe('OrdersService', () => {
     }).compile();
 
     ordersService = module.get<OrdersService>(OrdersService);
-    ordersRepository = module.get<Repository<Orders>>(getRepositoryToken(Orders));
+    ordersRepository = module.get<Repository<Order>>(getRepositoryToken(Order));
     orderIngredientsRepository = module.get<Repository<OrderIngredients>>(getRepositoryToken(OrderIngredients));
     foodService = module.get<FoodService>(FoodService);
     reservationService = module.get<ReservationService>(ReservationService);
@@ -280,4 +280,46 @@ describe('OrdersService', () => {
     });
   });
 
+  describe('pay', () => {
+    it('should mark the order as paid if it exists', async () => {
+      const user_id = 1;
+      const reservation_id = 1;
+      const order = new Order();
+      order.user_id = user_id;
+      order.reservation_id = reservation_id;
+      order.paid = false;
+
+      jest.spyOn(ordersRepository, 'findOne').mockResolvedValue(order);
+      jest.spyOn(ordersRepository, 'save').mockResolvedValue(order);
+
+      const result = await ordersService.pay(user_id, reservation_id);
+
+      expect(ordersRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          user_id,
+          reservation_id,
+        },
+      });
+      expect(order.paid).toBe(true);
+      expect(ordersRepository.save).toHaveBeenCalledWith(order);
+      expect(result).toBe(true);
+    });
+
+    it('should return null if the order does not exist', async () => {
+      const user_id = 1;
+      const reservation_id = 1;
+
+      jest.spyOn(ordersRepository, 'findOne').mockResolvedValue(null);
+
+      const result = await ordersService.pay(user_id, reservation_id);
+
+      expect(ordersRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          user_id,
+          reservation_id,
+        },
+      });
+      expect(result).toBeNull();
+    });
+  });
 });
