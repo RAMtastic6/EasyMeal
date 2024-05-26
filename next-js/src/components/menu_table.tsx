@@ -155,7 +155,7 @@ export default function MenuTable(
 								<dl className="space-y-0.5 text-sm text-gray-700">
 									<div className="flex justify-between">
 										<dt>Totale</dt>
-										<dd>€{price}</dd>
+										<dd data-testid="total-price">€{price}</dd>
 									</div>
 								</dl>
 
