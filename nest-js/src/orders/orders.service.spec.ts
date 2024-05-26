@@ -27,6 +27,7 @@ describe('OrdersService', () => {
             delete: jest.fn(),
             update: jest.fn(),
             save: jest.fn(),
+            updateStatus: jest.fn(),
           }
         },
         {
@@ -281,7 +282,7 @@ describe('OrdersService', () => {
   });
 
   describe('pay', () => {
-    it('should mark the order as paid if it exists', async () => {
+    it('should mark the order as paid and update the reservation status if all orders are paid', async () => {
       const user_id = 1;
       const reservation_id = 1;
       const order = new Order();
@@ -289,8 +290,14 @@ describe('OrdersService', () => {
       order.reservation_id = reservation_id;
       order.paid = false;
 
+      const otherOrder = new Order();
+      otherOrder.user_id = 2;
+      otherOrder.reservation_id = reservation_id;
+      otherOrder.paid = true;
+
       jest.spyOn(ordersRepository, 'findOne').mockResolvedValue(order);
       jest.spyOn(ordersRepository, 'save').mockResolvedValue(order);
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([order, otherOrder]);
 
       const result = await ordersService.pay(user_id, reservation_id);
 
@@ -302,6 +309,48 @@ describe('OrdersService', () => {
       });
       expect(order.paid).toBe(true);
       expect(ordersRepository.save).toHaveBeenCalledWith(order);
+      expect(ordersRepository.find).toHaveBeenCalledWith({
+        where: {
+          reservation_id,
+        },
+      });
+      expect(reservationService.updateStatus).toHaveBeenCalledWith(reservation_id, ReservationStatus.COMPLETED);
+      expect(result).toBe(true);
+    });
+
+    it('should mark the order as paid but not update the reservation status if not all orders are paid', async () => {
+      const user_id = 1;
+      const reservation_id = 1;
+      const order = new Order();
+      order.user_id = user_id;
+      order.reservation_id = reservation_id;
+      order.paid = false;
+
+      const otherOrder = new Order();
+      otherOrder.user_id = 2;
+      otherOrder.reservation_id = reservation_id;
+      otherOrder.paid = false;
+
+      jest.spyOn(ordersRepository, 'findOne').mockResolvedValue(order);
+      jest.spyOn(ordersRepository, 'save').mockResolvedValue(order);
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([order, otherOrder]);
+
+      const result = await ordersService.pay(user_id, reservation_id);
+
+      expect(ordersRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          user_id,
+          reservation_id,
+        },
+      });
+      expect(order.paid).toBe(true);
+      expect(ordersRepository.save).toHaveBeenCalledWith(order);
+      expect(ordersRepository.find).toHaveBeenCalledWith({
+        where: {
+          reservation_id,
+        },
+      });
+      expect(reservationService.updateStatus).not.toHaveBeenCalled();
       expect(result).toBe(true);
     });
 
