@@ -1,5 +1,4 @@
 'use server';
-import 'server-only';
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
@@ -13,5 +12,11 @@ export const verifySession = cache(async () => {
     if(!session?.id) {
         redirect('/login');
     }
-    return { isAuth: true, id: session.id as number}
+    return session;
 });
+
+export const getToken = async () => {
+    const cookie = cookies().get('session')?.value;
+    if(!cookie) redirect('/login');
+    return cookie;
+};

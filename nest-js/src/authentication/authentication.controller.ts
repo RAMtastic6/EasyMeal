@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpCode, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { AuthenticationDto } from './dto/authentication.dto';
+import { DecodeTokenDTO } from './dto/decodeToken.dto';
 
 @Controller('authentication')
 export class AuthenticationController {
@@ -18,7 +19,7 @@ export class AuthenticationController {
 
   @Post('decodeToken')
   @HttpCode(200)
-  async decodeToken(@Body() body: { token: string }) {
+  async decodeToken(@Body() body: DecodeTokenDTO) {
     const token = body.token;
     if (!token) throw new UnauthorizedException("Token is missing");
     const result = await this.authenticationService.verifyToken(token);

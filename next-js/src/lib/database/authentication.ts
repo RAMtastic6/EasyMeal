@@ -8,7 +8,10 @@ export async function login(email: string, password: string) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email: email, password: password }),
+      body: JSON.stringify({
+        email: email, 
+        password: password 
+      }),
     });
     if (response.status != 200) {
       return null;
@@ -34,7 +37,7 @@ export async function decodeToken(token: string) {
     if (response.status != 200) {
       return null;
     }
-    return await response.json();
+    return await response.json() as { id: number, role: string };
   } catch (error) {
     console.log(error);
     return null;

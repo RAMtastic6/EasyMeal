@@ -1,5 +1,4 @@
-'use client'
-
+'use client';
 import { useFormState } from 'react-dom'
 import { validateSignUp } from '@/src/actions/validateSignUp'
 
@@ -9,8 +8,6 @@ const initialState = {
 
 export default function Signup() {
   const [state, formAction] = useFormState(validateSignUp, initialState);
-  
-  const actionUrl = typeof formAction === 'string' ? formAction : '';
   
   return (
     <>
@@ -24,7 +21,7 @@ export default function Signup() {
               Registrati
             </h2>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              <form action={actionUrl}>
+              <form action={formAction}>
                 <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">Email</label>
                 <div className="mt-2">
                   <input

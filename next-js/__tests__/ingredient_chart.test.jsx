@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { IngredientChart } from '../src/components/ingredient_chart';
+import { getToken, verifySession } from '../src/lib/dal';
 
 jest.mock('socket.io-client', () => {
     return {
@@ -12,6 +13,12 @@ jest.mock('socket.io-client', () => {
             disconnect: jest.fn(),
         }),
     };
+});
+jest.mock('../src/lib/dal', () => {
+    return {
+        verifySession: jest.fn().mockResolvedValue({}),
+        getToken: jest.fn().mockResolvedValue('token'),
+    }
 });
 
 const mockFetchedOrders = {
@@ -60,11 +67,13 @@ describe('Verifica il funzionamento frontend del componente Ingredient Chart', (
     //     expect(window.alert).toHaveBeenCalledWith('Ordine aggiornato');
     // });
 
-    it('Verifica che vengano chiamati gli eventi relativi al socket', () => {
+    it('Verifica che vengano chiamati gli eventi relativi al socket', async () => {
         const { io } = require('socket.io-client');
         const mockSocket = io();
 
-        render(<IngredientChart fetchedOrders={mockFetchedOrders} reservationId={123} />);
+        await waitFor(async () => {
+            render(<IngredientChart fetchedOrders={mockFetchedOrders} reservationId={123} />);
+        }) 
 
         expect(mockSocket.on).toHaveBeenCalledWith('onIngredient', expect.any(Function));
         expect(mockSocket.on).toHaveBeenCalledWith('onConfirm', expect.any(Function));

@@ -1,6 +1,8 @@
-import { Body, Controller, Get, HttpCode, Post, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, ParseIntPipe, Post, UnauthorizedException } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { FindAllByUserIdDTO } from './dto/findAllByUserId.dto';
+import { UpdateStatusDTO } from './dto/updateStatus.dto';
 
 @Controller('notification')
 export class NotificationController {
@@ -11,19 +13,21 @@ export class NotificationController {
 
   @Post()
   @HttpCode(200)
-  async findAllByUserId(@Body() body: { userId: number, token: string}) {
+  // body: { userId: number, token: string}
+  async findAllByUserId(@Body() body: FindAllByUserIdDTO ) {
     const auth = await this.authenticationService.verifyToken(body.token);
     if (!auth) {
       throw new UnauthorizedException('Invalid token');
     }
-    return await this.notificationService.findAllByUserId(body.userId);
+    return await this.notificationService.findAllByUserId(auth.id);
   }
 
   @Post('update')
   @HttpCode(200)
-  async updateStatus(@Body() body: { notificationId: number, token: string }) {
+  async updateStatus(@Body() body: UpdateStatusDTO ) {
     const auth = await this.authenticationService.verifyToken(body.token);
-    if (!auth || auth.id !== body.notificationId) {
+    const notification = await this.notificationService.findOne(body.notificationId);
+    if (!auth || !notification || auth.id !== notification.id_receiver) {
       throw new UnauthorizedException('Invalid token');
     }
     return await this.notificationService.updateStatus(body.notificationId);

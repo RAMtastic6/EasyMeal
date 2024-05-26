@@ -7,6 +7,7 @@ import { RestaurantModule } from 'src/restaurant/restaurant.module';
 import { NotificationModule } from '../notification/notification.module';
 import { StaffModule } from '../staff/staff.module';
 import { AuthenticationModule } from '../authentication/authentication.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   controllers: [ReservationController],
@@ -15,7 +16,8 @@ import { AuthenticationModule } from '../authentication/authentication.module';
     RestaurantModule,
     NotificationModule,
     StaffModule,
-    AuthenticationModule
+    AuthenticationModule,
+    UserModule,
   ],
   exports: [TypeOrmModule, ReservationService]
 })

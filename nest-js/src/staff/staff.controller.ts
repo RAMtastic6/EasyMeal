@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, Get, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Get, NotFoundException, Param, ParseIntPipe } from '@nestjs/common';
 import { StaffService } from './staff.service';
 import { StaffDto } from './dto/create-staff.dto';
 
@@ -16,7 +16,7 @@ export class StaffController {
   }
 
   @Get(':id/restaurant')
-  async getRestaurantIdByAdminId(restaurant_id: number) {
+  async getRestaurantIdByAdminId(@Param('id', ParseIntPipe) restaurant_id: number) {
     const result = await this.staffService.getAdminByRestaurantId(restaurant_id);
     if (!result) {
       throw new NotFoundException('Restaurant not found');

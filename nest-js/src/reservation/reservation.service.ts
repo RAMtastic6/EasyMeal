@@ -8,6 +8,8 @@ import { RestaurantService } from 'src/restaurant/restaurant.service';
 import { NotificationService } from '../notification/notification.service';
 import { StaffService } from '../staff/staff.service';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { UserService } from '../user/user.service';
+import { StaffRole } from '../staff/enities/staff.entity';
 
 @Injectable()
 export class ReservationService {
@@ -17,6 +19,7 @@ export class ReservationService {
     private readonly restaurantService: RestaurantService,
     private readonly notificationService: NotificationService,
     private readonly staffService: StaffService,
+    private readonly userService: UserService
   ) {}
   
   async create(
@@ -36,14 +39,16 @@ export class ReservationService {
     if(Date.now() > new Date(date).getTime()) {
       return null;
     }
+
+    const user = await this.userService.findOne(user_id);
+
     const reservation = this.reservationRepository.create({
       date: new Date(date),
       number_people: number_people,
       restaurant_id: restaurant_id,
-      
-      users: [{ id: user_id }],
+      users: [ user ],
     });
-    await this.reservationRepository.save(reservation);
+    const result = await this.reservationRepository.save(reservation);
 
     // Notifiy the amministrator of the restaurant
     const admin = await this.staffService.getAdminByRestaurantId(restaurant_id);
@@ -60,20 +65,23 @@ export class ReservationService {
     };
   }
 
-  async addCustomer(params: { customer_id: number, reservation_id: number }) {
+  async addCustomer(params: { 
+    user_id: number, 
+    reservation_id: number 
+  }) {
     const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
     if(reservation == null) {
       return null
     }
     await this.reservationRepository.update({ id: params.reservation_id }, {
-      users: [...reservation.users, { id: params.customer_id }],
+      users: [...reservation.users, { id: params.user_id }],
     });
 
     // Notifiy the user of the restaurant
     await this.notificationService.create({
-      message: `Partecipa alla prenotazione con id: ${params.reservation_id}`,
-      title: 'Sei stato invitato ad una prenotazione',
-      id_receiver: params.customer_id,
+      message: `Stai partecipando alla prenotazione con id: ${params.reservation_id}`,
+      title: 'Hai accettato la prenotazione: ' + params.reservation_id,
+      id_receiver: params.user_id,
     });
     return true;
   }
@@ -125,22 +133,49 @@ export class ReservationService {
     return reservations;
   }
 
-  async acceptReservation(id: number) {
-    if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } })) {
+
+  async getReservationsByUserId(userId: number) {
+    const reservations = await this.reservationRepository.find({ where: { users:{id:userId}  }, 
+    relations:
+    {
+      users:true, 
+      restaurant:true
+    }, 
+    select:
+    {
+      restaurant:
+      {
+       name:true
+      }
+    } 
+  });
+    return reservations;
+  }
+
+  /*async acceptReservation(id: number) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING } }) == null) {
       return null;
     }
     return await this.reservationRepository.update({ id }, { state: ReservationStatus.ACCEPTED });
   }
 
   async rejectReservation(id: number) {
-    if (!this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING }})) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.PENDING }}) == null) {
       return null;
     }
     await this.reservationRepository.update({ id }, { state: ReservationStatus.REJECTED });
     return true;
+  }*/
+
+  async completeReservation(id: number) {
+    if (await this.reservationRepository.findOne({ where: { id, state: ReservationStatus.TO_PAY }}) == null) {
+      return null;
+    }
+    await this.reservationRepository.update({ id }, { state: ReservationStatus.COMPLETED });
+    return true;
   }
 
- async updateStatus(id: number, state: ReservationStatus, user_id: number) {
+ async updateStatus(id: number, state: ReservationStatus) {
     const reservation = await this.reservationRepository.findOne({ 
       where: { id },
       relations: { users: true  },
@@ -152,15 +187,35 @@ export class ReservationService {
     //Notify all the users of the reservation changed status
 
     for(const user of reservation.users) {
-      if(user.id === user_id) {
+      /*if(user.id === user_id) {
         continue;
-      }
+      }*/
       await this.notificationService.create({
-        message: `La tua prenotazione con id: ${id} è stata ${state}`,
+        message: `La tua prenotazione con id: ${id} è in: ${state}`,
         title: 'Aggiornamento prenotazione',
         id_receiver: user.id,
       });
     }
     return true;
+  }
+
+  async verifyReservation(reservation_id: number, user_id: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservation_id, users: { id: user_id } },
+      relations: { users: true },
+    });
+    if(reservation == null) {
+      return null;
+    }
+    return reservation;
+  }
+
+  async getReservationsByAdminId(adminId: number) {
+    return await this.reservationRepository.find({ 
+      where: { restaurant: { staff: { id: adminId, role: StaffRole.ADMIN }}},
+      relations: {
+        restaurant: {staff: true}
+      },
+    });
   }
 }

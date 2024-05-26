@@ -14,12 +14,31 @@ export class NotificationService {
   async create(dto: NotificationDto) {
     const notification = this.notificationRepository.create(dto);
     const result = await this.notificationRepository.save(notification);
+    // Send notification to websocket
+    const response = await fetch('http://socket:8000/notification/send', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: result.id,
+        title: result.title,
+        message: result.message,
+        id_receiver: [result.id_receiver],
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     return result;
   }
 
   async findAllByUserId(id: number) {
     return await this.notificationRepository.find({
-      where: { id_receiver: id },
+      where: { id_receiver: id, status: NotificationStatus.UNREAD},
+      select: { 
+        id: true, 
+        title: true, 
+        message: true, 
+        status: true
+      }
     });
   }
 
@@ -32,5 +51,9 @@ export class NotificationService {
     }
     notification.status = NotificationStatus.READ;
     return await this.notificationRepository.save(notification);
+  }
+
+  async findOne(id: number) {
+    return await this.notificationRepository.findOne({where: {id: id}});
   }
 }
