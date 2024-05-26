@@ -1,7 +1,8 @@
-"use client";
 import Link from 'next/link';
+import { LoginLogout } from './dynamic_login';
+import { Navbar } from './nav_bar';
 
-export default function Header() {
+export default function Header({ login }: { login: boolean}) {
 	return (
 		<header className="bg-orange-500">
 			<div className="mx-auto max-w-screen-xxl px-4 sm:px-6 lg:px-8">
@@ -26,8 +27,8 @@ export default function Header() {
 									</svg>
 								</span>
 							</Link>
-							<Link className="inline-block rounded bg-orange-950 px-12 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring"
-								href="/login" data-testid={"LoginLink"}> Login </Link>
+							<Navbar />
+							<LoginLogout isLogin={login} />
 						</div>
 					</div>
 				</div>

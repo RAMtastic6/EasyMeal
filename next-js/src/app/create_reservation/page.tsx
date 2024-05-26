@@ -4,7 +4,6 @@ import RestaurantSearch from '@/src/components/restaurant_search';
 import Pagination from '@/src/components/pagination';
 import { getAllCities, getAllCuisines, getRestaurantsTotalPages } from "@/src/lib/database/restaurant";
 import { RestaurantFilter } from "@/src/lib/database/restaurant";
-import { query } from "firebase/database";
 
 export default async function Page({ searchParams }: {
   searchParams?: {

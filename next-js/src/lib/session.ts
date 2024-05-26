@@ -1,6 +1,7 @@
 'use server';
 import { cookies } from 'next/headers';
 import { decodeToken, login } from './database/authentication';
+import { redirect } from 'next/navigation';
 
 export async function createSession(email: string, password: string) {
   const token: string = await login(email, password);
