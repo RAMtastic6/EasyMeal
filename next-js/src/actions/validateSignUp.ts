@@ -49,5 +49,5 @@ export async function validateSignUp(prevState: any, formData: FormData) {
 			return { message: data.message };
 		return { message: 'Registration failed' };
 	}
-	redirect('/login?signup=success')
+	redirect('login?signup=success')
 }

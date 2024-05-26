@@ -1,16 +1,14 @@
 import { validateSignUpAdmin } from '../src/actions/validateSignUpAdmin';
-import { createUser } from '../src/lib/database/user';
-import { createRestaurant } from '../src/lib/database/restaurant';
-import { createStaff } from '../src/lib/database/staff';
-import { createDaysOpen } from '../src/lib/database/daysopen';
+import { createAdmin } from '../src/lib/database/user';
 import { getFormData } from '@/src/lib/utils';
-import { daysOfWeek } from '@/src/lib/types/definitions';
+import { redirect } from 'next/navigation';
 
 jest.mock('../src/lib/database/user');
-jest.mock('../src/lib/database/restaurant');
-jest.mock('../src/lib/database/staff');
-jest.mock('../src/lib/database/daysopen');
 jest.mock('../src/lib/utils');
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+}));
+
 
 describe('Verifica del funzionamento della funzionalità di registrazione per utente amministratore', () => {
   let formData;
@@ -218,12 +216,11 @@ describe('Verifica del funzionamento della funzionalità di registrazione per ut
     formData.append('password', 'password123');
     formData.append('password_confirmation', 'password123');
 
-    createUser.mockResolvedValue({ id: 1 });
-    createRestaurant.mockResolvedValue({ id: 1 });
-    createStaff.mockResolvedValue({ id: 1 });
-    createDaysOpen.mockResolvedValue({});
+    createAdmin.mockResolvedValue({
+      ok: true,
+    });
 
-    const result = await validateSignUpAdmin({}, formData);
-    expect(result).toEqual({ message: 'Registration successful' });
+    await validateSignUpAdmin({}, formData);
+    expect(redirect).toHaveBeenCalledWith('login?signup=success');
   });
 });

@@ -1,7 +1,11 @@
 import { validateSignUp } from '../src/actions/validateSignUp';
 import { createUser } from '../src/lib/database/user';
+import { redirect } from 'next/navigation';
 
 jest.mock('../src/lib/database/user');
+jest.mock('next/navigation', () => ({
+  redirect: jest.fn(),
+}));
 
 describe('Verifica del funzionamento della funzionalità di registrazione per utente base', () => {
   it('Lancia un errore se manca la mail', async () => {
@@ -84,7 +88,9 @@ describe('Verifica del funzionamento della funzionalità di registrazione per ut
   });
 
   it('Verifica che la registrazione venga effettuata con successo', async () => {
-    createUser.mockResolvedValue(true);
+    createUser.mockResolvedValue({
+      ok: true,
+    });
 
     const formData = new FormData();
     formData.set('email', 'test@example.com');
@@ -93,7 +99,7 @@ describe('Verifica del funzionamento della funzionalità di registrazione per ut
     formData.set('password', 'password123');
     formData.set('password_confirmation', 'password123');
     
-    const result = await validateSignUp({}, formData);
-    expect(result).toEqual({ message: 'Registration successful' });
+    await validateSignUp({}, formData);
+    expect(redirect).toHaveBeenCalledWith('login?signup=success');
   });
 })
