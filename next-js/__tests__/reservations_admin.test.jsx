@@ -4,22 +4,25 @@ import ReservationsAdmin from '@/src/components/reservations_admin';
 import { getReservationsByAdminId } from "@/src/lib/database/reservation";
 
 // Mocking the getReservationsByRestaurantId function
-jest.mock('../src/lib/database/reservation', () => ({
-  getReservationsByAdminId: jest.fn().mockResolvedValue([
-    { id: 1, number_people: 2, date: '2021-12-01T12:00:00Z', state: 'pending' },
-    { id: 2, number_people: 4, date: '2021-12-02T12:00:00Z', state: 'accept' },
-    { id: 3, number_people: 6, date: '2021-12-03T12:00:00Z', state: 'reject' },
-    { id: 4, number_people: 8, date: '2021-12-04T12:00:00Z', state: 'to_pay' },
-    { id: 5, number_people: 10, date: '2021-12-05T12:00:00Z', state: 'completed' },
-  ]),
-}
-));
+jest.mock('../src/lib/database/reservation', () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return {
+    getReservationsByAdminId: jest.fn().mockResolvedValue([
+      { id: 1, number_people: 2, date: tomorrow.toISOString(), state: 'pending' },
+      { id: 2, number_people: 4, date: tomorrow.toISOString(), state: 'accept' },
+      { id: 3, number_people: 6, date: tomorrow.toISOString(), state: 'reject' },
+      { id: 4, number_people: 8, date: tomorrow.toISOString(), state: 'to_pay' },
+      { id: 5, number_people: 10, date:tomorrow.toISOString(), state: 'completed' },
+    ]),
+  };
+});
 
 describe('Verifica il funzionamento frontend del componente ReservationsAdmin', () => {
   beforeEach(() => {
     // Clear mock calls and reset mock implementation before each test
     jest.clearAllMocks();
-    jest.spyOn(global, 'setInterval').mockImplementation(() => {});
+    jest.spyOn(global, 'setInterval').mockImplementation(() => { });
   });
 
   it('Verifica della visualizzazione del caricamento', async () => {
@@ -40,7 +43,7 @@ describe('Verifica il funzionamento frontend del componente ReservationsAdmin', 
   });
 
   it('Verifica della visualizzazione dopo il caricamento', async () => {
-    render(<ReservationsAdmin/>);
+    render(<ReservationsAdmin />);
 
     await waitFor(() => {
       expect(getReservationsByAdminId).toHaveBeenCalledTimes(1);

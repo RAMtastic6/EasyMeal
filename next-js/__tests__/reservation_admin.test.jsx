@@ -6,25 +6,28 @@ import ReservationAdmin from '@/src/components/reservation_admin';
 jest.mock('../src/lib/database/reservation', () => ({
   getReservationById: jest.fn().mockImplementation((id) => {
     // Assuming different reservations with different states for testing
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
     const reservations = {
-      '1': { id: 1, number_people: 4, state: 'pending', date: new Date().toISOString(), restaurant_id: 1 },
-      '2': { id: 2, number_people: 2, state: 'accept', date: new Date().toISOString(), restaurant_id: 1 },
-      '3': { id: 3, number_people: 3, state: 'reject', date: new Date().toISOString(), restaurant_id: 1 },
-      '4': { id: 4, number_people: 4, state: 'to_pay', date: new Date().toISOString(), restaurant_id: 1 },
-      '5': { id: 5, number_people: 5, state: 'completed', date: new Date().toISOString(), restaurant_id: 1 },
+      '1': { id: 1, number_people: 4, state: 'pending', date: tomorrow.toISOString(), restaurant_id: 1 },
+      '2': { id: 2, number_people: 2, state: 'accept', date: tomorrow.toISOString(), restaurant_id: 1 },
+      '3': { id: 3, number_people: 3, state: 'reject', date: tomorrow.toISOString(), restaurant_id: 1 },
+      '4': { id: 4, number_people: 4, state: 'to_pay', date: tomorrow.toISOString(), restaurant_id: 1 },
+      '5': { id: 5, number_people: 5, state: 'completed', date: tomorrow.toISOString(), restaurant_id: 1 },
     };
     return Promise.resolve(reservations[id.toString()]);
   }),
 }));
 jest.mock('../src/lib/database/order', () => ({
-  getOrderByReservationId: jest.fn().mockResolvedValue([
-    {
+  getOrderByReservationId: jest.fn().mockResolvedValue({
+    "aperitivo": [{ 
       id: 1,
-      customer_id: 1,
-      food: { id: 1, name: 'Pizza' },
+      user_id: 1,
+      food: { id: 1, name: 'Pizza', price: 10 },
       ingredients: [{ id: 1, ingredient: { id: 1, name: 'Cheese' } }],
-    },
-  ]),
+      quantity: 2
+    }],
+  }),
 }));
 
 describe('Verifica il funzionamento frontend del componente Reservation Admin', () => {
@@ -52,37 +55,40 @@ describe('Verifica il funzionamento frontend del componente Reservation Admin', 
       expect(getByText('Posti disponibili:')).toBeInTheDocument();
     });
   });
-  //it fails i don't know why
-  /*
+
   it('Verifica stato accept', async () => {
-    const { getByText } = render(<ReservationAdmin params={{ id: '2' }} />);    ;
+    const { getByText } = render(<ReservationAdmin params={{ id: '2' }} />);;
     await waitFor(() => {
-      expect(getByText('Le ordinazioni:')).toBeInTheDocument();
+      expect(getByText('La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.')).toBeInTheDocument();
+      expect(getByText('Ingredienti')).toBeInTheDocument();
+      expect(getByText('Pizza')).toBeInTheDocument();
+      expect(getByText('Cheese')).toBeInTheDocument();
     });
   });
-  */
- 
- it('Verifica stato reject', async () => {
-   const { getByText } = render(<ReservationAdmin params={{ id: '3' }} />);
-   await waitFor(() => {
-     expect(getByText('La prenotazione è stata rifiutata.')).toBeInTheDocument();
-   });
- });
- 
- /*
+
+
+  it('Verifica stato reject', async () => {
+    const { getByText } = render(<ReservationAdmin params={{ id: '3' }} />);
+    await waitFor(() => {
+      expect(getByText('La prenotazione è stata rifiutata.')).toBeInTheDocument();
+    });
+  });
+
+
   it('Verifica stato to_pay', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '4' }} />);
     await waitFor(() => {
       expect(getByText('Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.')).toBeInTheDocument();
     });
   });
-  */
- 
+
+
   it('Verifica stato completed', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '5' }} />);
     await waitFor(() => {
       expect(getByText('La prenotazione è stata pagata e completata.')).toBeInTheDocument();
     });
   });
-  
+
+
 });

@@ -1,4 +1,4 @@
-import { Orders } from "src/orders/entities/order.entity";
+import { Order } from "src/orders/entities/order.entity";
 import { Column, Entity, Generated, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Ingredient } from "./ingredient.entity";
 import { Menu } from "../../menu/entities/menu.entity";
@@ -38,8 +38,8 @@ export class Food {
     @JoinColumn({ name: "menu_id" })
     menu: Menu;
 
-    @OneToMany(() => Orders, order => order.food)
-    orders: Orders[];
+    @OneToMany(() => Order, order => order.food)
+    orders: Order[];
 
     @ManyToMany(() => Ingredient, ingredient => ingredient.id)
     @JoinTable({name: "food_ingredients_ingredient"})
