@@ -19,14 +19,14 @@ jest.mock('../src/lib/database/reservation', () => ({
   }),
 }));
 jest.mock('../src/lib/database/order', () => ({
-  getOrderByReservationId: jest.fn().mockResolvedValue([
+  "getOrderByReservationId":[
     {
       id: 1,
       customer_id: 1,
       food: { id: 1, name: 'Pizza' },
       ingredients: [{ id: 1, ingredient: { id: 1, name: 'Cheese' } }],
     },
-  ]),
+  ],
 }));
 
 describe('Verifica il funzionamento frontend del componente Reservation Admin', () => {
@@ -54,15 +54,14 @@ describe('Verifica il funzionamento frontend del componente Reservation Admin', 
       expect(getByText('Posti disponibili:')).toBeInTheDocument();
     });
   });
-  //it fails i don't know why
-  /*
+  
   it('Verifica stato accept', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '2' }} />);    ;
     await waitFor(() => {
-      expect(getByText('Le ordinazioni:')).toBeInTheDocument();
+      expect(getByText('La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.')).toBeInTheDocument();
     });
   });
-  */
+  
  
  it('Verifica stato reject', async () => {
    const { getByText } = render(<ReservationAdmin params={{ id: '3' }} />);
@@ -71,21 +70,21 @@ describe('Verifica il funzionamento frontend del componente Reservation Admin', 
    });
  });
  
- /*
+ 
   it('Verifica stato to_pay', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '4' }} />);
     await waitFor(() => {
       expect(getByText('Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.')).toBeInTheDocument();
     });
   });
-  */
- /*
+  
+ 
   it('Verifica stato completed', async () => {
     const { getByText } = render(<ReservationAdmin params={{ id: '5' }} />);
     await waitFor(() => {
       expect(getByText('La prenotazione è stata pagata e completata.')).toBeInTheDocument();
     });
   });
-  */
+  
   
 });
