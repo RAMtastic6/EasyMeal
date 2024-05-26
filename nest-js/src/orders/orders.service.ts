@@ -162,23 +162,25 @@ export class OrdersService {
   }
   
   async pay(user_id: number, reservation_id: number) {
-    const order = await this.ordersRepository.findOne({
+    const orders = await this.ordersRepository.find({
       where: {
         user_id,
         reservation_id
       }
     });
-    if (order == null) {
+    if (orders.length === 0) {
       return null;
     }
-    order.paid = true;
-    await this.ordersRepository.save(order);
-    const orders = await this.ordersRepository.find({
+    for (const order of orders) {
+      order.paid = true;
+      await this.ordersRepository.save(order);
+    }
+    const allOrders = await this.ordersRepository.find({
       where: {
         reservation_id
       }
     });
-    const allPaid = orders.every(order => order.paid);
+    const allPaid = allOrders.every(order => order.paid);
     if (allPaid) {
       await this.reservationService.updateStatus(reservation_id, ReservationStatus.COMPLETED);
     }

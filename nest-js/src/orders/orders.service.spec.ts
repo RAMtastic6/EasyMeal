@@ -365,13 +365,12 @@ describe('OrdersService', () => {
       otherOrder.reservation_id = reservation_id;
       otherOrder.paid = true;
 
-      jest.spyOn(ordersRepository, 'findOne').mockResolvedValue(order);
       jest.spyOn(ordersRepository, 'save').mockResolvedValue(order);
       jest.spyOn(ordersRepository, 'find').mockResolvedValue([order, otherOrder]);
 
       const result = await ordersService.pay(user_id, reservation_id);
 
-      expect(ordersRepository.findOne).toHaveBeenCalledWith({
+      expect(ordersRepository.find).toHaveBeenCalledWith({
         where: {
           user_id,
           reservation_id,
@@ -401,13 +400,13 @@ describe('OrdersService', () => {
       otherOrder.reservation_id = reservation_id;
       otherOrder.paid = false;
 
-      jest.spyOn(ordersRepository, 'findOne').mockResolvedValue(order);
       jest.spyOn(ordersRepository, 'save').mockResolvedValue(order);
-      jest.spyOn(ordersRepository, 'find').mockResolvedValue([order, otherOrder]);
+      jest.spyOn(ordersRepository, 'find').mockResolvedValueOnce([order]);
+      jest.spyOn(ordersRepository, 'find').mockResolvedValueOnce([order, otherOrder]);
 
       const result = await ordersService.pay(user_id, reservation_id);
 
-      expect(ordersRepository.findOne).toHaveBeenCalledWith({
+      expect(ordersRepository.find).toHaveBeenCalledWith({
         where: {
           user_id,
           reservation_id,
@@ -428,11 +427,11 @@ describe('OrdersService', () => {
       const user_id = 1;
       const reservation_id = 1;
 
-      jest.spyOn(ordersRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([]);
 
       const result = await ordersService.pay(user_id, reservation_id);
 
-      expect(ordersRepository.findOne).toHaveBeenCalledWith({
+      expect(ordersRepository.find).toHaveBeenCalledWith({
         where: {
           user_id,
           reservation_id,
