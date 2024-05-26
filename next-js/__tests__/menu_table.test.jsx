@@ -3,104 +3,160 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MenuTable from '../src/components/menu_table';
 import { io } from 'socket.io-client';
+import { saveOrders, deleteOrders } from '../src/lib/database/order';
+import exp from 'constants';
 
 // Mocking socket.io-client
-jest.mock('socket.io-client');
+jest.mock('socket.io-client', () => ({
+	io: jest.fn().mockReturnValue({
+		on: jest.fn(),
+		emit: jest.fn(),
+		off: jest.fn(),
+		disconnect: jest.fn(),
+	}),
+}));
+
+// Mocking saveOrders and deleteOrders
+jest.mock('../src/lib/database/order', () => ({
+	saveOrders: jest.fn(),
+	deleteOrders: jest.fn(),
+}));
+
 jest.mock('../src/lib/dal', () => {
-    return {
-        verifySession: jest.fn().mockResolvedValue({}),
-        getToken: jest.fn().mockResolvedValue('token'),
-    }
+	return {
+		verifySession: jest.fn().mockResolvedValue({}),
+		getToken: jest.fn().mockResolvedValue('token'),
+	}
 });
 
 const mockMenuData = {
-    id: 1,
-    name: "Menu 1",
-    price: 100,
-    description: "Test Menu",
-    foods: [
-        {
-            id: 1,
-            name: "Pasta",
-            price: 10,
-            quantity: 1,
-            ingredients: [{ name: "Pomodoro" }, { name: "Formaggio" }],
-        },
-        {
-            id: 2,
-            name: "Pizza",
-            price: 12,
-            quantity: 2,
-            ingredients: [{ name: "Salame" }, { name: "Formaggio" }],
-        },
-    ],
+	id: 1,
+	name: "Menu 1",
+	price: 100,
+	description: "Test Menu",
+	foods: [
+		{
+			id: 1,
+			name: "Pasta",
+			price: 10,
+			quantity: 1,
+			ingredients: [{ name: "Pomodoro" }, { name: "Formaggio" }],
+		},
+		{
+			id: 2,
+			name: "Pizza",
+			price: 12,
+			quantity: 2,
+			ingredients: [{ name: "Salame" }, { name: "Formaggio" }],
+		},
+	],
 };
 
 const mockParams = { number: '123' };
 
 describe('Verifica il funzionamento frontend del componente Menu Table', () => {
-    let mockSocket;
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
 
-    beforeEach(() => {
-        mockSocket = {
-            on: jest.fn(),
-            emit: jest.fn(),
-            off: jest.fn(),
-            disconnect: jest.fn(),
-        };
-        io.mockReturnValue(mockSocket);
-    });
+	it('Verifica della visualizzazione', async () => {
+		await waitFor(() => {
+			render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+		});
 
-    it('Verifica della visualizzazione', async () => {
-        await waitFor(() => {
-            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
-        });
+		expect(screen.getByText('Pasta')).toBeInTheDocument();
+		expect(screen.getByText('Pizza')).toBeInTheDocument();
+		expect(screen.getByText('10€')).toBeInTheDocument();
+		expect(screen.getByText('12€')).toBeInTheDocument();
 
-        expect(screen.getByText('Pasta')).toBeInTheDocument();
-        expect(screen.getByText('Pizza')).toBeInTheDocument();
-        expect(screen.getByText('10€')).toBeInTheDocument();
-        expect(screen.getByText('12€')).toBeInTheDocument();
+		const cheeseElements = screen.getAllByText('Formaggio', { selector: '.text-gray-700' });
 
-        const cheeseElements = screen.getAllByText('Formaggio', { selector: '.text-gray-700' });
+		expect(cheeseElements).toHaveLength(2);
+	});
 
-        expect(cheeseElements).toHaveLength(2);
-    });
+	it('Verifica di aumento quantità', async () => {
+		await waitFor(() => {
+			render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+		});
 
-    it('Verifica di aumento e diminuzione quantità', async () => {
-        await waitFor(() => {
-            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
-        });
+		const increaseButtons = screen.getAllByTestId('increase_1');
+		const quantityDisplays = screen.getAllByTestId('display_1');
 
-        const decreaseButton = screen.getByTestId('decrease_1');
-        const increaseButton = screen.getByTestId('increase_1');
-        const quantityDisplay = screen.getByTestId('display_1');
+		fireEvent.click(increaseButtons[0]);
 
-        expect(quantityDisplay).toHaveValue('1');
+		await waitFor(() => expect(quantityDisplays[0]).toHaveValue('2'));
 
-        // Temporaneamente commentato perché non funzionante
-        // fireEvent.click(increaseButton);
-        // await waitFor(() => expect(quantityDisplay).toHaveValue('2'));
+		expect(saveOrders).toHaveBeenCalledWith({
+			reservation_id: parseInt(mockParams.number),
+			food_id: 1,
+		});
 
-        // fireEvent.click(decreaseButton);
-        // await waitFor(() => expect(quantityDisplay).toHaveValue('1'));
-    });
+		expect(io().emit).toHaveBeenCalledWith('onMessage', {
+			id_prenotazione: mockParams.number,
+			data: {
+				index: 0,
+				quantity: 2,
+			},
+		});
+	});
+
+	it('Verifica di diminuzione quantità', async () => {
+		await waitFor(() => {
+			render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+		});
+
+		const decreaseButtons = screen.getAllByTestId('decrease_2');
+		const quantityDisplays = screen.getAllByTestId('display_2');
+
+		fireEvent.click(decreaseButtons[0]);
+
+		await waitFor(() => expect(quantityDisplays[0]).toHaveValue('1'));
+
+		expect(deleteOrders).toHaveBeenCalledWith({
+			reservation_id: parseInt(mockParams.number),
+			food_id: 2,
+		});
+
+		expect(io().emit).toHaveBeenCalledWith('onMessage', {
+			id_prenotazione: mockParams.number,
+			data: {
+				index: 1,
+				quantity: 1,
+			},
+		});
+	});
+
+	it('Verifica il prezzo totale', async () => {
+		await waitFor(() => {
+			render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+		});
+
+		const totalPriceElement = screen.getByTestId('total-price');
+		const totalPrice = parseInt(totalPriceElement.textContent.replace('€', ''));
+		// it should be 32 because the first food has a price of 10 and a quantity of 2, while the second food has a price of 12 and a quantity of 1 after the previous test
+		expect(totalPrice).toBe(32);
 
 
-    it('Verifica che venga mostrato il prezzo totale corretto', async () => {
-        await waitFor(() => {
-            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
-        });
+		const increaseButton = screen.getByTestId('increase_1');
+		fireEvent.click(increaseButton);
 
-        const totalPrice = screen.getByText('€34');
+		const totalPriceElement2 = screen.getByTestId('total-price');
+		const totalPrice2 = parseInt(totalPriceElement2.textContent.replace('€', ''));
+		expect(totalPrice2).toBe(42);
 
-        expect(totalPrice).toBeInTheDocument();
-    });
+		const decreaseButton = screen.getByTestId('decrease_2');
+		fireEvent.click(decreaseButton);
 
-    it('Verifica che vengano chiamati gli eventi relativi al socket', async () => {
-        await waitFor(() => {
-            render(<MenuTable menuData={mockMenuData} params={mockParams} />);
-        });
+		const totalPriceElement3 = screen.getByTestId('total-price');
+		const totalPrice3 = parseInt(totalPriceElement3.textContent.replace('€', ''));
+		expect(totalPrice3).toBe(30);
 
-        expect(mockSocket.on).toHaveBeenCalledWith('onMessage', expect.any(Function));
-    });
+	});
+	it('Verifica che vengano chiamati gli eventi relativi al socket', async () => {
+		await waitFor(() => {
+			render(<MenuTable menuData={mockMenuData} params={mockParams} />);
+		});
+
+		expect(io().on).toHaveBeenCalledWith('onMessage', expect.any(Function));
+	});
 });

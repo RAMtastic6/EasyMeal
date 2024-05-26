@@ -64,7 +64,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
       reservation_id: reservationId,
       orders: orders,
     });
-    if(result == false) {
+    if (result == false) {
       alert('Ordine già confermato!');
       return;
     }
@@ -89,8 +89,8 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
                     <li key={ingredientIndex} className="flex justify-between items-center mb-2">
                       <span>{ingredient.ingredient.name}</span>
                       <button onClick={() => changeIngredient(key, dishIndex, ingredientIndex)} className={
-                      ingredient.removed ? "bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded" : "bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
-                    }>
+                        ingredient.removed ? "bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded" : "bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                      }>
                         {ingredient.removed ? 'Aggiungi' : 'Rimuovi'}
                       </button>
                     </li>
@@ -102,9 +102,9 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
         </div>
       ))}
       {/* Conferma */}
-    <div className="flex justify-center my-4">
-      <button onClick={submit} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded">Conferma</button>
-    </div>
+      <div className="flex justify-center my-4">
+        <button onClick={submit} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded" data-testid="conferma-button">Conferma</button>
+      </div>
     </>
   );
 }
