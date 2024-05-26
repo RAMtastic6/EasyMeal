@@ -6,6 +6,7 @@ import { Endpoints } from '../lib/database/endpoints';
 import { Socket, io } from 'socket.io-client';
 import { getToken, verifySession } from '../lib/dal';
 import { deleteOrders, saveOrders } from '../lib/database/order';
+import PaymentMethod from './payment_method';
 
 export default function MenuTable(
 	{ menuData, params }: {
@@ -137,6 +138,7 @@ export default function MenuTable(
 			<span className="flex items-center mt-8">
 				<span className="h-px flex-1 bg-orange-950"></span>
 			</span>
+			<PaymentMethod price={price} params={params} />
 		</>
 
 	);

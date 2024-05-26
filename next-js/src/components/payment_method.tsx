@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 
-export default function PaymentMethod({ params }: { params: { number: string } }) {
+export default function PaymentMethod({ price, params }: { price: number, params: { number: string } }) {
   const [selectedOption, setSelectedOption] = useState('AllaRomana');
   const [individualPrice, setIndividualPrice] = useState(0);
 
@@ -19,7 +19,6 @@ export default function PaymentMethod({ params }: { params: { number: string } }
     }
   };
 
-  const price = 100;
 
   return (
     <div className="flex flex-col items-center justify-center">

@@ -41,7 +41,6 @@ export default function Page({ params }: { params: { number: string } }) {
 					<span className="h-px flex-1 bg-orange-950"></span>
 				</span>
 				<MenuTable menuData={data.menu} params={params} />
-				<PaymentMethod params={params} />
 				<span className="flex items-center mt-8">
 					<span className="h-px flex-1 bg-orange-950"></span>
 				</span>
