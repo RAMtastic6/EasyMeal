@@ -3,6 +3,7 @@ import MenuTable from '@/src/components/menu_table';
 import Header from '@/src/components/header';
 import { getMenuWithOrdersQuantityByIdReservation } from '../../../lib/database/reservation';
 import { useEffect, useState } from 'react';
+import PaymentMethod from '@/src/components/payment_method';
 
 export default function Page({ params }: { params: { number: string } }) {
 
@@ -40,6 +41,7 @@ export default function Page({ params }: { params: { number: string } }) {
 					<span className="h-px flex-1 bg-orange-950"></span>
 				</span>
 				<MenuTable menuData={data.menu} params={params} />
+				<PaymentMethod params={params} />
 				<span className="flex items-center mt-8">
 					<span className="h-px flex-1 bg-orange-950"></span>
 				</span>
