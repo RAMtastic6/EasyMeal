@@ -17,18 +17,18 @@ export default function ReservationForm({
 		const options = { timeZone: 'Europe/Rome' };
 		const isoString = date.toLocaleString('en-US', options);
 		const json = {
-				date: isoString,
-				number_people: parseInt(formData.get("number_people") as string),
-				restaurant_id: restaurant_id,
+			date: isoString,
+			number_people: parseInt(formData.get("number_people") as string),
+			restaurant_id: restaurant_id,
 		};
 
 		// Create reservation
 		const response = await createReservation(json);
 		if (response != null && response.status) {
-				setReservationNumber(response.body.id.toString());
+			setReservationNumber(response.body.id.toString());
 		}
 		else {
-				alert("Errore nella prenotazione");
+			alert("Errore nella prenotazione");
 		}
 	}
 
@@ -61,8 +61,8 @@ export default function ReservationForm({
 			<p className="text-center">Utilizza il seguente link per fare l'ordinazione:</p>
 			<div className="flex justify-center">
 				<p className="text-center w-1/2 rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600">{link()}</p>
-				<button onClick={handleCopy} className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white">
-					{copySuccess ? 'Copied!' : 'Copy Link'}
+				<button onClick={handleCopy} className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white" data-testid="ButtonCopia">
+					{copySuccess ? 'Link copiato!' : 'Copia Link'}
 				</button>
 			</div>
 			<div className="flex justify-center">
