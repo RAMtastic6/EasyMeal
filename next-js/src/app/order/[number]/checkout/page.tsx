@@ -1,4 +1,5 @@
 "use server";
+import PaymentMethod from '@/src/components/payment_method';
 import { IngredientChart } from '../../../../components/ingredient_chart';
 import { getOrderByReservationId } from '../../../../lib/database/order';
 
@@ -20,7 +21,10 @@ export default async function Page({
     );
   }
   return (
-    <IngredientChart fetchedOrders={orders} reservationId={number} />
+    <>
+      <IngredientChart fetchedOrders={orders} reservationId={number} />
+      <PaymentMethod />
+    </>
   );
 }
 
