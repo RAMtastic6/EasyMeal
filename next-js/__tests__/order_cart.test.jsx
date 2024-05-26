@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import OrderCart from '../src/components/order_cart';
 
-describe('Verifica il funzionamento frontend del componente Menu Table', () => {
+describe('Verifica il funzionamento frontend del componente Order Cart', () => {
 
     it('Verifica della visualizzazione', () => {
         render(<OrderCart />);

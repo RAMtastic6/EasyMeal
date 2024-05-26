@@ -96,6 +96,8 @@ function PaginationNumber({
     direction: 'left' | 'right';
     isDisabled?: boolean;
   }) {
+    const ariaLabel = direction === 'left' ? 'Previous page' : 'Next page'; // Aggiungiamo un'etichetta accessibile
+  
     const className = clsx(
       'flex h-10 w-10 items-center justify-center rounded-md border',
       {
@@ -106,7 +108,7 @@ function PaginationNumber({
       },
     );
   
-    const icon= direction === 'left' ? (
+    const icon = direction === 'left' ? (
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -139,10 +141,13 @@ function PaginationNumber({
     );
   
     return isDisabled ? (
-      <div className={className}>{icon}</div>
+      <div className={className} aria-label={ariaLabel}> 
+        {icon}
+      </div>
     ) : (
-      <Link className={className} href={href}>
+      <Link className={className} href={href} aria-label={ariaLabel}>
         {icon}
       </Link>
     );
   }
+  
