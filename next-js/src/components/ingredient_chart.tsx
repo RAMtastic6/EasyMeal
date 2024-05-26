@@ -104,9 +104,9 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
       ))}
 
           {/* Conferma */}
-          <div className="flex justify-center mt-8">
-            <button onClick={submit} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded">Conferma</button>
-          </div>
+            <div className="flex justify-center mt-8">
+              <button onClick={submit} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded" data-testid="conferma-button">Conferma</button>
+            </div>
 
     </>
   );
