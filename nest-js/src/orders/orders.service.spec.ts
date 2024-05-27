@@ -74,7 +74,6 @@ describe('OrdersService', () => {
         {
           provide: StaffService,
           useValue: {
-            // funzione da mockare.
             getAdminByRestaurantId: jest.fn()
           }
         }
@@ -88,7 +87,6 @@ describe('OrdersService', () => {
     reservationService = module.get<ReservationService>(ReservationService);
     notificationService = module.get<NotificationService>(NotificationService);
     staffService = module.get<StaffService>(StaffService);
-
   });
 
   describe('create', () => {
@@ -338,7 +336,8 @@ describe('OrdersService', () => {
       jest.spyOn(ordersRepository, 'find').mockResolvedValue(mockOrders as any);
 
       // Call the getReservationOrders method
-      const result = await ordersService.getReservationOrders(mockReservationId);
+      const result =
+        await ordersService.getReservationOrders(mockReservationId);
 
       // Assert the result
       expect(result).toEqual(mockOrders);
@@ -351,34 +350,72 @@ describe('OrdersService', () => {
       const mockOrder = {
         user_id: 1,
         reservation_id: 1,
-        orders: [{ id: 1 }, { id: 2 }],
+        orders: [
+          {
+            id: 2,
+            name: "Spaghetti all'amatriciana",
+            price: 9,
+            menu_id: 1,
+            path_image: '',
+            type: 'apertivo',
+            ingredients: [
+              {
+                id: 10,
+                name: 'Sale',
+                removed: false
+              }
+            ],
+            quantity: 1,
+          },
+          {
+            id: 3,
+            name: 'Spaghetti al pomodoro',
+            price: 8,
+            menu_id: 1,
+            path_image: '',
+            type: 'apertivo',
+            ingredients: [
+              {
+                id: 10,
+                name: 'Sale',
+                removed: false
+              }
+            ],
+            quantity: 1,
+          },
+        ],
       };
       const adminMock = {
         id: 1,
-        restaurant_id: 1
+        restaurant_id: 1,
       };
 
-      jest.spyOn(orderIngredientsRepository, 'save').mockResolvedValue(undefined);
+      // jest.spyOn(orderIngredientsRepository, 'save').mockResolvedValue(undefined);
+      const date = new Date('2222-02-20T20:20:00.000Z');
       jest.spyOn(reservationService, 'findOne').mockResolvedValue(
+        // {
+        //   id: 1,
+        //   status: ReservationStatus.ACCEPTED,
+        // } as unknown as Reservation
         {
-          id: 1,
-          status: ReservationStatus.ACCEPTED,
-        } as unknown as Reservation
+          id: 23,
+          date: date,
+          number_people: 2222,
+          restaurant_id: 1,
+          state: ReservationStatus.ACCEPTED,
+          users: [],
+        } as Reservation,
       );
-      // jest.spyOn(staffService, 'getRestaurantByAdminId').mockResolvedValue(adminMock as any);
+      jest
+        .spyOn(staffService, 'getAdminByRestaurantId')
+        .mockResolvedValue(adminMock as any);
 
       // Call the updateListOrders method
       const result = await ordersService.updateListOrders(mockOrder);
-
-      expect(reservationService.findOne).toHaveBeenCalledWith(mockOrder.reservation_id);
+      expect(reservationService.findOne).toHaveBeenCalledWith(
+        mockOrder.reservation_id,
+      );
       expect(result).toBe(true);
-      // expect(reservationService.updateStatus).toHaveBeenCalledWith(mockOrder.reservation_id, ReservationStatus.TO_PAY);
-
-      // expect(notificationService.create).toHaveBeenCalledWith({
-      //   message: `L'ordine associato alla prenotazione con id: ${mockOrder.reservation_id} è in: ${ReservationStatus.TO_PAY}`,
-      //   title: 'Ordinazione confermata',
-      //   id_receiver: adminMock.id,
-      // });
     });
   });
 
