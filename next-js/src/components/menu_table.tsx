@@ -138,6 +138,11 @@ export default function MenuTable(
 			<span className="flex items-center mt-8">
 				<span className="h-px flex-1 bg-orange-950"></span>
 			</span>
+			<div className="flex justify-center mt-4">
+				<div className="sm:flex sm:gap-4">
+					<Link className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" href={`${params.number}/checkout/`}> Checkout </Link>
+				</div>
+			</div>
 		</>
 
 	);

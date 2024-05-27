@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getPartialBill, getRomanBill, getTotalBill } from '../lib/database/order';
+import { setPaymentMethod } from '../lib/database/reservation';
 import { verifySession } from '../lib/dal';
 
 export default function PaymentMethod({ params }: { params: { number: string } }) {
@@ -18,7 +19,11 @@ export default function PaymentMethod({ params }: { params: { number: string } }
     setSelectedOption(option);
     calculateIndividualPrice(option);
   };
-  
+
+  const onSubmit = async () => {
+    const isRomanBill = selectedOption === 'AllaRomana' ? true : false;
+    setPaymentMethod({ reservation_id: parseInt(params.number), isRomanBill });
+  };
   
   const calculateIndividualPrice = async (option: string) => {
     const session = await verifySession(); 
@@ -96,7 +101,9 @@ export default function PaymentMethod({ params }: { params: { number: string } }
 
             <div className="flex justify-center mt-4">
               <div className="sm:flex sm:gap-4">
-                <Link className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" href={`${params.number}/checkout/`}> Checkout </Link>
+                <button onClick={onSubmit} className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring">
+                  Conferma
+                </button>
               </div>
             </div>
           </div>
