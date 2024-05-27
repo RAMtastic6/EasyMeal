@@ -59,6 +59,39 @@ export async function createReservation(reservation: {
 	};
 }
 
+export async function getUserOfReservation(id: number): Promise<boolean> {
+	const token = await getToken();
+	const response = await fetch(`${Endpoints.reservation}${id}/user_token`, {
+		method: "POST",
+		cache: "no-cache",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ token: token })
+	});
+	if (!response.ok) {
+		throw new Error('Error fetching user from the database');
+	}
+	const data = await response.json();
+	return data;
+}
+
+export async function acceptInviteReservation(id: number): Promise<any> {
+	const token = await getToken();
+	const response = await fetch(`${Endpoints.reservation}addCustomer`, {
+		method: "POST",
+		cache: "no-cache",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({ token: token, reservation_id: id })
+	});
+	return {
+		result: (await response.json()) as boolean,
+		status: response.ok,
+	};
+}
+
 /** FUNZIONI ADMIN **/
 
 export async function getReservationsByAdminId(): Promise<[]> {

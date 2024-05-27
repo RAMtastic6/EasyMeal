@@ -27,7 +27,7 @@ export function NotificationPage({ notificationsList }: {
     return () => {
       socket.current?.off("onNotification", addNotification);
     }
-  }, [socket]);
+  }, []);
 
   return (
     <>

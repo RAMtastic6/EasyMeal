@@ -1,12 +1,11 @@
-import { IsNotEmpty, IsNumber, IsNumberString } from "class-validator";
+import { IsJWT, IsNotEmpty, IsNumber, IsNumberString } from "class-validator";
 
 export class AddCustomerDTO {
     
-    @IsNotEmpty()
-    @IsNumberString()
-    user_id: number; 
+    @IsJWT()
+    token: string; 
 
     @IsNotEmpty()
-    @IsNumberString()
+    @IsNumber()
     reservation_id: number;
 }

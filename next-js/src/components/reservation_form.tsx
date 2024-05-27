@@ -1,14 +1,17 @@
+"use client";
 import { createReservation } from "../lib/database/reservation";
 import { useState } from 'react';
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ReservationForm({
 	restaurant_id,
 }: {
 	restaurant_id: number;
 }) {
-	const [reservationNumber, setReservationNumber] = useState<string | null>(null);
-	const [copySuccess, setCopySuccess] = useState(false);
+	const router = useRouter();
+	/*const [reservationNumber, setReservationNumber] = useState<string | null>(null);
+	const [copySuccess, setCopySuccess] = useState(false);*/
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -17,26 +20,26 @@ export default function ReservationForm({
 		const options = { timeZone: 'Europe/Rome' };
 		const isoString = date.toLocaleString('en-US', options);
 		const json = {
-				date: isoString,
-				number_people: parseInt(formData.get("number_people") as string),
-				restaurant_id: restaurant_id,
+			date: isoString,
+			number_people: parseInt(formData.get("number_people") as string),
+			restaurant_id: restaurant_id,
 		};
 
 		// Create reservation
 		const response = await createReservation(json);
 		if (response != null && response.status) {
-				setReservationNumber(response.body.id.toString());
+			router.push(`/user/reservations_list`);
 		}
 		else {
-				alert("Errore nella prenotazione");
+			alert("Errore nella prenotazione");
 		}
 	}
 
 	/*const generateRandomReservationNumber = () => {
 			// Generate a random 6-digit reservation number for now
 			return Math.floor(100000 + Math.random() * 900000).toString();
-	};*/
-
+	}; */
+	/*
 	const handleCopy = () => {
 		const linkText = `${window.location.origin}/order/${reservationNumber}/`;
 		navigator.clipboard.writeText(linkText)
@@ -46,14 +49,15 @@ export default function ReservationForm({
 			.catch(err => {
 				console.error('Failed to copy: ', err);
 			});
-	};
+	};*/
 
-	const link = () => (
+	/*const link = () => (
 		<Link href={`/order/${reservationNumber}`}>{
 			`${window.location.origin}/order/${reservationNumber}`
 		}</Link>
-	);
+	);*/
 
+	/*
 	const confirmationPage = (
 		<div className="rounded-lg bg-white shadow-lg p-12 space-y-4">
 			<h2 className="text-2xl font-bold text-orange-950 text-center">Prenotazione confermata!</h2>
@@ -61,8 +65,8 @@ export default function ReservationForm({
 			<p className="text-center">Utilizza il seguente link per fare l'ordinazione:</p>
 			<div className="flex justify-center">
 				<p className="text-center w-1/2 rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600">{link()}</p>
-				<button onClick={handleCopy} className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white">
-					{copySuccess ? 'Copied!' : 'Copy Link'}
+				<button onClick={handleCopy} className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white" data-testid="ButtonCopia">
+					{copySuccess ? 'Link copiato!' : 'Copia Link'}
 				</button>
 			</div>
 			<div className="flex justify-center">
@@ -72,13 +76,11 @@ export default function ReservationForm({
 					Continua</Link>
 			</div>
 		</div>
-	);
+	);*/
 
 	return (
 		<>
-			{reservationNumber ? (
-				confirmationPage
-			) : (
+			
 				<div className="rounded-lg bg-white shadow-lg p-12 space-y-4">
 					<h2 className="text-2xl font-bold text-orange-950 text-center">Effettua una prenotazione</h2>
 					<form action="#" className="space-y-4" onSubmit={handleSubmit}>
@@ -122,7 +124,6 @@ export default function ReservationForm({
 						</div>
 					</form>
 				</div>
-			)}
 		</>
 	);
 }

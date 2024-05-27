@@ -201,6 +201,7 @@ export class OrdersService {
         ingredients: {
           ingredient: true
         },
+        reservation: true
       },
       select: {
         food: {

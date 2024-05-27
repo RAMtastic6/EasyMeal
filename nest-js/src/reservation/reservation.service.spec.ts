@@ -173,12 +173,13 @@ describe('ReservationService', () => {
 
     it('should add a customer to a reservation', async () => {
       jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(reservation);
-      jest.spyOn(reservationRepo, 'update').mockResolvedValueOnce(undefined);
+      jest.spyOn(userService, 'findOne').mockResolvedValueOnce({ id: 1 } as any);
+      jest.spyOn(reservationRepo, 'save').mockResolvedValueOnce(undefined);
 
       const result = await service.addCustomer(params);
 
       expect(reservationRepo.findOne).toHaveBeenCalled();
-      expect(reservationRepo.update).toHaveBeenCalled();
+      expect(reservationRepo.save).toHaveBeenCalled();
       expect(result).toEqual(true);
     });
 
@@ -186,7 +187,19 @@ describe('ReservationService', () => {
       jest.spyOn(reservationRepo, 'findOne').mockResolvedValue(null);
 
       expect(await service.addCustomer(params)).toBe(null);
-      expect(reservationRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(reservationRepo.findOne).toHaveBeenCalled();
+    });
+
+    it('should return false if the reservation is full', async () => {
+      const reservation = {
+        id: 1,
+        users: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+        number_people: 4,
+      } as unknown as Reservation;
+
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(reservation);
+
+      expect(await service.addCustomer(params)).toBe(false);
     });
   });
 
@@ -443,6 +456,32 @@ describe('ReservationService', () => {
         },
       });
       expect(result).toEqual(reservations);
+    });
+  });
+
+  describe('getUserOfReservation', () => {
+    it('should return true if the user is associated with the reservation', async () => {
+      const id = 1;
+      const userId = 1;
+      const reservation = { id, users: [{ id: userId }] } as Reservation;
+  
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(reservation);
+  
+      const result = await service.getUserOfReservation(id, userId);
+  
+      expect(result).toEqual(true);
+    });
+  
+    it('should return false if the user is not associated with the reservation', async () => {
+      const id = 1;
+      const userId = 1;
+      const reservation = { id, users: [{ id: 2 }] } as Reservation;
+  
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(null);
+  
+      const result = await service.getUserOfReservation(id, userId);
+  
+      expect(result).toEqual(false);
     });
   });
 });
