@@ -416,6 +416,9 @@ describe('OrdersService', () => {
         mockOrder.reservation_id,
       );
       expect(result).toBe(true);
+      // in questo momento il test non va in quanto la proprietá ingredients di MockOrder
+      // non è modellat nel modo corretto; di conseguenza, basta capire come siano organizzati i dati
+      // al suo interno per poter far passare il test.
     });
   });
 
