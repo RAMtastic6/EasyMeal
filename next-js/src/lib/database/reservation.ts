@@ -86,9 +86,6 @@ export async function acceptInviteReservation(id: number): Promise<any> {
 		},
 		body: JSON.stringify({ token: token, reservation_id: id })
 	});
-	if(!response.ok) {
-		throw new Error('Error accepting invite '+ await response.text());
-	}
 	return {
 		result: (await response.json()) as boolean,
 		status: response.ok,

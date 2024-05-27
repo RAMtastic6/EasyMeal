@@ -6,15 +6,27 @@ import { redirect } from 'next/navigation';
 
 export default async function Page({ params }: { params: { number: string } }) {
 
-	const reservation = (await getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)));
+	let reservation = null;
+	try {
+		reservation = (await getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)));
+	} catch (e) {
+		console.error(e);
+		redirect("/user/reservations_list");
+	}
 	const data = reservation.restaurant;
 	const status = reservation.state;
 	if(status !== 'accept')
 		redirect("/user/reservations_list")
 	const isPresent = await getUserOfReservation(parseInt(params.number));
-
 	if(!isPresent)
 		return (<UserInvite reservationId={parseInt(params.number)}/>);
+	if (reservation == null) {
+		return (
+			<div className="bg-gray-100 p-4 rounded-md">
+				<p className="text-gray-600">Non ci sono ordini per questa prenotazione</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="w-full">

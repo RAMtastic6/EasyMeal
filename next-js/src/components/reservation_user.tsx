@@ -165,8 +165,9 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                     Vai all'ordinazione
                   </a>
                 </div>
-                <div className="flex justify-center">
+                <div className="flex justify-center py-4">
                   <p className="text-center w-1/2 rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600">{link()}</p>
+                  <span className="px-1"></span>
                   <button onClick={handleCopy} className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white" data-testid="ButtonCopia">
                     {copy ? 'Link copiato!' : 'Copia Link'}
                   </button>
