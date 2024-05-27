@@ -1,31 +1,40 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getPartialBill, getTotalBill, getRomanBill } from '../lib/database/order';
+import { getPartialBill, getRomanBill } from '../lib/database/order';
+import { verifySession } from '../lib/dal';
 import { set } from 'firebase/database';
+import { verify } from 'crypto';
 
 export default function PaymentMethod({ price, params }: { price: number, params: { number: string } }) {
   const [selectedOption, setSelectedOption] = useState('AllaRomana');
   const [individualPrice, setIndividualPrice] = useState(0);
 
-  const handleOptionChange = (option: any) => {
+  useEffect(() => {
+    calculateIndividualPrice(selectedOption);
+  }, [selectedOption]);
+
+  const handleOptionChange = (option: string) => {
     setSelectedOption(option);
-    calculateIndividualPrice(option);
   };
 
-  const calculateIndividualPrice = (option: any) => {
-    // Calcola il prezzo individuale in base all'opzione selezionata
-    if (option === 'AllaRomana') {
-      getRomanBill(parseInt(params.number)).then((data) => {
-        setIndividualPrice(data.price);
-      });
-    } else if (option === 'Ognuno') {
-      getPartialBill({ customer_id: 1, reservation_id: parseInt(params.number) }).then((data) => {
+
+  const calculateIndividualPrice = async (option: string) => {
+    try {
+      const session = await verifySession(); 
+      if (option === 'AllaRomana') {
+        const data = await getRomanBill({ customer_id: session.id, reservation_id: parseInt(params.number) });
+        console.log('Roman Bill Data:', data);
         setIndividualPrice(data);
-      });
+      } else if (option === 'Ognuno') {
+        const data = await getPartialBill({ customer_id: session.id, reservation_id: parseInt(params.number) });
+        console.log('Partial Bill Data:', data);
+        setIndividualPrice(data);
+      }
+    } catch (error) {
+      console.error('Error calculating individual price:', error);
     }
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center">

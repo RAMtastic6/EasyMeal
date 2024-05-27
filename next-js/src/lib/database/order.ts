@@ -25,16 +25,20 @@ export async function getOrderByReservationId(id: number) {
 	return sortedData;
 }
 
-export async function getRomanBill(id: number) {
-	const res = await fetch(Endpoints.order + '/romanBill', {
+export async function getRomanBill(data: {
+	customer_id: number,
+	reservation_id: number,
+}) {
+	const request = await fetch(Endpoints.order + 'romanBill', {
 		method: 'POST',
+		cache: 'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ reservation_id: id })
+		body: JSON.stringify(data),
 	});
-	const data = await res.json();
-	return data;
+	const result = await request.json();
+	return result;
 }
 
 export async function saveOrders(data: {
@@ -139,21 +143,6 @@ export async function getPartialBill(data: {
 	reservation_id: number,
 }) {
 	const request = await fetch(Endpoints.order + 'partialBill', {
-		method: 'POST',
-		cache: 'no-cache',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(data),
-	});
-	const result = await request.json();
-	return result;
-}
-
-export async function getTotalBill(data: {
-	reservation_id: number,
-}) {
-	const request = await fetch(Endpoints.order + 'totalBill', {
 		method: 'POST',
 		cache: 'no-cache',
 		headers: {
