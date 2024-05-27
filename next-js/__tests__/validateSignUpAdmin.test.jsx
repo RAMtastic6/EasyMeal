@@ -1,3 +1,4 @@
+import { json } from 'stream/consumers';
 import { validateSignUpAdmin } from '../src/actions/validateSignUpAdmin';
 import { createAdmin } from '../src/lib/database/user';
 import { getFormData } from '@/src/lib/utils';
@@ -222,5 +223,68 @@ describe('Verifica del funzionamento della funzionalità di registrazione per ut
 
     await validateSignUpAdmin({}, formData);
     expect(redirect).toHaveBeenCalledWith('login?signup=success');
+  });
+
+  it('Lancia un errore se la registrazione non va a buon fine (should return an array of errors)', async () => {
+    formData.append('email', 'test@example.com');
+    formData.append('nome', 'John');
+    formData.append('cognome', 'Doe');
+    formData.append('nome-ristorante', 'Ristorante Test');
+    formData.append('city', 'Test City');
+    formData.append('indirizzo', 'Test Address');
+    formData.append('coperti', '50');
+    formData.append('numero', '1234567890');
+    formData.append('email-ristorante', 'ristorante@example.com');
+    formData.append('cucina', 'Italian');
+    formData.append('password', 'password123');
+    formData.append('password_confirmation', 'password123');
+    createAdmin.mockResolvedValue({
+      ok: false,
+      json: () => ({ message: ['Error', 'Error2'] })
+    });
+    const result = await validateSignUpAdmin({}, formData);
+    expect(result).toEqual({ message: 'Error, Error2' });
+  });
+
+  it('Lancia un errore se la registrazione non va a buon fine (should return a string error)', async () => {
+    formData.append('email', 'test@example.com');
+    formData.append('nome', 'John');
+    formData.append('cognome', 'Doe');
+    formData.append('nome-ristorante', 'Ristorante Test');
+    formData.append('city', 'Test City');
+    formData.append('indirizzo', 'Test Address');
+    formData.append('coperti', '50');
+    formData.append('numero', '1234567890');
+    formData.append('email-ristorante', 'ristorante@example.com');
+    formData.append('cucina', 'Italian');
+    formData.append('password', 'password123');
+    formData.append('password_confirmation', 'password123');
+    createAdmin.mockResolvedValue({
+      ok: false,
+      json: () => ({ message: 'Error' })
+    });
+    const result = await validateSignUpAdmin({}, formData);
+    expect(result).toEqual({ message: 'Error' });
+  });
+
+  it('Lancia un errore se la registrazione non va a buon fine (should return a generic error)', async () => {
+    formData.append('email', 'test@example.com');
+    formData.append('nome', 'John');
+    formData.append('cognome', 'Doe');
+    formData.append('nome-ristorante', 'Ristorante Test');
+    formData.append('city', 'Test City');
+    formData.append('indirizzo', 'Test Address');
+    formData.append('coperti', '50');
+    formData.append('numero', '1234567890');
+    formData.append('email-ristorante', 'ristorante@example.com');
+    formData.append('cucina', 'Italian');
+    formData.append('password', 'password123');
+    formData.append('password_confirmation', 'password123');
+    createAdmin.mockResolvedValue({
+      ok: false,
+      json: () => ({})
+    });
+    const result = await validateSignUpAdmin({}, formData);
+    expect(result).toEqual({ message: 'Registration failed' });
   });
 });

@@ -37,12 +37,12 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <div className="w-full">
       <div className="px-10 py-4 flex flex-col">
-        <div className="flex flex-row">
-          <div className="self-start py-1">
+        <div className="flex flex-row flex-wrap"> {/* Aggiunta della classe flex-wrap */}
+          <div className="self-start py-1 flex-shrink-0"> {/* Aggiunta della classe flex-shrink-0 */}
             <img
               src="/restaurant_template_image.jpg"
               alt="Restaurant Image template"
-              className="w-128 h-64 mr-4"
+              className="w-80 h-64 object-cover object-center mr-4"
             />
           </div>
           <div className="self-start py-20 text-orange-950">
@@ -53,22 +53,6 @@ export default function Page({ params }: { params: { id: string } }) {
           </div>
         </div>
         <div className="space-y-4">
-          {/* <div className="rounded-lg bg-white shadow-lg p-12 space-y-4">
-            <h2 className="text-2xl font-bold text-orange-950 text-center">
-              Menu:{" "}
-            </h2>
-            <div className="container mx-auto">
-              <ul>
-                {" "}
-                {menu.map((item) => (
-                  <li className="bg-white p-4" key={item["id"]}>
-                    {" "}
-                    {item["name"]} - {item["price"]}{"€"}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div> */}
           <div>
             <FoodList menu={menu} />
           </div>
@@ -78,5 +62,6 @@ export default function Page({ params }: { params: { id: string } }) {
         </div>
       </div>
     </div>
+
   );
 }

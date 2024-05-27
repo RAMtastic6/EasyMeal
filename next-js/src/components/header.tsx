@@ -1,13 +1,14 @@
 "use client";
 import Link from 'next/link';
+import { deleteSession } from '../lib/session';
 
-export default function Header() {
+export default function Header({ isLogin, isAdmin }: { isLogin: boolean, isAdmin: boolean }) {
 	return (
 		<header className="bg-orange-500">
 			<div className="mx-auto max-w-screen-xxl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 items-center justify-between">
 					<div className="md:flex md:items-center md:gap-12">
-						<Link className="block text-white font-bold" href="/create_reservation" data-testid={"HomeLink"}> EasyMeal </Link>
+						<Link className="block text-white font-bold" href="" data-testid={"HomeLink"}> EasyMeal </Link>
 					</div>
 
 					<div className="flex items-center gap-4">
@@ -26,10 +27,40 @@ export default function Header() {
 									</svg>
 								</span>
 							</Link>
-							<Link className="inline-block rounded bg-orange-950 px-12 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring"
-								href="/login" data-testid={"LoginLink"}> Login </Link>
+							{!isLogin && <Link className="inline-block rounded bg-orange-950 px-4 py-4 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring"
+								href="/login" data-testid={"LoginLink"}> Login </Link>}
+							{isLogin && <button
+								className="inline-block rounded bg-orange-950 px-4 py-4 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring"
+								data-testid={"LogoutButton"}
+								onClick={async () => {
+									await deleteSession();
+									window.location.replace("/login");
+								}}
+							>Logout</button>}
 						</div>
 					</div>
+				</div>
+				<div className="mt-4 flex items-center justify-center space-x-4 border-t-2 border-black px-4 py-2"> {/* Aggiunta del padding ai lati */}
+					<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/" data-testid="home-link">Home</Link>
+					<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/create_reservation" data-testid="create-reservation-link">Crea prenotazione</Link> 
+					{isAdmin && (
+						<Link
+							href="/admin/reservations_list"
+							className="text-white font-medium hover:text-gray-800 text-lg underline"
+							data-testid="admin-reservations-link"
+						>
+							Lista prenotazioni ristorante
+						</Link>
+					)} 
+					{!isAdmin && (
+						<Link
+							href="/user/reservations_list"
+							className="text-white font-medium hover:text-gray-800 text-lg underline"
+							data-testid="user-reservations-link"
+						>
+							Lista prenotazioni utente
+						</Link>
+					)}
 				</div>
 			</div>
 		</header>
