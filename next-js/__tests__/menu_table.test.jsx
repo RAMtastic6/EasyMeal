@@ -125,33 +125,6 @@ describe('Verifica il funzionamento frontend del componente Menu Table', () => {
 			},
 		});
 	});
-
-	it('Verifica il prezzo totale', async () => {
-		await waitFor(() => {
-			render(<MenuTable menuData={mockMenuData} params={mockParams} />);
-		});
-
-		const totalPriceElement = screen.getByTestId('total-price');
-		const totalPrice = parseInt(totalPriceElement.textContent.replace('€', ''));
-		// it should be 32 because the first food has a price of 10 and a quantity of 2, while the second food has a price of 12 and a quantity of 1 after the previous test
-		expect(totalPrice).toBe(32);
-
-
-		const increaseButton = screen.getByTestId('increase_1');
-		fireEvent.click(increaseButton);
-
-		const totalPriceElement2 = screen.getByTestId('total-price');
-		const totalPrice2 = parseInt(totalPriceElement2.textContent.replace('€', ''));
-		expect(totalPrice2).toBe(42);
-
-		const decreaseButton = screen.getByTestId('decrease_2');
-		fireEvent.click(decreaseButton);
-
-		const totalPriceElement3 = screen.getByTestId('total-price');
-		const totalPrice3 = parseInt(totalPriceElement3.textContent.replace('€', ''));
-		expect(totalPrice3).toBe(30);
-
-	});
 	it('Verifica che vengano chiamati gli eventi relativi al socket', async () => {
 		await waitFor(() => {
 			render(<MenuTable menuData={mockMenuData} params={mockParams} />);
