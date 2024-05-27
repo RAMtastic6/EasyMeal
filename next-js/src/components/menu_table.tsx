@@ -138,7 +138,6 @@ export default function MenuTable(
 			<span className="flex items-center mt-8">
 				<span className="h-px flex-1 bg-orange-950"></span>
 			</span>
-			<PaymentMethod price={price} params={params} />
 		</>
 
 	);

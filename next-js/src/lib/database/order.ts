@@ -153,3 +153,18 @@ export async function getPartialBill(data: {
 	const result = await request.json();
 	return result;
 }
+
+export async function getTotalBill(data: {
+	reservation_id: number,
+}) {
+	const request = await fetch(Endpoints.order + 'totalBill', {
+		method: 'POST',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(data),
+	});
+	const result = await request.json();
+	return result;
+}

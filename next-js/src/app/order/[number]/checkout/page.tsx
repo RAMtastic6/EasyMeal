@@ -23,6 +23,7 @@ export default async function Page({
   return (
     <>
       <IngredientChart fetchedOrders={orders} reservationId={number} />
+      <PaymentMethod params={{ number: String(number) }} />
     </>
   );
 }

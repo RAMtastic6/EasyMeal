@@ -234,4 +234,14 @@ export class OrdersService {
     await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY);
     return true;
   }
+
+  async getTotalBill(order: { reservation_id: number }) {
+    const orders = await this.ordersRepository.find({
+      where: {
+        reservation_id: order.reservation_id
+      },
+      relations: { food: true }
+    });
+    return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+  }
 }

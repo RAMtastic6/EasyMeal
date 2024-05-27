@@ -8,7 +8,7 @@ import { AddQuantityDTO } from './dto/add-quantity.dto';
 import { UpdateIngredientsDTO } from './dto/update-ingredients.dto';
 import { RemoveDTO } from './dto/remove.dto';
 import { PartialBillDTO } from './dto/partial-bill.dto';
-import { FullBillDTO as RomanBillDTO } from './dto/full-bill.dto';
+import { RomanBillDTO } from './dto/full-bill.dto';
 import { UpdateListOrdersDTO } from './dto/update-list-orders.dto';
 import { PayDTO } from './dto/pay.dto';
 
@@ -133,6 +133,11 @@ export class OrdersController {
     if(result == null) 
       throw new BadRequestException('Error updating orders');
     return result;
+  }
+
+  @Post('totalBill')
+  async totalBill(@Body() order: { reservation_id: number }) {
+    return await this.ordersService.getTotalBill(order);
   }
 
   @Get('reservation/:id')

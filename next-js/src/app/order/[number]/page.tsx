@@ -3,7 +3,6 @@ import MenuTable from '@/src/components/menu_table';
 import Header from '@/src/components/header';
 import { getMenuWithOrdersQuantityByIdReservation } from '../../../lib/database/reservation';
 import { useEffect, useState } from 'react';
-import PaymentMethod from '@/src/components/payment_method';
 
 export default function Page({ params }: { params: { number: string } }) {
 

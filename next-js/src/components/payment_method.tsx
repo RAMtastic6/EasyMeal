@@ -1,26 +1,28 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getPartialBill, getRomanBill } from '../lib/database/order';
+import { getPartialBill, getRomanBill, getTotalBill } from '../lib/database/order';
 import { verifySession } from '../lib/dal';
 
-export default function PaymentMethod({ price, params }: { price: number, params: { number: string } }) {
+export default function PaymentMethod({ params }: { params: { number: string } }) {
   const [selectedOption, setSelectedOption] = useState('AllaRomana');
   const [individualPrice, setIndividualPrice] = useState(0);
+  const [price, setPrice] = useState(0);
 
   useEffect(() => {
     calculateIndividualPrice(selectedOption);
+    calculateTotalPrice();
   }, [selectedOption]);
-
+  
   const handleOptionChange = (option: string) => {
     setSelectedOption(option);
     calculateIndividualPrice(option);
   };
-
-
+  
+  
   const calculateIndividualPrice = async (option: string) => {
+    const session = await verifySession(); 
     try {
-      const session = await verifySession(); 
       if (option === 'AllaRomana') {
         const data = await getRomanBill({ customer_id: session.id, reservation_id: parseInt(params.number) });
         console.log('Roman Bill Data:', data);
@@ -32,6 +34,16 @@ export default function PaymentMethod({ price, params }: { price: number, params
       }
     } catch (error) {
       console.error('Error calculating individual price:', error);
+    }
+  };
+
+  const calculateTotalPrice = async () => {
+    try {
+      const data = await getTotalBill({ reservation_id: parseInt(params.number) });
+      console.log('Total Bill Data:', data);
+      setPrice(data);
+    } catch (error) {
+      console.error('Error calculating total price:', error);
     }
   };
 
