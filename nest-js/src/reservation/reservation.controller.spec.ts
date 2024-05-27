@@ -34,6 +34,7 @@ describe('ReservationController', () => {
             verifyReservation: jest.fn(),
             updateStatus: jest.fn(),
             getReservationsByAdminId: jest.fn(),
+            getUserOfReservation: jest.fn(),
             setPaymentMethod: jest.fn(),  
           },
         },
@@ -127,8 +128,12 @@ describe('ReservationController', () => {
       const expectedResult = { id: 1, ...params };
 
       jest.spyOn(service, 'addCustomer').mockResolvedValue(true);
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: 1, role: StaffRole.ADMIN});
 
-      const result = await controller.addCustomer(params);
+      const result = await controller.addCustomer({
+        token: 'valid_token',
+        reservation_id: 1,
+      });
 
       expect(service.addCustomer).toHaveBeenCalledWith(params);
       expect(result).toEqual(true);
@@ -138,8 +143,12 @@ describe('ReservationController', () => {
       const params = { user_id: 1, reservation_id: 1 };
 
       jest.spyOn(service, 'addCustomer').mockResolvedValue(null);
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: 1, role: StaffRole.ADMIN});
 
-      await expect(controller.addCustomer(params)).rejects.toThrow(
+      await expect(controller.addCustomer({
+        token: 'valid_token',	
+        reservation_id: 1,
+      })).rejects.toThrow(
         NotFoundException,
       );
     });
@@ -397,6 +406,42 @@ describe('ReservationController', () => {
       await expect(controller.getReservationsByAdminId(data)).rejects.toThrowError(
         UnauthorizedException,
       );
+    });
+  });
+
+  describe('getUserOfReservation', () => {
+    it('should return true if user is part of the reservation', async () => {
+      const id = 1;
+      const userId = 1;
+  
+      jest.spyOn(service, 'getUserOfReservation').mockResolvedValue(true);
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: userId, 
+        role: StaffRole.ADMIN 
+      });
+  
+      const result = await controller.getUserOfReservation(id, {
+        token: 'valid_token'
+      });
+  
+      expect(service.getUserOfReservation).toHaveBeenCalledWith(id, userId);
+      expect(result).toEqual(true);
+    });
+  
+    it('should return false if user is not part of the reservation', async () => {
+      const id = 1;
+      const userId = 1;
+  
+      jest.spyOn(service, 'getUserOfReservation').mockResolvedValue(false);
+      jest.spyOn(authService, 'verifyToken').mockResolvedValue({ id: userId, 
+        role: StaffRole.ADMIN 
+      });
+  
+      const result = await controller.getUserOfReservation(id, {
+        token: 'valid_token'
+      });
+  
+      expect(service.getUserOfReservation).toHaveBeenCalledWith(id, userId);
+      expect(result).toEqual(false);
     });
   });
   describe('setPaymentMethod', () => {

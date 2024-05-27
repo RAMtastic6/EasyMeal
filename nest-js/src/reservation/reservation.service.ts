@@ -69,20 +69,18 @@ export class ReservationService {
     user_id: number,
     reservation_id: number
   }) {
-    const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id } });
+    const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id },
+      relations: { users: true },
+    });
     if (reservation == null) {
       return null
     }
-    await this.reservationRepository.update({ id: params.reservation_id }, {
-      users: [...reservation.users, { id: params.user_id }],
-    });
-
-    // Notifiy the user of the restaurant
-    await this.notificationService.create({
-      message: `Stai partecipando alla prenotazione con id: ${params.reservation_id}`,
-      title: 'Hai accettato la prenotazione: ' + params.reservation_id,
-      id_receiver: params.user_id,
-    });
+    if(reservation.number_people <= reservation.users.length) {
+      return false;
+    }
+    const user = await this.userService.findOne(params.user_id);
+    reservation.users = [...reservation.users, user];
+    await this.reservationRepository.save(reservation);
     return true;
   }
 
@@ -218,6 +216,16 @@ export class ReservationService {
         restaurant: { staff: true }
       },
     });
+  }
+
+  async getUserOfReservation(id: number, userId: number) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id, users: { id: userId } },
+    });
+    if(reservation == null) {
+      return false;
+    }
+    return true;
   }
 
   async setPaymentMethod(reservation_id: number, isRomanBill: boolean) {

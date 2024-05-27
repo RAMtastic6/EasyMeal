@@ -1,21 +1,31 @@
-'use client';
+"use server";
 import MenuTable from '@/src/components/menu_table';
-import Header from '@/src/components/header';
-import { getMenuWithOrdersQuantityByIdReservation } from '../../../lib/database/reservation';
-import { useEffect, useState } from 'react';
+import { getMenuWithOrdersQuantityByIdReservation, getUserOfReservation } from '../../../lib/database/reservation';
+import { UserInvite } from '../../../components/user_invite';
+import { redirect } from 'next/navigation';
 
-export default function Page({ params }: { params: { number: string } }) {
+export default async function Page({ params }: { params: { number: string } }) {
 
-	const [data, setData] = useState<any>();
-
-	useEffect(() => {
-		getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)).then((data) => {
-			setData(data.restaurant);
-		});
-	}, []);
-
-	if (!data) {
-		return <div>Loading...</div>;
+	let reservation = null;
+	try {
+		reservation = (await getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)));
+	} catch (e) {
+		console.error(e);
+		redirect("/user/reservations_list");
+	}
+	const data = reservation.restaurant;
+	const status = reservation.state;
+	if(status !== 'accept')
+		redirect("/user/reservations_list")
+	const isPresent = await getUserOfReservation(parseInt(params.number));
+	if(!isPresent)
+		return (<UserInvite reservationId={parseInt(params.number)}/>);
+	if (reservation == null) {
+		return (
+			<div className="bg-gray-100 p-4 rounded-md">
+				<p className="text-gray-600">Non ci sono ordini per questa prenotazione</p>
+			</div>
+		);
 	}
 
 	return (

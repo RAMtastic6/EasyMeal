@@ -36,7 +36,14 @@ export class ReservationController {
   @Post('addCustomer')
   // {customer_id: number, reservation_id: number}
   async addCustomer(@Body() body: AddCustomerDTO) {
-    const result = await this.reservationService.addCustomer(body);
+    const user = await this.authService.verifyToken(body.token);
+    if(user == null) {
+      throw new UnauthorizedException('Invalid token');
+    }
+    const result = await this.reservationService.addCustomer({
+      user_id: user.id,
+      reservation_id: body.reservation_id,
+    });
     if(result == null) {
       throw new NotFoundException('Reservation not found');
     }
@@ -103,6 +110,15 @@ export class ReservationController {
     if(token == null)
       throw new UnauthorizedException('Invalid token');
     return await this.reservationService.getReservationsByAdminId(token.id);
+  }
+
+  @Post(':id/user_token')
+  async getUserOfReservation(@Param('id', ParseIntPipe) id: number,
+      @Body() data: { token: string }) {
+    const token = await this.authService.verifyToken(data.token);
+    if(token == null)
+      throw new UnauthorizedException('Invalid token');
+    return await this.reservationService.getUserOfReservation(id, token.id);
   }
 
   @Post(':id/accept')

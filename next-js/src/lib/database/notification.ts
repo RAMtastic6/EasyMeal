@@ -21,7 +21,7 @@ export async function getNotifications() {
   });
 
   const notifications: CustomNotification[] = await response.json();
-  return notifications;
+  return notifications.reverse();
 }
 
 export async function setReadNotification(data: { id: number }) {

@@ -4,6 +4,7 @@ import { getReservationById, completeReservation } from "@/src/lib/database/rese
 import { stateMessage } from "@/src/lib/types/definitions";
 import { getRestaurantById } from "@/src/lib/database/restaurant";
 import { checkOrdersPayStatus, getOrderByReservationId, getPartialBill, getRomanBill, pay } from "@/src/lib/database/order";
+import Link from "next/link";
 import { verifySession } from "@/src/lib/dal";
 import { useRouter } from "next/navigation";
 import { set } from "firebase/database";
@@ -13,6 +14,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
   const [reservation, setReservation] = useState<any>({}); // TO DO: define the type of the reservation object
   const [restaurant, setRestaurant] = useState<any>({}); // TO DO: define the type of the restaurant object
   const [orders, setOrders] = useState<any[]>([]); // TO DO: define the type of the orders object
+  const [copy, setCopy] = useState(false);
   const [individualPrice, setIndividualPrice] = useState<number>(0); // TO DO: define the type of the individualPrice object
   const [isPaid, setIsPaid] = useState<boolean>(false); // TO DO: define the type of the isPaid object
   const router = useRouter();
@@ -87,7 +89,24 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
       router.refresh();
       fetchReservation();
     }
-  }
+  };
+
+  const handleCopy = () => {
+		const linkText = `${window.location.origin}/order/${params.id}/`;
+		navigator.clipboard.writeText(linkText)
+			.then(() => {
+				setCopy(true);
+			})
+			.catch(err => {
+				console.error('Failed to copy: ', err);
+			});
+	};
+
+  const link = () => (
+		<Link href={`/order/${params.id}`}>{
+			`${window.location.origin}/order/${params.id}`
+		}</Link>
+	);
 
   if (reservation.date < new Date().toISOString()) {
     return (
@@ -174,6 +193,13 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                   >
                     Vai all'ordinazione
                   </a>
+                </div>
+                <div className="flex justify-center py-4">
+                  <p className="text-center w-1/2 rounded-md border-2 border-orange-700 py-2.5 pe-2 shadow-sm sm:text-sm pl-[14px] text-gray-600">{link()}</p>
+                  <span className="px-1"></span>
+                  <button onClick={handleCopy} className="rounded-lg bg-orange-950 px-5 py-3 font-medium text-white" data-testid="ButtonCopia">
+                    {copy ? 'Link copiato!' : 'Copia Link'}
+                  </button>
                 </div>
                 <div className="text-center mt-4">
                   <p className="text-sm text-gray-600">
