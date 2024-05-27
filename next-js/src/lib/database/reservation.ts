@@ -151,6 +151,9 @@ export async function setPaymentMethod(data: {
 			token: token,
 		}),
 	});
+	if(!response.ok) {
+		return false;
+	}
 	const result = await response.json();
 	return result;
 }

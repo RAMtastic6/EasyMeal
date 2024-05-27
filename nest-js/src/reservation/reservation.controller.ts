@@ -140,6 +140,9 @@ export class ReservationController {
     const token = await this.authService.verifyToken(data.token);
     if(token == null)
       throw new UnauthorizedException('Invalid token');
-    return await this.reservationService.setPaymentMethod(data.reservation_id, data.isRomanBill);
+    const result = await this.reservationService.setPaymentMethod(data.reservation_id, data.isRomanBill);
+    if(result == null)
+      throw new BadRequestException('Error setting payment method');
+    return result;
   }
 }

@@ -224,7 +224,7 @@ export class ReservationService {
     const reservation = await this.reservationRepository.findOne({
       where: { id: reservation_id },
     });
-    if (reservation == null) {
+    if (reservation == null || reservation.state !== ReservationStatus.ACCEPTED) {
       return null;
     }
     await this.reservationRepository.update({ id: reservation_id }, { isRomanBill });

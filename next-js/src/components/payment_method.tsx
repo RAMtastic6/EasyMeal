@@ -1,12 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { getPartialBill, getRomanBill, getTotalBill } from '../lib/database/order';
-import { setPaymentMethod } from '../lib/database/reservation';
 import { verifySession } from '../lib/dal';
 
-export default function PaymentMethod({ params }: { params: { number: string } }) {
-  const [selectedOption, setSelectedOption] = useState('AllaRomana');
+export default function PaymentMethod({ selectedOption, setSelectedOption, params }: { selectedOption: string, setSelectedOption: Function, params: number }) {
   const [individualPrice, setIndividualPrice] = useState(0);
   const [price, setPrice] = useState(0);
 
@@ -14,26 +11,21 @@ export default function PaymentMethod({ params }: { params: { number: string } }
     calculateIndividualPrice(selectedOption);
     calculateTotalPrice();
   }, [selectedOption]);
-  
+
   const handleOptionChange = (option: string) => {
     setSelectedOption(option);
     calculateIndividualPrice(option);
   };
 
-  const onSubmit = async () => {
-    const isRomanBill = selectedOption === 'AllaRomana' ? true : false;
-    setPaymentMethod({ reservation_id: parseInt(params.number), isRomanBill });
-  };
-  
   const calculateIndividualPrice = async (option: string) => {
-    const session = await verifySession(); 
+    const session = await verifySession();
     try {
       if (option === 'AllaRomana') {
-        const data = await getRomanBill({ customer_id: session.id, reservation_id: parseInt(params.number) });
+        const data = await getRomanBill({ customer_id: session.id, reservation_id: params });
         console.log('Roman Bill Data:', data);
         setIndividualPrice(data);
       } else if (option === 'Ognuno') {
-        const data = await getPartialBill({ customer_id: session.id, reservation_id: parseInt(params.number) });
+        const data = await getPartialBill({ customer_id: session.id, reservation_id: params });
         console.log('Partial Bill Data:', data);
         setIndividualPrice(data);
       }
@@ -44,7 +36,7 @@ export default function PaymentMethod({ params }: { params: { number: string } }
 
   const calculateTotalPrice = async () => {
     try {
-      const data = await getTotalBill({ reservation_id: parseInt(params.number) });
+      const data = await getTotalBill({ reservation_id: params });
       console.log('Total Bill Data:', data);
       setPrice(data);
     } catch (error) {
@@ -54,7 +46,7 @@ export default function PaymentMethod({ params }: { params: { number: string } }
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+      <div className="mx-auto max-w-screen-xl px-4 py-5 sm:px-6 sm:py-5 lg:px-8">
         <div className="mx-auto max-w-3xl">
           <header className="text-center">
             <h1 className="text-xl font-bold text-orange-950 sm:text-3xl">Il vostro ordine</h1>
@@ -98,14 +90,6 @@ export default function PaymentMethod({ params }: { params: { number: string } }
 
             {/* Sezione per visualizzare la tua parte da pagare */}
             <div className="text-lg font-semibold text-center">La tua parte: €{individualPrice}</div>
-
-            <div className="flex justify-center mt-4">
-              <div className="sm:flex sm:gap-4">
-                <button onClick={onSubmit} className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring">
-                  Conferma
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
