@@ -13,6 +13,14 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
   const [restaurant, setRestaurant] = useState<any>({}); // TO DO: define the type of the restaurant object
   const [orders, setOrders] = useState<any[]>([]); // TO DO: define the type of the orders object
   const [individualPrice, setIndividualPrice] = useState<number>(0); // TO DO: define the type of the individualPrice object
+  const totalPrice = Object.keys(orders).map((key: string) => orders[key as keyof typeof orders].reduce((acc: number, order: any) => acc + (order.quantity * order.food.price), 0).toFixed(2));
+  const totalPaid = Object.keys(orders)
+  .flatMap((key: string) => 
+    orders[key as keyof typeof orders]
+      .filter((order: any) => order.paid)
+      .map((order: any) => order.quantity * order.food.price)
+  )
+  .reduce((acc: number, amount: number) => acc + amount, 0);
 
   // fetch reservation by id
   async function fetchReservation() {
@@ -178,7 +186,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                 <ul>
                   <li>
                     <span className="font-bold">
-                    Utenti che partecipano:
+                      Utenti che partecipano:
                     </span>
                     {Array.from(new Set(
                       Object.keys(orders).flatMap((key) =>
@@ -197,7 +205,10 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                   </p>
                 </div>
                 <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md text-center">
-                  <h2 className="text-2xl mb-2">Totale: €{Object.keys(orders).map((key: string) => orders[key as keyof typeof orders].reduce((acc: number, order: any) => acc + (order.quantity * order.food.price), 0).toFixed(2))}</h2>
+                  <h2 className="text-2xl mb-2">Totale: €{totalPrice}</h2>
+                  <p>
+                    Totale rimanente: €{(Number(totalPrice) - Number(totalPaid)).toFixed(2)}
+                  </p>
                   <p>La tua parte: €{individualPrice.toFixed(2)}</p>
                   <p className="text-gray-600 text-center mt-4">
                     La modalità scelta per la divisione del conto è: {reservation.isRomanBill ? "Romana" : "Proporzionale"}
