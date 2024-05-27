@@ -133,9 +133,7 @@ export class OrdersController {
     if(result == null) 
       throw new BadRequestException('Error updating orders');
 
-    // a questo punto, creare una notifica con tutti i dati del caso
-    // mandarela al service delle notifiche e, all'interno del NotificationDTO,
-    // mettere l'id dell'admin all'interno del campo id_receiver.
+    
     return result;
   }
 

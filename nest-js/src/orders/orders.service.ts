@@ -232,6 +232,11 @@ export class OrdersService {
       }
     };
     await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY);
+
+    // a questo punto, creare una notifica con tutti i dati del caso
+    // mandarela al service delle notifiche e, all'interno del NotificationDTO,
+    // mettere l'id dell'admin all'interno del campo id_receiver.
+
     return true;
   }
 }
