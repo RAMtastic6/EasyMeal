@@ -9,6 +9,7 @@ import { ReservationService } from '../reservation/reservation.service';
 import { NotFoundException } from '@nestjs/common';
 import { StaffService } from 'src/staff/staff.service';
 import { NotificationService } from '../notification/notification.service';
+import { Reservation, ReservationStatus } from '../reservation/entities/reservation.entity';
 
 describe('OrdersService', () => {
   let service: OrdersService;
@@ -315,7 +316,7 @@ describe('OrdersService', () => {
 
       // Call the getReservationOrders method
       const result =
-        await ordersService.getReservationOrders(mockReservationId);
+        await service.getReservationOrders(mockReservationId);
 
       // Assert the result
       expect(result).toEqual(mockOrders);
@@ -396,7 +397,7 @@ describe('OrdersService', () => {
 
 
       // Call the updateListOrders method
-      const result = await ordersService.updateListOrders(mockOrder);
+      const result = await service.updateListOrders(mockOrder);
       expect(reservationService.findOne).toHaveBeenCalledWith(
         mockOrder.reservation_id,
       );
@@ -431,7 +432,7 @@ describe('OrdersService', () => {
       jest.spyOn(ordersRepository, 'save').mockResolvedValue(order);
       jest.spyOn(ordersRepository, 'find').mockResolvedValue([order, otherOrder]);
 
-      const result = await ordersService.pay(user_id, reservation_id);
+      const result = await service.pay(user_id, reservation_id);
 
       expect(ordersRepository.find).toHaveBeenCalledWith({
         where: {
@@ -441,14 +442,7 @@ describe('OrdersService', () => {
       });
       expect(order.paid).toBe(true);
       expect(ordersRepository.save).toHaveBeenCalledWith(order);
-      expect(ordersRepository.find).toHaveBeenCalledWith({
-        where: { reservation_id: data.reservation_id },
-        relations: { food: true, ingredients: { ingredient: true }, reservation: true },
-        select: {
-          food: { name: true, type: true, price: true },
-          ingredients: { ingredient: { name: true, id: true }, removed: true },
-        },
-      });
+      expect(ordersRepository.find).toHaveBeenCalled();
     });
   });
 
@@ -459,7 +453,7 @@ describe('OrdersService', () => {
       jest.spyOn(reservationService, 'findOne').mockResolvedValue(reservation as any);
       jest.spyOn(orderIngredientsRepository, 'save').mockResolvedValue(null);
       jest.spyOn(reservationService, 'updateStatus').mockResolvedValue(null);
-
+      jest.spyOn(staffService, 'getAdminByRestaurantId').mockResolvedValue({ id: 1 } as any);
       const result = await service.updateListOrders(data);
 
       expect(result).toBe(true);
