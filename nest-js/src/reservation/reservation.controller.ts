@@ -134,4 +134,12 @@ export class ReservationController {
       throw new NotFoundException('Reservation not found');
     return result;
   }
+
+  @Post('setPaymentMethod')
+  async setPaymentMethod(@Body() data: { token: string, reservation_id: number, isRomanBill: boolean }) {
+    const token = await this.authService.verifyToken(data.token);
+    if(token == null)
+      throw new UnauthorizedException('Invalid token');
+    return await this.reservationService.setPaymentMethod(data.reservation_id, data.isRomanBill);
+  }
 }

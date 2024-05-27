@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getPartialBill, getRomanBill } from '../lib/database/order';
 import { verifySession } from '../lib/dal';
-import { set } from 'firebase/database';
-import { verify } from 'crypto';
 
 export default function PaymentMethod({ price, params }: { price: number, params: { number: string } }) {
   const [selectedOption, setSelectedOption] = useState('AllaRomana');
@@ -16,6 +14,7 @@ export default function PaymentMethod({ price, params }: { price: number, params
 
   const handleOptionChange = (option: string) => {
     setSelectedOption(option);
+    calculateIndividualPrice(option);
   };
 
 

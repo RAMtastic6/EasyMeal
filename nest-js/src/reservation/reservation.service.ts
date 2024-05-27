@@ -219,4 +219,15 @@ export class ReservationService {
       },
     });
   }
+
+  async setPaymentMethod(reservation_id: number, isRomanBill: boolean) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservation_id },
+    });
+    if (reservation == null) {
+      return null;
+    }
+    await this.reservationRepository.update({ id: reservation_id }, { isRomanBill });
+    return true;
+  }
 }

@@ -156,7 +156,7 @@ export class OrdersService {
   
     const totalCost = orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
     const uniqueUserIds = new Set(orders.map(order => order.user_id));
-    const perPersonCost = totalCost / uniqueUserIds.size;
+    const perPersonCost = (totalCost / uniqueUserIds.size).toFixed(2);
   
     return perPersonCost;
   }

@@ -135,3 +135,22 @@ export async function completeReservation(id: number): Promise<any> {
 		status: response.ok,
 	};
 }
+
+export async function setPaymentMethod(data: {
+	reservation_id: number,
+	isRomanBill: boolean,
+}): Promise<any> {
+	const token = cookies().get('session')?.value;
+	const response = await fetch(Endpoints.reservation + "setPaymentMethod", {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			...data,
+			token: token,
+		}),
+	});
+	const result = await response.json();
+	return result;
+}
