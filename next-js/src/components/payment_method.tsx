@@ -1,6 +1,8 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { getPartialBill, getTotalBill, getRomanBill } from '../lib/database/order';
+import { set } from 'firebase/database';
 
 export default function PaymentMethod({ price, params }: { price: number, params: { number: string } }) {
   const [selectedOption, setSelectedOption] = useState('AllaRomana');
@@ -14,8 +16,13 @@ export default function PaymentMethod({ price, params }: { price: number, params
   const calculateIndividualPrice = (option: any) => {
     // Calcola il prezzo individuale in base all'opzione selezionata
     if (option === 'AllaRomana') {
+      getRomanBill(parseInt(params.number)).then((data) => {
+        setIndividualPrice(data.price);
+      });
     } else if (option === 'Ognuno') {
-      // Aggiungi qui la logica per calcolare il prezzo individuale
+      getPartialBill({ customer_id: 1, reservation_id: parseInt(params.number) }).then((data) => {
+        setIndividualPrice(data);
+      });
     }
   };
 
