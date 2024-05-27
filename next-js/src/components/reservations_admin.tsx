@@ -1,10 +1,9 @@
 'use client';
 import { getReservationsByAdminId } from "@/src/lib/database/reservation";
-import { join } from "path";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from 'next/link';
 import { stateMessage } from "@/src/lib/types/definitions";
-import { getRestaurantIdByAdminId } from "../lib/database/staff";
+import { filterAndFormatReservations } from "../lib/utils";
 
 export default function ReservationsAdmin() {
   const [reservations, setReservations] = useState<any[]>([]);
@@ -14,7 +13,7 @@ export default function ReservationsAdmin() {
     const fetchReservations = async () => {
       try {
         const json = await getReservationsByAdminId();
-        setReservations(json);
+        setReservations(filterAndFormatReservations(json));
         setLoading(false);
       } catch (error) {
         console.error("Error fetching reservations", error);
@@ -88,5 +87,5 @@ export default function ReservationsAdmin() {
         <p className="text-base text-gray-500">Visualizzate {reservations.length} prenotazioni</p>
       </div>
     </div>
-  );  
+  );
 }

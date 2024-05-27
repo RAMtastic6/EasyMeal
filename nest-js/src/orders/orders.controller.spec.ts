@@ -5,7 +5,8 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { User } from '../user/entities/user.entity';
 import { StaffRole } from '../staff/enities/staff.entity';
-import { Orders } from './entities/order.entity';
+import { Order } from './entities/order.entity';
+import { PayDTO } from './dto/pay.dto';
 
 describe('OrdersController', () => {
   let controller: OrdersController;
@@ -26,9 +27,10 @@ describe('OrdersController', () => {
             updateIngredients: jest.fn(),
             remove: jest.fn(),
             getPartialBill: jest.fn(),
-            getTotalBill: jest.fn(),
+            getRomanBill: jest.fn(),
             updateListOrders: jest.fn(),
             getReservationOrders: jest.fn(),
+            pay: jest.fn(),
           },
         }, 
         {
@@ -56,7 +58,7 @@ describe('OrdersController', () => {
       const user = { id: 1 , role: StaffRole.ADMIN};
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(user);
       jest.spyOn(ordersService, 'create').mockResolvedValue(
-        {} as Orders
+        {} as Order
       );
 
       // Act
@@ -111,7 +113,7 @@ describe('OrdersController', () => {
   describe('findAll', () => {
     it('should return all orders', async () => {
       // Arrange
-      const orders = [{ id: 1 } as Orders, { id: 2 } as Orders];
+      const orders = [{ id: 1 } as Order, { id: 2 } as Order];
       jest.spyOn(ordersService, 'findAll').mockResolvedValue(orders);
 
       // Act
@@ -135,7 +137,7 @@ describe('OrdersController', () => {
   describe('findOne', () => {
     it('should find an order', async () => {
       // Arrange
-      const order = { id: 1 } as Orders;
+      const order = { id: 1 } as Order;
       const requestBody = {
         user_id: 1,
         reservation_id: 1,
@@ -176,7 +178,7 @@ describe('OrdersController', () => {
         food_id: 1,
         quantity: 2,
       };
-      const order = { id: 1 } as Orders;
+      const order = { id: 1 } as Order;
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(
         { id: 1, role: StaffRole.STAFF});
       jest.spyOn(ordersService, 'addQuantity').mockResolvedValue(order);
@@ -242,7 +244,7 @@ describe('OrdersController', () => {
         id: 1,
         ingredients: ['ingredient1', 'ingredient2'],
       };
-      const order = { id: 1 } as Orders;
+      const order = { id: 1 } as Order;
       jest.spyOn(ordersService, 'updateIngredients').mockResolvedValue(order);
   
       // Act
@@ -276,7 +278,7 @@ describe('OrdersController', () => {
         food_id: 1,
         token: 'token',
       };
-      const order = { id: 1 } as Orders;
+      const order = { id: 1 } as Order;
       jest.spyOn(ordersService, 'remove').mockResolvedValue(order);
   
       // Act
@@ -324,7 +326,7 @@ describe('OrdersController', () => {
     });
   });
   
-  describe('fullBill', () => {
+  describe('RomanBill', () => {
     it('should calculate the full bill for a customer', async () => {
       // Arrange
       const requestBody = {
@@ -332,13 +334,13 @@ describe('OrdersController', () => {
         reservation_id: 1,
       };
       const bill = 100;
-      jest.spyOn(ordersService, 'getTotalBill').mockResolvedValue(bill);
+      jest.spyOn(ordersService, 'getRomanBill').mockResolvedValue(bill);
   
       // Act
       const result = await controller.fullBill(requestBody);
   
       // Assert
-      expect(ordersService.getTotalBill).toHaveBeenCalledWith(requestBody);
+      expect(ordersService.getRomanBill).toHaveBeenCalledWith(requestBody);
       expect(result).toEqual(bill);
     });
   });
@@ -388,7 +390,7 @@ describe('OrdersController', () => {
     it('should get the orders for a reservation', async () => {
       // Arrange
       const reservationId = 1;
-      const orders = [{ id: 1 }, { id: 2 }] as Orders[];
+      const orders = [{ id: 1 }, { id: 2 }] as Order[];
       jest.spyOn(ordersService, 'getReservationOrders').mockResolvedValue(orders);
   
       // Act
@@ -411,6 +413,27 @@ describe('OrdersController', () => {
     });
   });
 
+  describe('pay', () => {
+    it('should return true if the payment was successful', async () => {
+      const payDTO: PayDTO = { user_id: 1, reservation_id: 1 };
+      jest.spyOn(ordersService, 'pay').mockResolvedValue(true);
+
+      const result = await controller.pay(payDTO);
+
+      expect(ordersService.pay).toHaveBeenCalledWith(payDTO.user_id, payDTO.reservation_id);
+      expect(result).toBe(true);
+    });
+
+    it('should return null if the order does not exist', async () => {
+      const payDTO: PayDTO = { user_id: 1, reservation_id: 1 };
+      jest.spyOn(ordersService, 'pay').mockResolvedValue(null);
+
+      const result = await controller.pay(payDTO);
+
+      expect(ordersService.pay).toHaveBeenCalledWith(payDTO.user_id, payDTO.reservation_id);
+      expect(result).toBeNull();
+    });
+  });
 });
 
 

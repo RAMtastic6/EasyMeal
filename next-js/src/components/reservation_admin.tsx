@@ -32,7 +32,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
         console.log("Fetching orders data...");
         const reservation = await getReservationById(parseInt(params.id));
         setReservation(reservation);
-        if (reservation.state === 'accept' || reservation.state === 'to_pay') {
+        if (reservation.state === 'accept' || reservation.state === 'to_pay' || reservation.state === 'completed') {
           const orders = await getOrderByReservationId(parseInt(params.id));
           setOrders(orders);
         }
@@ -68,20 +68,33 @@ export default function ReservationDetails({ params }: { params: { id: string } 
 
     Object.keys(orders).forEach((key) => {
       orders[key].forEach((order: any) => {
-        order.ingredients.forEach((ingredient: any) => {
-          const name = ingredient.ingredient.name;
-          if (!totals[name]) {
-            totals[name] = 0;
-          }
-          totals[name] += 1;
-        });
-      });
+        {
+          order.ingredients
+            .filter((ingredient: any) => !ingredient.removed).forEach((ingredient: any) => {
+              const name = ingredient.ingredient.name;
+              if (!totals[name]) {
+                totals[name] = 0;
+              }
+              totals[name] += 1;
+            });
+        }
+      }
+      );
     });
 
     return totals;
   };
 
   const ingredientTotals = orders ? calculateIngredientTotals(orders) : {};
+
+  if(reservation.date < new Date().toISOString()) {
+    return (
+      <div className="container mx-auto mt-4 p-6 bg-100 rounded-lg shadow-lg">
+        <div className="text-2xl font-semibold text-gray-800">Errore</div>
+        <p className="text-gray-700">Non è possibile visualizzare la prenotazione selezionata poiché la data è passata.</p>
+      </div>
+    );
+  }
 
   if (loading) return <div>Loading...</div>;
 
@@ -149,7 +162,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                 La prenotazione è stata pagata e completata.
               </div>
             )}
-            {(reservation.state === "to_pay" || reservation.state === "accept") && (
+            {(reservation.state === "to_pay" || reservation.state === "accept" || reservation.state === "completed") && (
               <div>
                 {(!orders || orders.length === 0) ? (
                   <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -186,12 +199,14 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                                   <p>Cliente {order.customer_id}</p>
                                   <h2 className="text-xl font-semibold mb-2">{order.food.name}</h2>
                                   <ul>
-                                    {order.ingredients.map((ingredient: any, ingredientIndex: number) => (
-                                      <li key={ingredientIndex} className="flex justify-between items-center mb-2">
-                                        <span>{ingredient.ingredient.name}</span>
-                                        <span>{ingredient.quantity}</span>
-                                      </li>
-                                    ))}
+                                    {order.ingredients
+                                      .filter((ingredient: any) => !ingredient.removed) // Filtra gli ingredienti non rimossi
+                                      .map((ingredient: any, ingredientIndex: number) => (
+                                        <li key={ingredientIndex} className="flex justify-between items-center mb-2">
+                                          <span>{ingredient.ingredient.name}</span>
+                                          <span>{ingredient.quantity}</span>
+                                        </li>
+                                      ))}
                                   </ul>
                                 </div>
                               ))}

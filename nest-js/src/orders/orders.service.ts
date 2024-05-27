@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { OrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { Orders } from './entities/order.entity';
+import { Order } from './entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderIngredients } from './entities/order_ingredients';
@@ -13,8 +13,8 @@ import { ReservationStatus } from '../reservation/entities/reservation.entity';
 export class OrdersService {
   
   constructor(
-    @InjectRepository(Orders)
-    private ordersRepository: Repository<Orders>,
+    @InjectRepository(Order)
+    private ordersRepository: Repository<Order>,
     @InjectRepository(OrderIngredients)
     private orderIngredientsRepository: Repository<OrderIngredients>,
     private readonly foodService: FoodService,
@@ -141,16 +141,50 @@ export class OrdersService {
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
   }
 
-  async getTotalBill(order: {
-    reservation_id: number,
-  }) {
+  // Conto alla romana
+  async getRomanBill(order: { reservation_id: number }) {
     const orders = await this.ordersRepository.find({
       where: {
         reservation_id: order.reservation_id,
       },
-      relations: { food: true}
+      relations: { food: true },
     });
-    return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+  
+    if (orders.length === 0) {
+      return 0;
+    }
+  
+    const totalCost = orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+    const uniqueUserIds = new Set(orders.map(order => order.user_id));
+    const perPersonCost = totalCost / uniqueUserIds.size;
+  
+    return perPersonCost;
+  }
+  
+  async pay(user_id: number, reservation_id: number) {
+    const orders = await this.ordersRepository.find({
+      where: {
+        user_id,
+        reservation_id
+      }
+    });
+    if (orders.length === 0) {
+      return null;
+    }
+    for (const order of orders) {
+      order.paid = true;
+      await this.ordersRepository.save(order);
+    }
+    const allOrders = await this.ordersRepository.find({
+      where: {
+        reservation_id
+      }
+    });
+    const allPaid = allOrders.every(order => order.paid);
+    if (allPaid) {
+      await this.reservationService.updateStatus(reservation_id, ReservationStatus.COMPLETED);
+    }
+    return true;
   }
 
   async getReservationOrders(id: number) {

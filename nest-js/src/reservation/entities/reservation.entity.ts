@@ -1,4 +1,4 @@
-import { Orders } from "src/orders/entities/order.entity";
+import { Order } from "src/orders/entities/order.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
@@ -29,8 +29,8 @@ export class Reservation {
     @Column({ default: ReservationStatus.PENDING })
     state: ReservationStatus;
 
-    @OneToMany(() => Orders, order => order.reservation)
-    orders: Orders[];
+    @OneToMany(() => Order, order => order.reservation)
+    orders: Order[];
 
     @ManyToMany(() => User, customer => customer.reservations)
     @JoinTable()

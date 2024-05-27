@@ -5,7 +5,7 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany
 import { OrderIngredients } from "./order_ingredients";
 
 @Entity({ name: 'order_detail' })
-export class Orders {
+export class Order {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -20,6 +20,9 @@ export class Orders {
 
 	@Column({ default: 1 })
 	quantity: number;
+
+	@Column({ default: false })
+	paid: boolean;
 
 	@ManyToOne(() => User, customer => customer.orders)
 	@JoinColumn({ name: 'customer_id' })

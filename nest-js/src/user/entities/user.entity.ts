@@ -1,4 +1,4 @@
-import { Orders } from "../../orders/entities/order.entity";
+import { Order } from "../../orders/entities/order.entity";
 import { Reservation } from "../../reservation/entities/reservation.entity";
 import { Column, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Staff } from "../../staff/enities/staff.entity";
@@ -21,8 +21,8 @@ export class User {
     @Column({ type: 'varchar', length: 256 })
     password: string;
 
-    @OneToMany(() => Orders, order => order.customer)
-    orders: Orders[];
+    @OneToMany(() => Order, order => order.customer)
+    orders: Order[];
 
     @ManyToMany(() => Reservation, reservation => reservation.users)
     reservations: Reservation[];

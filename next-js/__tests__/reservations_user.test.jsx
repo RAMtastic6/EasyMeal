@@ -4,45 +4,49 @@ import ReservationsUser from '@/src/components/reservations_user';
 import { getReservationsByUserId } from '@/src/lib/database/reservation';
 
 // Mocking the getReservationsByUserId function
-jest.mock('../src/lib/database/reservation', () => ({
-  getReservationsByUserId: jest.fn().mockResolvedValue([
-    {
-      id: 1,
-      number_people: 2,
-      date: '2021-12-01T12:00:00Z',
-      state: 'pending',
-      restaurant: { name: 'Ristorante 1' }
-    },
-    {
-      id: 2,
-      number_people: 4,
-      date: '2021-12-02T12:00:00Z',
-      state: 'accept',
-      restaurant: { name: 'Ristorante 2' }
-    },
-    {
-      id: 3,
-      number_people: 6,
-      date: '2021-12-03T12:00:00Z',
-      state: 'reject',
-      restaurant: { name: 'Ristorante 3' }
-    },
-    {
-      id: 4,
-      number_people: 8,
-      date: '2021-12-04T12:00:00Z',
-      state: 'to_pay',
-      restaurant: { name: 'Ristorante 4' }
-    },
-    {
-      id: 5,
-      number_people: 10,
-      date: '2021-12-05T12:00:00Z',
-      state: 'completed',
-      restaurant: { name: 'Ristorante 5' }
-    },
-  ]),
-}));
+jest.mock('../src/lib/database/reservation', () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return {
+    getReservationsByUserId: jest.fn().mockResolvedValue([
+      {
+        id: 1,
+        number_people: 2,
+        date: tomorrow.toISOString(),
+        state: 'pending',
+        restaurant: { name: 'Ristorante 1' }
+      },
+      {
+        id: 2,
+        number_people: 4,
+        date: tomorrow.toISOString(),
+        state: 'accept',
+        restaurant: { name: 'Ristorante 2' }
+      },
+      {
+        id: 3,
+        number_people: 6,
+        date: tomorrow.toISOString(),
+        state: 'reject',
+        restaurant: { name: 'Ristorante 3' }
+      },
+      {
+        id: 4,
+        number_people: 8,
+        date: tomorrow.toISOString(),
+        state: 'to_pay',
+        restaurant: { name: 'Ristorante 4' }
+      },
+      {
+        id: 5,
+        number_people: 10,
+        date: tomorrow.toISOString(),
+        state: 'completed',
+        restaurant: { name: 'Ristorante 5' }
+      },
+    ]),
+    }
+  });
 
 describe('Verifica il funzionamento frontend del componente ReservationsUser', () => {
   beforeEach(() => {
@@ -92,6 +96,6 @@ describe('Verifica il funzionamento frontend del componente ReservationsUser', (
     expect(screen.getByText('Visualizzate 5 prenotazioni')).toBeInTheDocument();
 
 
-    
+
   });
 });
