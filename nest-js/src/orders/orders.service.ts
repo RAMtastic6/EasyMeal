@@ -8,19 +8,23 @@ import { OrderIngredients } from './entities/order_ingredients';
 import { FoodService } from '../food/food.service';
 import { ReservationService } from '../reservation/reservation.service';
 import { ReservationStatus } from '../reservation/entities/reservation.entity';
+import { NotificationService } from 'src/notification/notification.service';
+import { StaffService } from 'src/staff/staff.service';
 
 @Injectable()
 export class OrdersService {
-  
+
   constructor(
     @InjectRepository(Order)
     private ordersRepository: Repository<Order>,
     @InjectRepository(OrderIngredients)
     private orderIngredientsRepository: Repository<OrderIngredients>,
     private readonly foodService: FoodService,
-    private readonly reservationService: ReservationService
-  ) {}
-  
+    private readonly reservationService: ReservationService,
+    private readonly notificationService: NotificationService,
+    private readonly staffService: StaffService,
+  ) { }
+
   async create(data: {
     reservation_id: number,
     food_id: number,
@@ -120,7 +124,7 @@ export class OrdersService {
         ingredients: true
       }
     });
-    if(result == null) {
+    if (result == null) {
       return null;
     }
     result.ingredients = order.ingredients;
@@ -136,7 +140,7 @@ export class OrdersService {
         user_id: order.customer_id,
         reservation_id: order.reservation_id,
       },
-      relations: {food: true}
+      relations: { food: true }
     });
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
   }
@@ -149,24 +153,25 @@ export class OrdersService {
       },
       relations: { food: true },
     });
-  
+
     if (orders.length === 0) {
       return 0;
     }
-  
+
     const totalCost = orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
     const uniqueUserIds = new Set(orders.map(order => order.user_id));
     const perPersonCost = (totalCost / uniqueUserIds.size).toFixed(2);
-  
+
     return perPersonCost;
   }
-  
+
   async pay(user_id: number, reservation_id: number) {
     const orders = await this.ordersRepository.find({
       where: {
         user_id,
         reservation_id
-      }
+      },
+      relations: { reservation: true }
     });
     if (orders.length === 0) {
       return null;
@@ -181,8 +186,13 @@ export class OrdersService {
       }
     });
     const allPaid = allOrders.every(order => order.paid);
+    const admin = await this.staffService.getAdminByRestaurantId(orders[0].reservation.restaurant_id);
     if (allPaid) {
       await this.reservationService.updateStatus(reservation_id, ReservationStatus.COMPLETED);
+      this.notificationService.create({id_receiver: admin.id, message: 'Quota pagata per tutti i partecipanti nella prenotazione con id: ' + reservation_id, title: 'Quota pagata'});
+    }
+    else{
+      this.notificationService.create({id_receiver: admin.id, message: 'Quota pagata per ' + user_id + ' nella prenotazione con id: ' + reservation_id, title: 'Quota pagata'});
     }
     return true;
   }
@@ -220,7 +230,7 @@ export class OrdersService {
   async updateListOrders(order: { user_id: number; reservation_id: number; orders: any[]; }) {
     const { reservation_id, orders } = order;
     const reservation = await this.reservationService.findOne(reservation_id);
-    if ( reservation == null || reservation.state != ReservationStatus.ACCEPTED) {
+    if (reservation == null || reservation.state != ReservationStatus.ACCEPTED) {
       return null;
     }
     for (const orderItem of orders) {

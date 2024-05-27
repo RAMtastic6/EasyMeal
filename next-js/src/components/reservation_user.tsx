@@ -86,8 +86,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
     if (!response) {
       alert("Errore nel completamento della prenotazione");
     } else {
-      router.refresh();
-      fetchReservation();
+      window.location.reload();
     }
   };
 
