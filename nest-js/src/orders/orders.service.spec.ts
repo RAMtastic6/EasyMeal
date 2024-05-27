@@ -361,6 +361,9 @@ describe('OrdersService', () => {
             ingredients: [
               {
                 id: 10,
+                ingredient : {
+                  id: 1
+                },
                 name: 'Sale',
                 removed: false
               }
@@ -377,6 +380,9 @@ describe('OrdersService', () => {
             ingredients: [
               {
                 id: 10,
+                ingredient : {
+                  id: 2
+                },
                 name: 'Sale',
                 removed: false
               }
@@ -410,15 +416,23 @@ describe('OrdersService', () => {
         .spyOn(staffService, 'getAdminByRestaurantId')
         .mockResolvedValue(adminMock as any);
 
+
       // Call the updateListOrders method
       const result = await ordersService.updateListOrders(mockOrder);
       expect(reservationService.findOne).toHaveBeenCalledWith(
         mockOrder.reservation_id,
       );
+      expect(reservationService.updateStatus).toHaveBeenCalledWith(
+        mockOrder.reservation_id,
+        ReservationStatus.TO_PAY,
+      );
+
+      expect(notificationService.create).toHaveBeenCalledWith({
+        message: `L'ordine associato alla prenotazione con id: ${mockOrder.reservation_id} è in: ${ReservationStatus.TO_PAY}`,
+        title: 'Ordinazione confermata',
+        id_receiver: adminMock.id,
+      });
       expect(result).toBe(true);
-      // in questo momento il test non va in quanto la proprietá ingredients di MockOrder
-      // non è modellat nel modo corretto; di conseguenza, basta capire come siano organizzati i dati
-      // al suo interno per poter far passare il test.
     });
   });
 
