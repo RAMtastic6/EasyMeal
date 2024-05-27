@@ -71,6 +71,18 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
     socket.current?.emit('onConfirm', {
       id_prenotazione: reservationId,
     });
+    
+    // fare una chiamata post che crei una nuova notifica.
+    // const token : Promise<string> = getToken();
+    // await fetch(Endpoints.notification + '/update', {
+    //   // inserire all'interno dellap post i vari dati che l'endpoint si aspetta. 
+    //   method : "POST", 
+    //   body : JSON.stringify({
+    //     notificationId: 1,
+    //     token: token,
+    //   })
+    // }).then(res => console.log(res));
+
     alert('Ordine aggiornato');
   }
 
