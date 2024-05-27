@@ -1,4 +1,5 @@
 "use server";
+import { redirect } from 'next/navigation';
 import { IngredientChart } from '../../../../components/ingredient_chart';
 import { UserInvite } from '../../../../components/user_invite';
 import { getOrderByReservationId } from '../../../../lib/database/order';
@@ -13,10 +14,12 @@ export default async function Page({
       number: number;
     }
   }) {
+  const orders = await getOrderByReservationId(number);
+  if(orders?.reservation && orders.reservation?.state !== 'accept')
+    redirect("/user/reservations_list");
 	const isPresent = await getUserOfReservation(number);
 	if(!isPresent)
 		return (<UserInvite reservationId={number}/>);
-  const orders = await getOrderByReservationId(number);
   if (orders == null) {
     return (
       <div className="bg-gray-100 p-4 rounded-md">

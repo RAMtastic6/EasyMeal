@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { deleteSession } from '../lib/session';
 
-export default function Header({ isLogin, isAdmin }: { isLogin: boolean, isAdmin: boolean}) {
+export default function Header({ isLogin, isAdmin }: { isLogin: boolean, isAdmin: boolean }) {
 	return (
 		<header className="bg-orange-500">
 			<div className="mx-auto max-w-screen-xxl px-4 sm:px-6 lg:px-8">
@@ -28,7 +28,7 @@ export default function Header({ isLogin, isAdmin }: { isLogin: boolean, isAdmin
 								</span>
 							</Link>
 							{!isLogin && <Link className="inline-block rounded bg-orange-950 px-4 py-4 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring"
-        				href="/login" data-testid={"LoginLink"}> Login </Link>}
+								href="/login" data-testid={"LoginLink"}> Login </Link>}
 							{isLogin && <button
 								className="inline-block rounded bg-orange-950 px-4 py-4 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring"
 								data-testid={"LogoutButton"}
@@ -40,15 +40,27 @@ export default function Header({ isLogin, isAdmin }: { isLogin: boolean, isAdmin
 						</div>
 					</div>
 				</div>
-				<div className="mt-4 flex items-center justify-center space-x-4 border-t-2 border-black">
-					<Link className="text-white font-medium hover:text-gray-800" href="/" data-testid="home-link">Home</Link>
-					<Link className="text-white font-medium hover:text-gray-800" href="/create_reservation" data-testid="create-reservation-link">Crea prenotazione</Link>
-					{isAdmin && <Link href="/admin/reservations_list"
-							className="text-white font-medium hover:text-gray-800" data-testid="admin-reservations-link">
-							Lista prenotazioni ristorante</Link>}
-					{!isAdmin && <Link href="/user/reservations_list"
-						className="text-white font-medium hover:text-gray-800" data-testid="user-reservations-link">
-						Lista prenotazioni utente</Link>}
+				<div className="mt-4 flex items-center justify-center space-x-4 border-t-2 border-black px-4 py-2"> {/* Aggiunta del padding ai lati */}
+					<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/" data-testid="home-link">Home</Link>
+					<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/create_reservation" data-testid="create-reservation-link">Crea prenotazione</Link> 
+					{isAdmin && (
+						<Link
+							href="/admin/reservations_list"
+							className="text-white font-medium hover:text-gray-800 text-lg underline"
+							data-testid="admin-reservations-link"
+						>
+							Lista prenotazioni ristorante
+						</Link>
+					)} 
+					{!isAdmin && (
+						<Link
+							href="/user/reservations_list"
+							className="text-white font-medium hover:text-gray-800 text-lg underline"
+							data-testid="user-reservations-link"
+						>
+							Lista prenotazioni utente
+						</Link>
+					)}
 				</div>
 			</div>
 		</header>

@@ -6,6 +6,6 @@ export class AddCustomerDTO {
     token: string; 
 
     @IsNotEmpty()
-    @IsNumber()
+    @IsNumberString()
     reservation_id: number;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { fireEvent, getByTestId, render, waitFor } from '@testing-library/react';
 import ReservationUser from '@/src/components/reservation_user';
+import exp from 'constants';
 
 // Mocking the API functions
 jest.mock('../src/lib/database/reservation', () => ({
@@ -41,7 +42,11 @@ jest.mock('../src/lib/database/restaurant', () => ({
     email: 'test@test.com'
   }),
 }));
-
+Object.assign(navigator, {
+  clipboard: {
+    writeText: jest.fn().mockResolvedValue(),
+  },
+});
 describe('Verifica il funzionamento frontend del componente Reservation User', () => {
 
   it('Visualizza il caricamento', () => {
@@ -79,6 +84,12 @@ describe('Visualizza i dettagli della prenotazione per diversi stati', () => {
       expect(getByText('Numero di telefono:')).toBeInTheDocument();
       expect(getByText('Email:')).toBeInTheDocument();
     });
+    if(id === '2') {
+      expect(getByText('Copia Link')).toBeInTheDocument();
+      await waitFor(() => fireEvent.click(getByText('Copia Link')));
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(`${window.location.origin}/order/${id}/`);
+      expect(getByText('Link copiato!')).toBeInTheDocument();
+    }
   });
 });
 

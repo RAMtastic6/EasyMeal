@@ -2,10 +2,15 @@
 import MenuTable from '@/src/components/menu_table';
 import { getMenuWithOrdersQuantityByIdReservation, getUserOfReservation } from '../../../lib/database/reservation';
 import { UserInvite } from '../../../components/user_invite';
+import { redirect } from 'next/navigation';
 
 export default async function Page({ params }: { params: { number: string } }) {
 
-	const data = (await getMenuWithOrdersQuantityByIdReservation(parseInt(params.number))).restaurant;
+	const reservation = (await getMenuWithOrdersQuantityByIdReservation(parseInt(params.number)));
+	const data = reservation.restaurant;
+	const status = reservation.state;
+	if(status !== 'accept')
+		redirect("/user/reservations_list")
 	const isPresent = await getUserOfReservation(parseInt(params.number));
 
 	if(!isPresent)

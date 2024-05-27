@@ -1,14 +1,17 @@
+"use client";
 import { createReservation } from "../lib/database/reservation";
 import { useState } from 'react';
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ReservationForm({
 	restaurant_id,
 }: {
 	restaurant_id: number;
 }) {
-	const [reservationNumber, setReservationNumber] = useState<string | null>(null);
-	const [copySuccess, setCopySuccess] = useState(false);
+	const router = useRouter();
+	/*const [reservationNumber, setReservationNumber] = useState<string | null>(null);
+	const [copySuccess, setCopySuccess] = useState(false);*/
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -25,7 +28,7 @@ export default function ReservationForm({
 		// Create reservation
 		const response = await createReservation(json);
 		if (response != null && response.status) {
-			setReservationNumber(response.body.id.toString());
+			router.push(`/user/reservations_list`);
 		}
 		else {
 			alert("Errore nella prenotazione");
@@ -35,8 +38,8 @@ export default function ReservationForm({
 	/*const generateRandomReservationNumber = () => {
 			// Generate a random 6-digit reservation number for now
 			return Math.floor(100000 + Math.random() * 900000).toString();
-	};*/
-
+	}; */
+	/*
 	const handleCopy = () => {
 		const linkText = `${window.location.origin}/order/${reservationNumber}/`;
 		navigator.clipboard.writeText(linkText)
@@ -46,14 +49,15 @@ export default function ReservationForm({
 			.catch(err => {
 				console.error('Failed to copy: ', err);
 			});
-	};
+	};*/
 
-	const link = () => (
+	/*const link = () => (
 		<Link href={`/order/${reservationNumber}`}>{
 			`${window.location.origin}/order/${reservationNumber}`
 		}</Link>
-	);
+	);*/
 
+	/*
 	const confirmationPage = (
 		<div className="rounded-lg bg-white shadow-lg p-12 space-y-4">
 			<h2 className="text-2xl font-bold text-orange-950 text-center">Prenotazione confermata!</h2>
@@ -72,13 +76,11 @@ export default function ReservationForm({
 					Continua</Link>
 			</div>
 		</div>
-	);
+	);*/
 
 	return (
 		<>
-			{reservationNumber ? (
-				confirmationPage
-			) : (
+			
 				<div className="rounded-lg bg-white shadow-lg p-12 space-y-4">
 					<h2 className="text-2xl font-bold text-orange-950 text-center">Effettua una prenotazione</h2>
 					<form action="#" className="space-y-4" onSubmit={handleSubmit}>
@@ -122,7 +124,6 @@ export default function ReservationForm({
 						</div>
 					</form>
 				</div>
-			)}
 		</>
 	);
 }
