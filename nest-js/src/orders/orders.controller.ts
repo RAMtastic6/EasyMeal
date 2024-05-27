@@ -132,6 +132,8 @@ export class OrdersController {
     });
     if(result == null) 
       throw new BadRequestException('Error updating orders');
+
+    
     return result;
   }
 
