@@ -445,4 +445,35 @@ describe('ReservationService', () => {
       expect(result).toEqual(reservations);
     });
   });
+  describe('setPaymentMethod', () => {
+    const reservationId = 1;
+    const isRomanBill = true;
+    const reservation = { id: reservationId, state: ReservationStatus.ACCEPTED } as Reservation;
+
+    it('should set the payment method for a reservation', async () => {
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(reservation);
+      const result = await service.setPaymentMethod(reservationId, isRomanBill);
+
+      expect(reservationRepo.findOne).toHaveBeenCalledWith({ where: { id: reservationId } });
+      expect(reservationRepo.update).toHaveBeenCalledWith({ id: reservationId }, { isRomanBill });
+      expect(result).toEqual(true);
+    });
+
+    it('should return null if reservation is not found', async () => {
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(null);
+
+      const result = await service.setPaymentMethod(reservationId, isRomanBill);
+
+      expect(result).toEqual(null);
+    });
+
+    it('should return null if reservation is not in the accepted state', async () => {
+      const invalidReservation = { id: reservationId, state: ReservationStatus.PENDING } as Reservation;
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(invalidReservation);
+
+      const result = await service.setPaymentMethod(reservationId, isRomanBill);
+
+      expect(result).toEqual(null);
+    });
+  });
 });
