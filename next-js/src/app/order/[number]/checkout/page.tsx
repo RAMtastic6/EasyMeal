@@ -1,6 +1,8 @@
 "use server";
 import { IngredientChart } from '../../../../components/ingredient_chart';
+import { UserInvite } from '../../../../components/user_invite';
 import { getOrderByReservationId } from '../../../../lib/database/order';
+import { getUserOfReservation } from '../../../../lib/database/reservation';
 
 
 export default async function Page({
@@ -11,6 +13,9 @@ export default async function Page({
       number: number;
     }
   }) {
+	const isPresent = await getUserOfReservation(number);
+	if(!isPresent)
+		return (<UserInvite reservationId={number}/>);
   const orders = await getOrderByReservationId(number);
   if (orders == null) {
     return (

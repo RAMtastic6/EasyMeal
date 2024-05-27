@@ -1,5 +1,5 @@
+"use client";
 import Link from 'next/link';
-import { Navbar } from './nav_bar';
 import { deleteSession } from '../lib/session';
 
 export default function Header({ isLogin, isAdmin }: { isLogin: boolean, isAdmin: boolean}) {
