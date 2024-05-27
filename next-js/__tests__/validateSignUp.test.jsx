@@ -102,4 +102,55 @@ describe('Verifica del funzionamento della funzionalità di registrazione per ut
     await validateSignUp({}, formData);
     expect(redirect).toHaveBeenCalledWith('login?signup=success');
   });
+
+  it('Verifica che la registrazione fallisca (should be an array)', async () => {
+    createUser.mockResolvedValue({
+      ok: false,
+      json: async () => ({ message: ['Error1', 'Error2'] }),
+    });
+
+    const formData = new FormData();
+    formData.set('email', 'test@example.com');
+    formData.set('nome', 'John');
+    formData.set('cognome', 'Doe');
+    formData.set('password', 'password123');
+    formData.set('password_confirmation', 'password123');
+    
+    const result = await validateSignUp({}, formData);
+    expect(result).toEqual({ message: 'Error1, Error2' });
+  });
+
+  it('Verifica che la registrazione fallisca (specific error)', async () => {
+    createUser.mockResolvedValue({
+      ok: false,
+      json: async () => ({ message: 'Error1' }),
+    });
+
+    const formData = new FormData();
+    formData.set('email', 'test@example.com');
+    formData.set('nome', 'John');
+    formData.set('cognome', 'Doe');
+    formData.set('password', 'password123');
+    formData.set('password_confirmation', 'password123');
+    
+    const result = await validateSignUp({}, formData);
+    expect(result).toEqual({ message: 'Error1' });
+  });
+
+  it('Verifica che la registrazione fallisca (generic)', async () => {
+    createUser.mockResolvedValue({
+      ok: false,
+      json: async () => ({}),
+    });
+
+    const formData = new FormData();
+    formData.set('email', 'test@example.com');
+    formData.set('nome', 'John');
+    formData.set('cognome', 'Doe');
+    formData.set('password', 'password123');
+    formData.set('password_confirmation', 'password123');
+    
+    const result = await validateSignUp({}, formData);
+    expect(result).toEqual({ message: 'Registration failed' });
+  });
 })
