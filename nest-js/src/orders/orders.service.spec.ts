@@ -293,7 +293,7 @@ describe('OrdersService', () => {
       expect(result).toEqual(orders);
       expect(ordersRepository.find).toHaveBeenCalledWith({
         where: { reservation_id: data.reservation_id },
-        relations: { food: true, ingredients: { ingredient: true } },
+        relations: { food: true, ingredients: { ingredient: true }, reservation: true },
         select: {
           food: { name: true, type: true, price: true },
           ingredients: { ingredient: { name: true, id: true }, removed: true },
