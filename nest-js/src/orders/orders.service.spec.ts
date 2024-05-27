@@ -9,6 +9,7 @@ import { ReservationService } from '../reservation/reservation.service';
 import { Reservation, ReservationStatus } from '../reservation/entities/reservation.entity';
 import { NotificationService } from '../notification/notification.service';
 import { Food } from '../food/entities/food.entity';
+import { StaffService } from 'src/staff/staff.service';
 
 describe('OrdersService', () => {
   let ordersService: OrdersService;
@@ -16,6 +17,11 @@ describe('OrdersService', () => {
   let orderIngredientsRepository: Repository<OrderIngredients>;
   let foodService: FoodService;
   let reservationService: ReservationService;
+  
+  // questi due sono da mockare per fare i test della funzione che invia le notifiche
+  // all'admin dop che un ordine è stato confermato.
+  let notificationService: NotificationService; 
+  let staffService: StaffService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
