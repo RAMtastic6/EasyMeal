@@ -8,6 +8,8 @@ import { OrderIngredients } from './entities/order_ingredients';
 import { FoodService } from '../food/food.service';
 import { ReservationService } from '../reservation/reservation.service';
 import { ReservationStatus } from '../reservation/entities/reservation.entity';
+import { NotificationService } from 'src/notification/notification.service';
+import { StaffService } from 'src/staff/staff.service';
 
 @Injectable()
 export class OrdersService {
@@ -18,7 +20,9 @@ export class OrdersService {
     @InjectRepository(OrderIngredients)
     private orderIngredientsRepository: Repository<OrderIngredients>,
     private readonly foodService: FoodService,
-    private readonly reservationService: ReservationService
+    private readonly reservationService: ReservationService,
+    private readonly notificationService: NotificationService,
+    private readonly staffService: StaffService 
   ) {}
   
   async create(data: {
@@ -236,6 +240,16 @@ export class OrdersService {
     // a questo punto, creare una notifica con tutti i dati del caso
     // mandarela al service delle notifiche e, all'interno del NotificationDTO,
     // mettere l'id dell'admin all'interno del campo id_receiver.
+
+    // prendere admin tramite l'id del ristorante
+    const admin = await this.staffService.getAdminByRestaurantId(reservation.restaurant_id); 
+
+    // creare una notifica rivolta all'admin del ristorante.
+    await this.notificationService.create({
+        message: `L'ordine associato alla prenotazione con id: ${reservation_id} è in: ${ReservationStatus.TO_PAY}`,
+        title: 'Ordinazione confermata',
+        id_receiver: admin.id,
+      });
 
     return true;
   }
