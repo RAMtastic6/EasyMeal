@@ -8,7 +8,10 @@ export function UserInvite({ reservationId }: { reservationId: number }) {
   async function acceptInvite() {
     const result = await acceptInviteReservation(reservationId);
     console.log(result);
-    if (result.status) {
+    if (result.status && result.result) {
+      router.push('/user/reservations_list');
+    } else if (result.status) {
+      alert("La prenotazione è gia piena!");
       router.push('/user/reservations_list');
     } else {
       console.log('Error accepting invite');
@@ -29,6 +32,5 @@ export function UserInvite({ reservationId }: { reservationId: number }) {
         </div>
       </div>
     </div>
-
   );
 }

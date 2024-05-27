@@ -189,6 +189,18 @@ describe('ReservationService', () => {
       expect(await service.addCustomer(params)).toBe(null);
       expect(reservationRepo.findOne).toHaveBeenCalled();
     });
+
+    it('should return false if the reservation is full', async () => {
+      const reservation = {
+        id: 1,
+        users: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+        number_people: 4,
+      } as unknown as Reservation;
+
+      jest.spyOn(reservationRepo, 'findOne').mockResolvedValueOnce(reservation);
+
+      expect(await service.addCustomer(params)).toBe(false);
+    });
   });
 
   describe('findAll', () => {

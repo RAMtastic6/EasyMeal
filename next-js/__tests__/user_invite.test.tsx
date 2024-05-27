@@ -31,7 +31,7 @@ describe('UserInvite', () => {
   });
 
   it('should call acceptInviteReservation and redirect on accept', async () => {
-    (acceptInviteReservation as jest.Mock).mockResolvedValue({ status: true });
+    (acceptInviteReservation as jest.Mock).mockResolvedValue({ status: true, result: true});
 
     const { getByText } = render(<UserInvite reservationId={123} />);
 
@@ -39,6 +39,21 @@ describe('UserInvite', () => {
 
     await waitFor(() => {
       expect(acceptInviteReservation).toHaveBeenCalledWith(123);
+      expect(mockPush).toHaveBeenCalledWith('/user/reservations_list');
+    });
+  });
+
+  it('should call acceptInviteReservation and alert on accept if reservation is full', async () => {
+    (acceptInviteReservation as jest.Mock).mockResolvedValue({ status: true, result: false });
+
+    window.alert = jest.fn();
+    const { getByText } = render(<UserInvite reservationId={123} />);
+
+    fireEvent.click(getByText('Accetta'));
+
+    await waitFor(() => {
+      expect(acceptInviteReservation).toHaveBeenCalledWith(123);
+      expect(window.alert).toHaveBeenCalledWith("La prenotazione è gia piena!");
       expect(mockPush).toHaveBeenCalledWith('/user/reservations_list');
     });
   });

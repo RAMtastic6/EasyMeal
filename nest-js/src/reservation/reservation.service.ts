@@ -75,6 +75,9 @@ export class ReservationService {
     if (reservation == null) {
       return null
     }
+    if(reservation.number_people <= reservation.users.length) {
+      return false;
+    }
     const user = await this.userService.findOne(params.user_id);
     reservation.users = [...reservation.users, user];
     await this.reservationRepository.save(reservation);

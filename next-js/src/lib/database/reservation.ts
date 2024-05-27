@@ -90,7 +90,7 @@ export async function acceptInviteReservation(id: number): Promise<any> {
 		throw new Error('Error accepting invite '+ await response.text());
 	}
 	return {
-		body: await response.json(),
+		result: (await response.json()) as boolean,
 		status: response.ok,
 	};
 }
