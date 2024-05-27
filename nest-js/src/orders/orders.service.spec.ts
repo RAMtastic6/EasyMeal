@@ -68,6 +68,14 @@ describe('OrdersService', () => {
           provide: NotificationService,
           useValue: {
             sendNotification: jest.fn(),
+            create: jest.fn()
+          }
+        },
+        {
+          provide: StaffService,
+          useValue: {
+            // funzione da mockare.
+            getAdminByRestaurantId: jest.fn()
           }
         }
       ],
@@ -78,6 +86,9 @@ describe('OrdersService', () => {
     orderIngredientsRepository = module.get<Repository<OrderIngredients>>(getRepositoryToken(OrderIngredients));
     foodService = module.get<FoodService>(FoodService);
     reservationService = module.get<ReservationService>(ReservationService);
+    notificationService = module.get<NotificationService>(NotificationService);
+    staffService = module.get<StaffService>(StaffService);
+
   });
 
   describe('create', () => {
@@ -342,6 +353,11 @@ describe('OrdersService', () => {
         reservation_id: 1,
         orders: [{ id: 1 }, { id: 2 }],
       };
+      const adminMock = {
+        id: 1,
+        restaurant_id: 1
+      };
+
       jest.spyOn(orderIngredientsRepository, 'save').mockResolvedValue(undefined);
       jest.spyOn(reservationService, 'findOne').mockResolvedValue(
         {
@@ -349,11 +365,20 @@ describe('OrdersService', () => {
           status: ReservationStatus.ACCEPTED,
         } as unknown as Reservation
       );
+      // jest.spyOn(staffService, 'getRestaurantByAdminId').mockResolvedValue(adminMock as any);
 
       // Call the updateListOrders method
-      await ordersService.updateListOrders(mockOrder);
+      const result = await ordersService.updateListOrders(mockOrder);
 
       expect(reservationService.findOne).toHaveBeenCalledWith(mockOrder.reservation_id);
+      expect(result).toBe(true);
+      // expect(reservationService.updateStatus).toHaveBeenCalledWith(mockOrder.reservation_id, ReservationStatus.TO_PAY);
+
+      // expect(notificationService.create).toHaveBeenCalledWith({
+      //   message: `L'ordine associato alla prenotazione con id: ${mockOrder.reservation_id} è in: ${ReservationStatus.TO_PAY}`,
+      //   title: 'Ordinazione confermata',
+      //   id_receiver: adminMock.id,
+      // });
     });
   });
 
