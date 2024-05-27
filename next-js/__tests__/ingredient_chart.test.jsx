@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import { IngredientChart } from '../src/components/ingredient_chart';
 import { getToken, verifySession } from '../src/lib/dal';
 import { updateListOrders } from '../src/lib/database/order';
+import { setPaymentMethod } from '../src/lib/database/reservation';
 
 jest.mock('socket.io-client', () => {
 	return {
@@ -25,6 +26,10 @@ jest.mock('../src/lib/dal', () => {
 
 jest.mock('../src/lib/database/order', () => ({
 	updateListOrders: jest.fn(),
+}));
+
+jest.mock('../src/lib/database/reservation', () => ({
+	setPaymentMethod: jest.fn(),
 }));
 
 const mockFetchedOrders = {
