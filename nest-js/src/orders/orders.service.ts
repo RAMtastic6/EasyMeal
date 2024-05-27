@@ -173,8 +173,8 @@ export class OrdersService {
     }
     for (const order of orders) {
       order.paid = true;
-      await this.ordersRepository.save(order);
     }
+    await this.ordersRepository.save(orders);
     const allOrders = await this.ordersRepository.find({
       where: {
         reservation_id
@@ -243,5 +243,15 @@ export class OrdersService {
       relations: { food: true }
     });
     return orders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+  }
+
+  async checkOrdersPayStatusByUserId(user_id: number, reservation_id: number) {
+    const orders = await this.ordersRepository.find({
+      where: {
+        user_id,
+        reservation_id
+      }
+    });
+    return orders.every(order => order.paid);
   }
 }
