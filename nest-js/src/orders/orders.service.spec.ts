@@ -295,7 +295,7 @@ describe('OrdersService', () => {
         where: { reservation_id },
         relations: { food: true },
       });
-      expect(result).toBe((2 * 10 + 1 * 20 + 1 * 10) / 2);
+      expect(result).toBe(((2 * 10 + 1 * 20 + 1 * 10) / 2).toFixed(2));
     });
 
     it('should return 0 if there are no orders', async () => {
@@ -438,6 +438,38 @@ describe('OrdersService', () => {
         },
       });
       expect(result).toBeNull();
+    });
+  });
+  describe('getTotalBill', () => {
+    it('should return the total bill for a specific reservation', async () => {
+      // Mock the necessary dependencies and setup the test data
+      const mockReservationId = 1;
+      const mockOrders = [
+        { id: 1, quantity: 2, food: { price: 10 } },
+        { id: 2, quantity: 1, food: { price: 20 } },
+      ];
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue(mockOrders as any);
+
+      // Call the getTotalBill method
+      const result = await ordersService.getTotalBill({ reservation_id: mockReservationId });
+
+      // Calculate the expected total bill
+      const expectedTotalBill = mockOrders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+
+      // Assert the result
+      expect(result).toEqual(expectedTotalBill);
+    });
+
+    it('should return 0 if there are no orders for the reservation', async () => {
+      // Mock the necessary dependencies and setup the test data
+      const mockReservationId = 1;
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([] as any);
+
+      // Call the getTotalBill method
+      const result = await ordersService.getTotalBill({ reservation_id: mockReservationId });
+
+      // Assert the result
+      expect(result).toEqual(0);
     });
   });
 });
