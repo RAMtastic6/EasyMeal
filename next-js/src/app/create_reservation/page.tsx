@@ -5,6 +5,7 @@ import Pagination from '@/src/components/pagination';
 import { getAllCities, getAllCuisines, getRestaurantsTotalPages } from "@/src/lib/database/restaurant";
 import { RestaurantFilter } from "@/src/lib/database/restaurant";
 
+
 export default async function Page({ searchParams }: {
   searchParams?: {
     date?: string,
