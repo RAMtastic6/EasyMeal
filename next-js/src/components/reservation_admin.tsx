@@ -8,6 +8,16 @@ export default function ReservationDetails({ params }: { params: { id: string } 
   const [loading, setLoading] = useState(true);
   const [reservation, setReservation] = useState<any>({});
   const [orders, setOrders] = useState<any[]>([]);
+  const totalPrice = Object.keys(orders).map((key: string) => orders[key as keyof typeof orders].reduce((acc: number, order: any) => acc + (order.quantity * order.food.price), 0).toFixed(2));
+  const totalPaid = Object.keys(orders)
+    .flatMap((key: string) =>
+      orders[key as keyof typeof orders]
+        .filter((order: any) => order.paid)
+        .map((order: any) => order.quantity * order.food.price)
+    )
+    .reduce((acc: number, amount: number) => acc + amount, 0);
+  const usersThatPaid = Object.keys(orders).flatMap((key) => orders[key as keyof typeof orders].filter((order: any) => order.paid).map((order: any) => order.user_id)).join(", ");
+
 
   // fetch reservation by id
   async function fetchReservation() {
@@ -153,8 +163,47 @@ export default function ReservationDetails({ params }: { params: { id: string } 
             )}
             {reservation.state === "to_pay" && (
               <div>
-                <div className="bg-red-200 p-4">
-                  Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.
+                <ul>
+                  <li>
+                    <span className="font-bold">
+                      Utenti che partecipano:
+                    </span>
+                    {Array.from(new Set(
+                      Object.keys(orders).flatMap((key) =>
+                        orders[key as keyof typeof orders].map((order: any) => order.user_id)
+                      )
+                    )).map((userId, index, array) => (
+                      <span key={userId}>
+                        {' '}{userId}{index < array.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                  </li>
+                </ul>
+                <div className="bg-red-200 p-4 text-center rounded-lg shadow-md">
+                  <p className="text-lg font-semibold">
+                    Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.
+                  </p>
+                </div>
+                <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md text-center">
+                  <h2 className="text-2xl mb-2">Totale: €{totalPrice}</h2>
+                  <p>
+                    Totale rimanente: €{(Number(totalPrice) - Number(totalPaid)).toFixed(2)}
+                  </p>
+                  <p className="text-gray-600 text-center mt-4">
+                    La modalità scelta per la divisione del conto è: {reservation.isRomanBill ? "Romana" : "Proporzionale"}
+                  </p>
+                </div>
+                {usersThatPaid && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md text-center">
+                    <p className="text-lg font-semibold">
+                      Utenti che hanno pagato: {usersThatPaid}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-gray-600 text-center mt-4">
+                    La prenotazione risulterà completata solo dopo il pagamento di tutte le quote.
+                  </p>
                 </div>
               </div>
             )}
