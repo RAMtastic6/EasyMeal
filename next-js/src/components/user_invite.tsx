@@ -9,7 +9,7 @@ export function UserInvite({ reservationId }: { reservationId: number }) {
     const result = await acceptInviteReservation(reservationId);
     console.log(result);
     if (result.status && result.result) {
-      router.push('/user/reservations_list');
+      router.push('/user/reservations_list/'+reservationId+'/view');
     } else if (result.status) {
       alert("La prenotazione è gia piena!");
       router.push('/user/reservations_list');

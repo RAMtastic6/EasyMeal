@@ -6,7 +6,7 @@ import { Endpoints } from '../lib/database/endpoints';
 import { Socket, io } from 'socket.io-client';
 import { getToken, verifySession } from '../lib/dal';
 import { deleteOrders, saveOrders } from '../lib/database/order';
-import PaymentMethod from './payment_method';
+import { useRouter } from 'next/navigation';
 
 export default function MenuTable(
 	{ menuData, params }: {
@@ -21,8 +21,9 @@ export default function MenuTable(
 	},
 ) {
 	const socket = useRef<Socket>();
-	const [menu, setMenu] = useState(menuData);
+	const [menu, setMenu] = useState(menuData); 
 	const [price, setPrice] = useState(menuData.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
+	const router = useRouter();
 
 	const sendData = async (index: number, menu: any, add: boolean) => {
 		// Al db inviamo l'aumento o la dimuzione di 1
@@ -54,6 +55,11 @@ export default function MenuTable(
 		setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 	}
 
+	function onConfirm() {
+    alert('Ordine confermato da un altro utente!');
+    router.push('/user/reservations_list/'+params.number+'/view');
+  }
+
 	useEffect(() => {
 		getToken().then((token) => {
 			const soc = io(Endpoints.socket, {
@@ -62,14 +68,16 @@ export default function MenuTable(
 				},
 				auth: {
 					token: token,
-				}
+				},
 			});
 			socket.current = soc;
 			socket.current.on('onMessage', handleMessage);
+			socket.current.on('onConfirm', onConfirm);
 		});
 		//Close the socket connection when the component is unmounted
 		return () => {
 			socket.current?.off('onMessage', handleMessage);
+			socket.current?.off('onConfirm', onConfirm);
 			socket.current?.disconnect();
 		}
 	}, []);
@@ -144,6 +152,5 @@ export default function MenuTable(
 				</div>
 			</div>
 		</>
-
 	);
 }

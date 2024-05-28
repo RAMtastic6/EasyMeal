@@ -6,6 +6,7 @@ describe('MyGateway', () => {
   let gateway: MyGateway;
   let mockServer: Server;
   let mockSocket: Socket;
+  let broadcastEmitMock: jest.Mock;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -13,9 +14,13 @@ describe('MyGateway', () => {
     }).compile();
 
     gateway = module.get<MyGateway>(MyGateway);
+    broadcastEmitMock = jest.fn();
 
     // Mock Server and Socket
     mockServer = {
+      sockets: {
+        sockets: new Map(),
+      },
       to: jest.fn(() => mockServer),
       except: jest.fn(() => mockServer),
       emit: jest.fn(),
@@ -26,6 +31,11 @@ describe('MyGateway', () => {
 
     mockSocket = {
       id: 'mockSocketId',
+      broadcast: {
+        to: jest.fn(() => ({
+          emit: broadcastEmitMock,
+        })),
+      },
       handshake: {
         query: {
           id_prenotazione: 'testRoomId',
@@ -37,7 +47,16 @@ describe('MyGateway', () => {
       join: jest.fn(),
       disconnect: jest.fn(),
       on: jest.fn(),
+      rooms: new Set(['testRoomId']),
+      emit: jest.fn(),
     } as unknown as Socket;
+
+    mockServer.sockets.sockets.set('mockSocketId', mockSocket);
+    mockServer.sockets.sockets.set('anotherSocketId', {
+      id: 'anotherSocketId',
+      rooms: new Set(['testRoomId']),
+      emit: jest.fn(),
+    } as unknown as Socket);
   });
 
   describe('handleConnection', () => {
@@ -110,14 +129,17 @@ describe('MyGateway', () => {
     expect(mockServer.emit).toHaveBeenCalledWith('onIngredient', body.data);
   });
 
-  it('should emit "onConfirm" to other sockets in the same room', () => {
-    const body = { id_prenotazione: 'testRoomId' };
+  describe('onConfirm', () => {
+    it('should emit "onConfirm" to all sockets in the specified room except the sender', async () => {
+      const body = { id_prenotazione: 'testRoomId' };
+      const newSocket = {
 
-    gateway.onConfirm(body, mockSocket);
+      }
 
-    expect(mockServer.to).toHaveBeenCalledWith('testRoomId');
-    expect(mockServer.except).toHaveBeenCalledWith('mockSocketId');
-    expect(mockServer.emit).toHaveBeenCalledWith('onConfirm');
+      await gateway.onConfirm(body, mockSocket);
+
+      expect(mockSocket.broadcast.to).toHaveBeenCalledWith('testRoomId');
+      expect(broadcastEmitMock).toHaveBeenCalledWith('onConfirm');
+    });
   });
 });
-

@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import MenuTable from '../src/components/menu_table';
 import { io } from 'socket.io-client';
 import { saveOrders, deleteOrders } from '../src/lib/database/order';
-import exp from 'constants';
+import { useRouter } from 'next/navigation';
 
 // Mocking socket.io-client
 jest.mock('socket.io-client', () => ({
@@ -28,6 +28,10 @@ jest.mock('../src/lib/dal', () => {
 		getToken: jest.fn().mockResolvedValue('token'),
 	}
 });
+
+jest.mock('next/navigation', () => ({
+	useRouter: jest.fn()
+}));
 
 const mockMenuData = {
 	id: 1,

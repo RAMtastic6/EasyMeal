@@ -9,7 +9,7 @@ export class Endpoints {
     static readonly reservation = Endpoints.host + "reservation/";
     static readonly user = Endpoints.host + "user/"; 
     static readonly order = Endpoints.host + "orders/";
-    static readonly socket = "http://" + socket +":8000/";
+    static readonly socket = "http://" + "localhost" +":8000/";
     static readonly staff = Endpoints.host + "staff/";
     static readonly daysopen = Endpoints.host + "daysopen/";
     static readonly menu = Endpoints.host + "menu/";

@@ -77,5 +77,4 @@ export type CustomNotification = {
   id: number;
   title: string;
   message: string;
-  status: NotificationStatus;
 }
