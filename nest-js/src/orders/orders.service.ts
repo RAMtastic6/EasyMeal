@@ -207,7 +207,8 @@ export class OrdersService {
         ingredients: {
           ingredient: true
         },
-        reservation: true
+        customer: true,
+        reservation: true,
       },
       select: {
         food: {
@@ -222,10 +223,16 @@ export class OrdersService {
           },
           removed: true
         },
+        customer: {
+          id: true,
+          name: true,
+          surname: true
+        },
       }
     });
     return orders;
   }
+  
 
   async updateListOrders(order: { user_id: number; reservation_id: number; orders: any[]; }) {
     const { reservation_id, orders } = order;

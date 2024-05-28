@@ -25,7 +25,8 @@ jest.mock('../src/lib/database/order', () => ({
       user_id: 1,
       food: { id: 1, name: 'Pizza', price: 10 },
       ingredients: [{ id: 1, ingredient: { id: 1, name: 'Cheese' } }],
-      quantity: 2
+      quantity: 2,
+      customer: { id: 1, name: 'Doe', surname: 'Doe'}
     }],
   }),
 }));

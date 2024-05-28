@@ -8,6 +8,16 @@ export default function ReservationDetails({ params }: { params: { id: string } 
   const [loading, setLoading] = useState(true);
   const [reservation, setReservation] = useState<any>({});
   const [orders, setOrders] = useState<any[]>([]);
+  const totalPrice = Object.keys(orders).map((key: string) => orders[key as keyof typeof orders].reduce((acc: number, order: any) => acc + (order.quantity * order.food.price), 0).toFixed(2));
+  const totalPaid = Object.keys(orders)
+    .flatMap((key: string) =>
+      orders[key as keyof typeof orders]
+        .filter((order: any) => order.paid)
+        .map((order: any) => order.quantity * order.food.price)
+    )
+    .reduce((acc: number, amount: number) => acc + amount, 0);
+  const usersThatPaid = Object.keys(orders).flatMap((key) => orders[key as keyof typeof orders].filter((order: any) => order.paid).map((order: any) => order.customer.name + " " + order.customer.surname)).join(", ");
+
 
   // fetch reservation by id
   async function fetchReservation() {
@@ -87,7 +97,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
 
   const ingredientTotals = orders ? calculateIngredientTotals(orders) : {};
 
-  if(reservation.date < new Date().toISOString()) {
+  if (reservation.date < new Date().toISOString()) {
     return (
       <div className="container mx-auto mt-4 p-6 bg-100 rounded-lg shadow-lg">
         <div className="text-2xl font-semibold text-gray-800">Errore</div>
@@ -102,7 +112,8 @@ export default function ReservationDetails({ params }: { params: { id: string } 
     <>
       <div className="w-full">
         <div className="w-full">
-          <div className="container mx-auto mt-4 space-y-4">
+          <div className="container mx-auto mt-4 space-y-8 p-6 bg-100 rounded-lg shadow-lg">
+            <div className="text-2xl font-semibold text-gray-800">Dettagli Prenotazione</div>
             <ul className="space-y-4">
               <li>
                 <span className="font-bold">Numero persone:</span>
@@ -129,9 +140,9 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                     <span> 10</span>
                   </li>
                 </ul>
-                <div className="bg-yellow-200 p-4">
+                <div className="bg-yellow-200 p-4 rounded-lg shadow-md text-center">
                   La prenotazione è in attesa di conferma.
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-4 mt-4 justify-center">
                     <button onClick={handleAccept} className="bg-orange-500 text-black px-4 py-2 rounded">Accetta</button>
                     <button onClick={handleReject} className="bg-orange-500 text-black px-4 py-2 rounded">Rifiuta</button>
                   </div>
@@ -139,26 +150,65 @@ export default function ReservationDetails({ params }: { params: { id: string } 
               </>
             )}
             {(reservation.state === "accept") && (
-              <div>
-                <div className="bg-green-200 p-4">
+              <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
+                <p className="text-lg font-semibold text-gray-800">
                   La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.
-                </div>
+                </p>
               </div>
             )}
             {reservation.state === "reject" && (
-              <div className="bg-red-200 p-4">
+              <div className="bg-red-200 p-4 rounded-lg shadow-md text-center">
                 La prenotazione è stata rifiutata.
               </div>
             )}
             {reservation.state === "to_pay" && (
               <div>
-                <div className="bg-red-200 p-4">
-                  Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.
+                <div className="bg-100 border border-400 p-4 rounded-lg shadow-md text-center">
+                  <ul className="space-y-2 text-gray-800 mt-4">
+                    <li className="font-bold">Utenti che hanno partecipato:</li>
+                    {Array.from(new Set(
+                      Object.keys(orders).flatMap((key) =>
+                        orders[key as keyof typeof orders]
+                          .filter((order: any) => order.customer && order.customer.name && order.customer.surname)
+                          .map((order: any) => `${order.customer.name} ${order.customer.surname}`)
+                      )
+                    )).map((customerFullName, index, array) => (
+                      <span key={customerFullName} className="text-600">
+                        {customerFullName}{index < array.length - 1 ? ', ' : ''}
+                      </span>
+                    ))}
+                  </ul>
+                </div>
+                <div className="bg-red-200 p-4 text-center rounded-lg shadow-md">
+                  <p className="text-lg font-semibold">
+                    Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.
+                  </p>
+                </div>
+                <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md text-center">
+                  <h2 className="text-2xl mb-2">Totale: €{totalPrice}</h2>
+                  <p>
+                    Totale rimanente: €{(Number(totalPrice) - Number(totalPaid)).toFixed(2)}
+                  </p>
+                  <p className="text-gray-600 text-center mt-4">
+                    La modalità scelta per la divisione del conto è: {reservation.isRomanBill ? "Romana" : "Proporzionale"}
+                  </p>
+                </div>
+                {usersThatPaid && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md text-center">
+                    <p className="text-lg font-semibold">
+                      Utenti che hanno pagato: {usersThatPaid}
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-gray-600 text-center mt-4">
+                    La prenotazione risulterà completata solo dopo il pagamento di tutte le quote.
+                  </p>
                 </div>
               </div>
             )}
             {reservation.state === "completed" && (
-              <div className="bg-green-200 p-4">
+              <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
                 La prenotazione è stata pagata e completata.
               </div>
             )}
@@ -196,7 +246,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
                                 <div key={dishIndex} className="bg-white shadow-md rounded p-4">
-                                  <p>Cliente {order.customer_id}</p>
+                                  <p>Cliente {order.customer.name + " " + order.customer.surname}</p>
                                   <h2 className="text-xl font-semibold mb-2">{order.food.name}</h2>
                                   <ul>
                                     {order.ingredients
