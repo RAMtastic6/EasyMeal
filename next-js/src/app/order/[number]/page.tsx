@@ -31,7 +31,7 @@ export default async function Page({ params }: { params: { number: string } }) {
 	return (
 		<div className="w-full">
 			<div className="px-10 py-4 flex flex-col">
-				<div className="flex flex-row">
+				<div className="flex flex-col md:flex-row">
 					<div className="self-start py-1">
 						<img
 							src='/restaurant_template_image.jpg'
@@ -39,7 +39,7 @@ export default async function Page({ params }: { params: { number: string } }) {
 							className="w-128 h-64 mr-4"
 						/>
 					</div>
-					<div className="self-start py-20 text-orange-950">
+					<div className="self-start py-5 md:py-20 text-orange-950">
 						<h1 className="text-3xl font-bold">{data.name}</h1>
 						<p>Indirizzo: {data.address}</p>
 						<p>Città: {data.city}</p>

@@ -54,18 +54,18 @@ describe('Header', () => {
   it('renders all links for admin user', () => {
     render(<Header isLogin={true} isAdmin={true} />);
 
-    expect(screen.getByTestId('home-link')).toBeInTheDocument();
-    expect(screen.getByTestId('create-reservation-link')).toBeInTheDocument();
-    expect(screen.getByTestId('admin-reservations-link')).toBeInTheDocument();
+    expect(screen.getAllByTestId('home-link')[0]).toBeInTheDocument();
+    expect(screen.getAllByTestId('create-reservation-link')[0]).toBeInTheDocument();
+    expect(screen.getAllByTestId('admin-reservations-link')[0]).toBeInTheDocument();
     expect(screen.queryByTestId('user-reservations-link')).not.toBeInTheDocument();
   });
 
   it('renders all links for regular user', () => {
     render(<Header isLogin={true} isAdmin={false} />);
 
-    expect(screen.getByTestId('home-link')).toBeInTheDocument();
-    expect(screen.getByTestId('create-reservation-link')).toBeInTheDocument();
+    expect(screen.getAllByTestId('home-link')[0]).toBeInTheDocument();
+    expect(screen.getAllByTestId('create-reservation-link')[0]).toBeInTheDocument();
     expect(screen.queryByTestId('admin-reservations-link')).not.toBeInTheDocument();
-    expect(screen.getByTestId('user-reservations-link')).toBeInTheDocument();
+    expect(screen.getAllByTestId('user-reservations-link')[0]).toBeInTheDocument();
   });
 });
