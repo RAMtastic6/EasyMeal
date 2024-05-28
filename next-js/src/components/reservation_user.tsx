@@ -91,21 +91,21 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
   };
 
   const handleCopy = () => {
-		const linkText = `${window.location.origin}/order/${params.id}/`;
-		navigator.clipboard.writeText(linkText)
-			.then(() => {
-				setCopy(true);
-			})
-			.catch(err => {
-				console.error('Failed to copy: ', err);
-			});
-	};
+    const linkText = `${window.location.origin}/order/${params.id}/`;
+    navigator.clipboard.writeText(linkText)
+      .then(() => {
+        setCopy(true);
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+  };
 
   const link = () => (
-		<Link href={`/order/${params.id}`}>{
-			`${window.location.origin}/order/${params.id}`
-		}</Link>
-	);
+    <Link href={`/order/${params.id}`}>{
+      `${window.location.origin}/order/${params.id}`
+    }</Link>
+  );
 
   if (reservation.date < new Date().toISOString()) {
     return (
@@ -222,11 +222,13 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                     </span>
                     {Array.from(new Set(
                       Object.keys(orders).flatMap((key) =>
-                        orders[key as keyof typeof orders].map((order: any) => order.user_id)
+                        orders[key as keyof typeof orders]
+                          .filter((order: any) => order.customer && order.customer.name && order.customer.surname) // Filtra gli ordini senza customer, nome o cognome
+                          .map((order: any) => `${order.customer.name} ${order.customer.surname}`)
                       )
-                    )).map((userId, index, array) => (
-                      <span key={userId}>
-                        {' '}{userId}{index < array.length - 1 ? ', ' : ''}
+                    )).map((customerFullName, index, array) => (
+                      <span key={customerFullName}>
+                        {' '}{customerFullName}{index < array.length - 1 ? ', ' : ''}
                       </span>
                     ))}
                   </li>
@@ -270,52 +272,52 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
                 </div>
               </div>
             )}
-                {reservation.state === "completed" && (
-                  <div className="bg-green-200 p-4">
-                    La prenotazione è stata pagata e completata.
-                  </div>
-                )}
-                {(reservation.state === "to_pay" || reservation.state === "accept" || reservation.state === "completed") && (
-                  <div>
-                    <div className="bg-white p-4 rounded-lg shadow-md">
-                      <h2 className="text-2xl font-bold mb-4 text-gray-800">Le ordinazioni</h2>
-                      {orders.length === 0 && <p className="text-gray-600">Non ci sono ancora ordini per questa prenotazione</p>}
-                      <ul>
-                        {Object.keys(orders).map((key: string) => (
-                          <div key={key} className="container mx-auto mb-8">
-                            <h1 className="text-3xl font-bold mb-4 text-gray-900 border-b-2 pb-2">{key}</h1>
-                            {orders[key as keyof typeof orders].length === 0 ? (
-                              <p className="text-gray-600">Non ci sono ordini per questa prenotazione</p>
-                            ) : (
-                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {orders[key as keyof typeof orders] && Array.isArray(orders[key as keyof typeof orders]) && orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
-                                  <div key={dishIndex} className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
-                                    <p className="text-gray-700 mb-2">Utente: <span className="font-medium">{order.user_id}</span></p>
-                                    <h2 className="text-xl font-semibold mb-2 text-gray-800">{order.food.name} - €{order.food.price.toFixed(2)}</h2>
-                                    <ul className="text-gray-700">
-                                      {order.ingredients
-                                        .filter((ingredient: any) => !ingredient.removed) // Filtra gli ingredienti non rimossi
-                                        .map((ingredient: any, ingredientIndex: number) => (
-                                          <li key={ingredientIndex} className="flex justify-between items-center mb-2">
-                                            <span>{ingredient.ingredient.name}</span>
-                                            <span>{ingredient.quantity}</span>
-                                          </li>
-                                        ))}
-                                    </ul>
-                                  </div>
-                                ))}
+            {reservation.state === "completed" && (
+              <div className="bg-green-200 p-4">
+                La prenotazione è stata pagata e completata.
+              </div>
+            )}
+            {(reservation.state === "to_pay" || reservation.state === "accept" || reservation.state === "completed") && (
+              <div>
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                  <h2 className="text-2xl font-bold mb-4 text-gray-800">Le ordinazioni</h2>
+                  {orders.length === 0 && <p className="text-gray-600">Non ci sono ancora ordini per questa prenotazione</p>}
+                  <ul>
+                    {Object.keys(orders).map((key: string) => (
+                      <div key={key} className="container mx-auto mb-8">
+                        <h1 className="text-3xl font-bold mb-4 text-gray-900 border-b-2 pb-2">{key}</h1>
+                        {orders[key as keyof typeof orders].length === 0 ? (
+                          <p className="text-gray-600">Non ci sono ordini per questa prenotazione</p>
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {orders[key as keyof typeof orders] && Array.isArray(orders[key as keyof typeof orders]) && orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
+                              <div key={dishIndex} className="bg-white shadow-lg rounded-lg p-6 border border-gray-200">
+                                <p className="text-gray-700 mb-2">Utente: <span className="font-medium">{order.customer.name + " " + order.customer.surname}</span></p>
+                                <h2 className="text-xl font-semibold mb-2 text-gray-800">{order.food.name} - €{order.food.price.toFixed(2)}</h2>
+                                <ul className="text-gray-700">
+                                  {order.ingredients
+                                    .filter((ingredient: any) => !ingredient.removed) // Filtra gli ingredienti non rimossi
+                                    .map((ingredient: any, ingredientIndex: number) => (
+                                      <li key={ingredientIndex} className="flex justify-between items-center mb-2">
+                                        <span>{ingredient.ingredient.name}</span>
+                                        <span>{ingredient.quantity}</span>
+                                      </li>
+                                    ))}
+                                </ul>
                               </div>
-                            )}
+                            ))}
                           </div>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                )}
-              </div >
+                        )}
+                      </div>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div >
         </div >
-        </div >
-      </>
-      );
+      </div >
+    </>
+  );
 }
 
