@@ -243,6 +243,17 @@ export class OrdersService {
       }
     };
     await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY);
+
+    // prendere admin tramite l'id del ristorante
+    const admin = await this.staffService.getAdminByRestaurantId(reservation.restaurant_id); 
+
+    // creare una notifica rivolta all'admin del ristorante.
+    await this.notificationService.create({
+        message: `L'ordine associato alla prenotazione con id: ${reservation_id} è in: ${ReservationStatus.TO_PAY}`,
+        title: 'Ordinazione confermata',
+        id_receiver: admin.id,
+      });
+
     return true;
   }
 

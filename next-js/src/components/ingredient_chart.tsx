@@ -14,6 +14,8 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
   const [selectedOption, setSelectedOption] = useState('AllaRomana');
   const socket = useRef<Socket>();
 
+  console.log(fetchedOrders);
+
   function onIngredient(body: any) {
     const newOrders = { ...orders };
     newOrders[body.key][body.index].ingredients[body.ingredientIndex].removed = body.removed;
@@ -76,6 +78,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
     socket.current?.emit('onConfirm', {
       id_prenotazione: reservationId,
     });
+    
     alert('Ordine aggiornato');
     //TODO: riepilogo ordine? pagina apposta?
   }

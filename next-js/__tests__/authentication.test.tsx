@@ -7,6 +7,7 @@ jest.mock('node-fetch');
 
 describe('Authentication', () => {
   beforeEach(() => {
+    
     jest.resetAllMocks(); // Reset all mocked functions before each test
   });
 

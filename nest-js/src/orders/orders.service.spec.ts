@@ -7,9 +7,9 @@ import { OrderIngredients } from './entities/order_ingredients';
 import { FoodService } from '../food/food.service';
 import { ReservationService } from '../reservation/reservation.service';
 import { NotFoundException } from '@nestjs/common';
-import { NotificationService } from 'src/notification/notification.service';
 import { StaffService } from 'src/staff/staff.service';
-import { ReservationStatus } from '../reservation/entities/reservation.entity';
+import { NotificationService } from '../notification/notification.service';
+import { Reservation, ReservationStatus } from '../reservation/entities/reservation.entity';
 
 describe('OrdersService', () => {
   let service: OrdersService;
@@ -46,16 +46,25 @@ describe('OrdersService', () => {
           },
         },
         {
-          provide: NotificationService,
+          provide: getRepositoryToken(OrderIngredients),
           useValue: {
             create: jest.fn(),
-          },
+            save: jest.fn(),
+            remove: jest.fn(),
+          }
+        },
+        {
+          provide: NotificationService,
+          useValue: {
+            sendNotification: jest.fn(),
+            create: jest.fn()
+          }
         },
         {
           provide: StaffService,
           useValue: {
-            getAdminByRestaurantId: jest.fn(),
-          },
+            getAdminByRestaurantId: jest.fn()
+          }
         }
       ],
     }).compile();
@@ -65,8 +74,8 @@ describe('OrdersService', () => {
     orderIngredientsRepository = module.get<Repository<OrderIngredients>>(getRepositoryToken(OrderIngredients));
     foodService = module.get<FoodService>(FoodService);
     reservationService = module.get<ReservationService>(ReservationService);
-    staffService = module.get<StaffService>(StaffService);
     notificationService = module.get<NotificationService>(NotificationService);
+    staffService = module.get<StaffService>(StaffService);
   });
 
   it('should be defined', () => {
@@ -304,28 +313,141 @@ describe('OrdersService', () => {
   });
   */
   describe('getReservationOrders', () => {
-    it('should return orders for a reservation', async () => {
-      const data = { reservation_id: 1 };
-      const orders = [
+    it('should return all orders for a specific reservation', async () => {
+      // Mock the necessary dependencies and setup the test data
+      const mockReservationId = 1;
+      const mockOrders = [{ id: 1 }, { id: 2 }];
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue(mockOrders as any);
+
+      // Call the getReservationOrders method
+      const result =
+        await service.getReservationOrders(mockReservationId);
+
+      // Assert the result
+      expect(result).toEqual(mockOrders);
+    });
+  });
+
+  describe('updateListOrders', () => {
+    it('should update the list of orders for a specific user and reservation', async () => {
+      // Mock the necessary dependencies and setup the test data
+      const mockOrder = {
+        user_id: 1,
+        reservation_id: 1,
+        orders: [
+          {
+            id: 2,
+            name: "Spaghetti all'amatriciana",
+            price: 9,
+            menu_id: 1,
+            path_image: '',
+            type: 'apertivo',
+            ingredients: [
+              {
+                id: 10,
+                ingredient : {
+                  id: 1
+                },
+                name: 'Sale',
+                removed: false
+              }
+            ],
+            quantity: 1,
+          },
+          {
+            id: 3,
+            name: 'Spaghetti al pomodoro',
+            price: 8,
+            menu_id: 1,
+            path_image: '',
+            type: 'apertivo',
+            ingredients: [
+              {
+                id: 10,
+                ingredient : {
+                  id: 2
+                },
+                name: 'Sale',
+                removed: false
+              }
+            ],
+            quantity: 1,
+          },
+        ],
+      };
+      const adminMock = {
+        id: 1,
+        restaurant_id: 1,
+      };
+
+      // jest.spyOn(orderIngredientsRepository, 'save').mockResolvedValue(undefined);
+      const date = new Date('2222-02-20T20:20:00.000Z');
+      jest.spyOn(reservationService, 'findOne').mockResolvedValue(
+        // {
+        //   id: 1,
+        //   status: ReservationStatus.ACCEPTED,
+        // } as unknown as Reservation
         {
-          id: 1,
-          food: { name: 'Pizza', type: 'Main', price: 10 },
-          ingredients: [{ ingredient: { name: 'Cheese', id: 1 }, removed: false }],
-        },
-      ];
-      jest.spyOn(ordersRepository, 'find').mockResolvedValue(orders as any);
+          id: 23,
+          date: date,
+          number_people: 2222,
+          restaurant_id: 1,
+          state: ReservationStatus.ACCEPTED,
+          users: [],
+        } as Reservation,
+      );
+      jest
+        .spyOn(staffService, 'getAdminByRestaurantId')
+        .mockResolvedValue(adminMock as any);
 
-      const result = await service.getReservationOrders(data.reservation_id);
 
-      expect(result).toEqual(orders);
+      // Call the updateListOrders method
+      const result = await service.updateListOrders(mockOrder);
+      expect(reservationService.findOne).toHaveBeenCalledWith(
+        mockOrder.reservation_id,
+      );
+      expect(reservationService.updateStatus).toHaveBeenCalledWith(
+        mockOrder.reservation_id,
+        ReservationStatus.TO_PAY,
+      );
+
+      expect(notificationService.create).toHaveBeenCalledWith({
+        message: `L'ordine associato alla prenotazione con id: ${mockOrder.reservation_id} è in: ${ReservationStatus.TO_PAY}`,
+        title: 'Ordinazione confermata',
+        id_receiver: adminMock.id,
+      });
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('pay', () => {
+    it('should mark the order as paid and update the reservation status if all orders are paid', async () => {
+      const user_id = 1;
+      const reservation_id = 1;
+      const order = new Order();
+      order.user_id = user_id;
+      order.reservation_id = reservation_id;
+      order.paid = false;
+
+      const otherOrder = new Order();
+      otherOrder.user_id = 2;
+      otherOrder.reservation_id = reservation_id;
+      otherOrder.paid = true;
+
+      jest.spyOn(ordersRepository, 'save').mockResolvedValue(order);
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([order, otherOrder]);
+
+      const result = await service.pay(user_id, reservation_id);
+
       expect(ordersRepository.find).toHaveBeenCalledWith({
-        where: { reservation_id: data.reservation_id },
-        relations: { food: true, ingredients: { ingredient: true }, reservation: true },
-        select: {
-          food: { name: true, type: true, price: true },
-          ingredients: { ingredient: { name: true, id: true }, removed: true },
+        where: {
+          user_id,
+          reservation_id,
         },
       });
+      expect(order.paid).toBe(true);
+      expect(ordersRepository.save).toHaveBeenCalledWith(order);
+      expect(ordersRepository.find).toHaveBeenCalled();
     });
   });
 
@@ -336,7 +458,7 @@ describe('OrdersService', () => {
       jest.spyOn(reservationService, 'findOne').mockResolvedValue(reservation as any);
       jest.spyOn(orderIngredientsRepository, 'save').mockResolvedValue(null);
       jest.spyOn(reservationService, 'updateStatus').mockResolvedValue(null);
-
+      jest.spyOn(staffService, 'getAdminByRestaurantId').mockResolvedValue({ id: 1 } as any);
       const result = await service.updateListOrders(data);
 
       expect(result).toBe(true);
