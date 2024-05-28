@@ -25,7 +25,7 @@ export class Order {
 	paid: boolean;
 
 	@ManyToOne(() => User, customer => customer.orders)
-	@JoinColumn({ name: 'customer_id' })
+	@JoinColumn({ name: 'user_id' })
 	customer: User;
 
 	@ManyToOne(() => Reservation, reservation => reservation.orders)

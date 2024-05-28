@@ -16,7 +16,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
         .map((order: any) => order.quantity * order.food.price)
     )
     .reduce((acc: number, amount: number) => acc + amount, 0);
-  const usersThatPaid = Object.keys(orders).flatMap((key) => orders[key as keyof typeof orders].filter((order: any) => order.paid).map((order: any) => order.user_id)).join(", ");
+  const usersThatPaid = Object.keys(orders).flatMap((key) => orders[key as keyof typeof orders].filter((order: any) => order.paid).map((order: any) => order.customer.name + " " + order.customer.surname)).join(", ");
 
 
   // fetch reservation by id
@@ -170,11 +170,13 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                     </span>
                     {Array.from(new Set(
                       Object.keys(orders).flatMap((key) =>
-                        orders[key as keyof typeof orders].map((order: any) => order.user_id)
+                        orders[key as keyof typeof orders]
+                          .filter((order: any) => order.customer && order.customer.name && order.customer.surname) // Filtra gli ordini senza customer, nome o cognome
+                          .map((order: any) => `${order.customer.name} ${order.customer.surname}`)
                       )
-                    )).map((userId, index, array) => (
-                      <span key={userId}>
-                        {' '}{userId}{index < array.length - 1 ? ', ' : ''}
+                    )).map((customerFullName, index, array) => (
+                      <span key={customerFullName}>
+                        {' '}{customerFullName}{index < array.length - 1 ? ', ' : ''}
                       </span>
                     ))}
                   </li>
@@ -246,7 +248,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
                                 <div key={dishIndex} className="bg-white shadow-md rounded p-4">
-                                  <p>Cliente {order.user_id}</p>
+                                  <p>Cliente {order.customer.name + " " + order.customer.surname}</p>
                                   <h2 className="text-xl font-semibold mb-2">{order.food.name}</h2>
                                   <ul>
                                     {order.ingredients
