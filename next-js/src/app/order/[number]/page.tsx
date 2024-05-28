@@ -55,5 +55,5 @@ export default async function Page({ params }: { params: { number: string } }) {
 				</span>
 			</div>
 		</div>
-	)
+	) 
 }
