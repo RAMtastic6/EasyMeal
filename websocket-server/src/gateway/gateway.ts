@@ -61,6 +61,6 @@ export class MyGateway implements OnModuleInit {
   @SubscribeMessage('onConfirm')
   async onConfirm(@MessageBody() body, @ConnectedSocket() client: Socket) {
     const id_prenotazione: string = body["id_prenotazione"];
-    client.broadcast.to(id_prenotazione).emit('onNotification');
+    client.broadcast.to(id_prenotazione).emit('onConfirm');
   }
 }

@@ -6,6 +6,7 @@ import { saveOrders, updateIngredientsOrder, updateListOrders } from "../lib/dat
 import { getToken } from "../lib/dal";
 import PaymentMethod from "./payment_method";
 import { setPaymentMethod } from "../lib/database/reservation";
+import { useRouter } from "next/navigation";
 
 
 
@@ -13,6 +14,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
   const [orders, setOrders] = useState<any>(fetchedOrders);
   const [selectedOption, setSelectedOption] = useState('AllaRomana');
   const socket = useRef<Socket>();
+  const router = useRouter();
 
   console.log(fetchedOrders);
 
@@ -23,7 +25,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
   }
 
   function onConfirm() {
-    alert('Ordine confermato da un altro utente!');
+    router.push('/user/reservations_list/'+reservationId+'/view');
   }
 
   function changeIngredient(key: string, index: number, ingredientIndex: number) {
@@ -73,13 +75,13 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
     const payment_method = await setPaymentMethod({ reservation_id: reservationId, isRomanBill });
     if (result == false || payment_method == false) {
       alert('Ordine già confermato!');
+      router.push('/user/reservations_list/'+reservationId+'/view');
       return;
     }
     socket.current?.emit('onConfirm', {
       id_prenotazione: reservationId,
     });
-    
-    alert('Ordine aggiornato');
+    router.push('/user/reservations_list/'+reservationId+'/view');
     //TODO: riepilogo ordine? pagina apposta?
   }
 

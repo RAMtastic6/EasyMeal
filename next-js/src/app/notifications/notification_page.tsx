@@ -13,8 +13,11 @@ export function NotificationPage({ notificationsList }: {
   const { socket } = useNotification();
 
   const addNotification = (notification: CustomNotification) => {
-    console.log(notification);
-    setNotifications([notification, ...notifications]);
+    setNotifications((prev) => {
+      let newList = [...prev];
+      newList.unshift(notification);
+      return newList;
+    });
   }
 
   const deleteNotification = (id: number) => {
@@ -29,7 +32,7 @@ export function NotificationPage({ notificationsList }: {
       console.log("Removing notification listener")
       socket.current.off("onNotification", addNotification);
     }
-  }, [socket.current]);
+  }, [socket]);
 
   return (
     <>
