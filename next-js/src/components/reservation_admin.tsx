@@ -87,7 +87,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
 
   const ingredientTotals = orders ? calculateIngredientTotals(orders) : {};
 
-  if(reservation.date < new Date().toISOString()) {
+  if (reservation.date < new Date().toISOString()) {
     return (
       <div className="container mx-auto mt-4 p-6 bg-100 rounded-lg shadow-lg">
         <div className="text-2xl font-semibold text-gray-800">Errore</div>
@@ -102,7 +102,8 @@ export default function ReservationDetails({ params }: { params: { id: string } 
     <>
       <div className="w-full">
         <div className="w-full">
-          <div className="container mx-auto mt-4 space-y-4">
+          <div className="container mx-auto mt-4 space-y-8 p-6 bg-100 rounded-lg shadow-lg">
+            <div className="text-2xl font-semibold text-gray-800">Dettagli Prenotazione</div>
             <ul className="space-y-4">
               <li>
                 <span className="font-bold">Numero persone:</span>
@@ -139,10 +140,10 @@ export default function ReservationDetails({ params }: { params: { id: string } 
               </>
             )}
             {(reservation.state === "accept") && (
-              <div>
-                <div className="bg-green-200 p-4">
+              <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
+                <p className="text-lg font-semibold text-gray-800">
                   La prenotazione è stata accettata. Le ordinazioni sono in attesa di conferma.
-                </div>
+                </p>
               </div>
             )}
             {reservation.state === "reject" && (
@@ -196,7 +197,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {orders[key as keyof typeof orders].map((order: any, dishIndex: number) => (
                                 <div key={dishIndex} className="bg-white shadow-md rounded p-4">
-                                  <p>Cliente {order.customer_id}</p>
+                                  <p>Cliente {order.user_id}</p>
                                   <h2 className="text-xl font-semibold mb-2">{order.food.name}</h2>
                                   <ul>
                                     {order.ingredients
