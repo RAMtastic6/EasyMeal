@@ -180,8 +180,8 @@ export async function setPaymentMethod(data: {
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({
-			...data,
 			token: token,
+			...data,
 		}),
 	});
 	if(!response.ok) {
