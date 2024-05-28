@@ -454,7 +454,7 @@ describe('OrdersService', () => {
   */
   describe('updateListOrders', () => {
     it('should update the ingredients of a list of orders and update reservation status', async () => {
-      const data = { user_id: 1, reservation_id: 1, orders: [{ id: 1, ingredients: [{ ingredient: { id: 1 }, removed: false }] }] };
+      const data = { user_id: 1, reservation_id: 1, orders: [{ id: 1, ingredients: [{ ingredient: { id: 1 },  removed: false }] }] };
       const reservation = { id: 1, state: 'accept' };
       jest.spyOn(reservationService, 'findOne').mockResolvedValue(reservation as any);
       jest.spyOn(orderIngredientsRepository, 'save').mockResolvedValue(null);
