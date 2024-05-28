@@ -1,12 +1,10 @@
 import { deleteNotification, setReadNotification } from "../lib/database/notification";
-import { CustomNotification, NotificationStatus } from "../lib/types/definitions";
 
 export default function Notification(
-	{ id, title, description, status, hook }: { 
+	{ id, title, description, hook }: { 
 		id: number, 
 		title: string, 
 		description: string,
-		status: NotificationStatus,
 		hook: (id: number) => void
 	}) {
 	

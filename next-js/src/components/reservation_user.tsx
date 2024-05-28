@@ -7,7 +7,6 @@ import { checkOrdersPayStatus, getOrderByReservationId, getPartialBill, getRoman
 import Link from "next/link";
 import { verifySession } from "@/src/lib/dal";
 import { useRouter } from "next/navigation";
-import { set } from "firebase/database";
 
 export default function ReservationUser({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);

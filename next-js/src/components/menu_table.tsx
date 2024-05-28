@@ -62,7 +62,7 @@ export default function MenuTable(
 				},
 				auth: {
 					token: token,
-				}
+				},
 			});
 			socket.current = soc;
 			socket.current.on('onMessage', handleMessage);
@@ -72,7 +72,7 @@ export default function MenuTable(
 			socket.current?.off('onMessage', handleMessage);
 			socket.current?.disconnect();
 		}
-	}, []);
+	}, [socket.current]);
 
 	const decreaseQuantity = (index: number) => {
 		const newMenu = { ...menu };

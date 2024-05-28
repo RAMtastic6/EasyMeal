@@ -13,6 +13,7 @@ export function NotificationPage({ notificationsList }: {
   const { socket } = useNotification();
 
   const addNotification = (notification: CustomNotification) => {
+    console.log(notification);
     setNotifications([notification, ...notifications]);
   }
 
@@ -25,9 +26,10 @@ export function NotificationPage({ notificationsList }: {
     console.log("Setting up notification listener")
     socket.current.on("onNotification", addNotification);
     return () => {
-      socket.current?.off("onNotification", addNotification);
+      console.log("Removing notification listener")
+      socket.current.off("onNotification", addNotification);
     }
-  }, []);
+  }, [socket.current]);
 
   return (
     <>
@@ -37,7 +39,6 @@ export function NotificationPage({ notificationsList }: {
           id={notification.id} 
           title={notification.title} 
           description={notification.message} 
-          status={notification.status}
           hook={deleteNotification}>
         </Notification>
       )}

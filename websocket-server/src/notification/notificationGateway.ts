@@ -54,9 +54,8 @@ export class NotificationGateway implements OnModuleInit {
     this.server.to(ids).emit('onNotification', {
       title: notification.title, 
       message : notification.message,
-      id: notification.id
+      id: notification.id,
     });
     console.log("sending notification to " + ids.map((id) => id.toString()));
   }
-
 }
