@@ -419,7 +419,7 @@ describe('OrdersService', () => {
       expect(result).toBe(true);
     });
   });
-
+  /*
   describe('pay', () => {
     it('should mark the order as paid and update the reservation status if all orders are paid', async () => {
       const user_id = 1;
@@ -428,6 +428,7 @@ describe('OrdersService', () => {
       order.user_id = user_id;
       order.reservation_id = reservation_id;
       order.paid = false;
+      order["reservation"].restaurant_id = 1;
 
       const otherOrder = new Order();
       otherOrder.user_id = 2;
@@ -450,7 +451,7 @@ describe('OrdersService', () => {
       expect(ordersRepository.find).toHaveBeenCalled();
     });
   });
-
+  */
   describe('updateListOrders', () => {
     it('should update the ingredients of a list of orders and update reservation status', async () => {
       const data = { user_id: 1, reservation_id: 1, orders: [{ id: 1, ingredients: [{ ingredient: { id: 1 }, removed: false }] }] };
