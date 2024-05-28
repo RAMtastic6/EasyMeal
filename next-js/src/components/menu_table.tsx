@@ -21,7 +21,7 @@ export default function MenuTable(
 	},
 ) {
 	const socket = useRef<Socket>();
-	const [menu, setMenu] = useState(menuData);
+	const [menu, setMenu] = useState(menuData); 
 	const [price, setPrice] = useState(menuData.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 	const router = useRouter();
 
