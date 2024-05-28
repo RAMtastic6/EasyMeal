@@ -60,14 +60,14 @@ ALTER TYPE public.daysopen_day_open_enum OWNER TO postgres;
 --
 
 CREATE TYPE public.food_type_enum AS ENUM (
-    'apertivo',
-    'primo',
-    'secondo',
-    'contorno',
-    'dolce',
-    'bevanda',
-    'caffè',
-    'pizza'
+    'Aperitivo',
+    'Primo',
+    'Secondo',
+    'Contorno',
+    'Dolce',
+    'Bevanda',
+    'Caffè',
+    'Pizza'
 );
 
 
@@ -177,7 +177,7 @@ CREATE TABLE public.food (
     name character varying(100) NOT NULL,
     price double precision NOT NULL,
     path_image character varying(255) DEFAULT ''::character varying NOT NULL,
-    type public.food_type_enum DEFAULT 'apertivo'::public.food_type_enum NOT NULL
+    type public.food_type_enum DEFAULT 'Aperitivo'::public.food_type_enum NOT NULL
 );
 
 
@@ -637,15 +637,15 @@ ALTER TABLE ONLY public.staff ALTER COLUMN id SET DEFAULT nextval('public.staff_
 -- Data for Name: food; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (2, 1, 'Spaghetti all''amatriciana', 9, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (3, 1, 'Spaghetti al pomodoro', 8, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (4, 2, 'Riso alla cantonese', 10, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (5, 2, 'Riso fritto', 9, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (7, 3, 'Pizza margherita', 10, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (8, 3, 'Pizza marinara', 9, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (9, 3, 'Pizza capricciosa', 8, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (6, 2, 'Riso saltato', 8, '', 'apertivo');
-INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (1, 1, 'Spaghetti alla carbonara', 10, '', 'apertivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (2, 1, 'Spaghetti all''amatriciana', 9, '', 'Aperitivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (3, 1, 'Spaghetti al pomodoro', 8, '', 'Aperitivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (4, 2, 'Riso alla cantonese', 10, '', 'Aperitivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (5, 2, 'Riso fritto', 9, '', 'Aperitivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (7, 3, 'Pizza margherita', 10, '', 'Aperitivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (8, 3, 'Pizza marinara', 9, '', 'Aperitivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (9, 3, 'Pizza capricciosa', 8, '', 'Aperitivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (6, 2, 'Riso saltato', 8, '', 'Aperitivo');
+INSERT INTO public.food (id, menu_id, name, price, path_image, type) OVERRIDING SYSTEM VALUE VALUES (1, 1, 'Spaghetti alla carbonara', 10, '', 'Aperitivo');
 
 
 --
@@ -1258,11 +1258,11 @@ INSERT INTO public.staff (id, restaurant_id, user_id, ruolo) VALUES (2, 2, 2, 'a
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (2, 'test', 'test', 'admin2@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'admin1@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (3, 'test', 'test', 'admin3@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (4, 'dc', 'dc', 'dc@', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (5, 's', 's', 'sas@sas', '$2b$13$igZzV4v/GS9ysbULdYwV.uzWS4BPwGlGc9K063kEbr21d9rgMcutK');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (2, 'test', 'test', 'admin2@admin.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'admin1@admin.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (3, 'test', 'test', 'admin3@admin.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (4, 'user', 'user', 'user1@user.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (5, 'user2', 'user2', 'user2@user.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
 
 
 --
