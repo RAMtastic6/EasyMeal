@@ -209,7 +209,7 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
 
             )}
             {reservation.state === "reject" && (
-              <div className="bg-red-200 p-4">
+              <div className="bg-red-200 p-4 rounded-lg shadow-md text-center">
                 La prenotazione è stata rifiutata.
               </div>
             )}
@@ -261,18 +261,19 @@ export default function ReservationUser({ params }: { params: { id: string } }) 
             )}
             {reservation.state === "to_pay" && isPaid && (
               <div>
-                <div className="bg-green-200 p-4">
+                <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
                   La tua parte è stata pagata.
                 </div>
-                <div>
+                <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md text-center">
                   <p>
-                    Totale rimanente: €{(Number(totalPrice) - Number(totalPaid)).toFixed(2)}
+                    <span className="font-semibold">Totale rimanente: </span>
+                    €{(Number(totalPrice) - Number(totalPaid)).toFixed(2)}
                   </p>
                 </div>
               </div>
             )}
             {reservation.state === "completed" && (
-              <div className="bg-green-200 p-4">
+              <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
                 La prenotazione è stata pagata e completata.
               </div>
             )}

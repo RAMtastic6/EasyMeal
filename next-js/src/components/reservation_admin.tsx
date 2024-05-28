@@ -140,9 +140,9 @@ export default function ReservationDetails({ params }: { params: { id: string } 
                     <span> 10</span>
                   </li>
                 </ul>
-                <div className="bg-yellow-200 p-4">
+                <div className="bg-yellow-200 p-4 rounded-lg shadow-md text-center">
                   La prenotazione è in attesa di conferma.
-                  <div className="flex space-x-4">
+                  <div className="flex space-x-4 mt-4 justify-center">
                     <button onClick={handleAccept} className="bg-orange-500 text-black px-4 py-2 rounded">Accetta</button>
                     <button onClick={handleReject} className="bg-orange-500 text-black px-4 py-2 rounded">Rifiuta</button>
                   </div>
@@ -157,7 +157,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
               </div>
             )}
             {reservation.state === "reject" && (
-              <div className="bg-red-200 p-4">
+              <div className="bg-red-200 p-4 rounded-lg shadow-md text-center">
                 La prenotazione è stata rifiutata.
               </div>
             )}
@@ -208,7 +208,7 @@ export default function ReservationDetails({ params }: { params: { id: string } 
               </div>
             )}
             {reservation.state === "completed" && (
-              <div className="bg-green-200 p-4">
+              <div className="bg-green-200 p-4 rounded-lg shadow-md text-center">
                 La prenotazione è stata pagata e completata.
               </div>
             )}
