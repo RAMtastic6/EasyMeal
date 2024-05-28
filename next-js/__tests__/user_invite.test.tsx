@@ -39,7 +39,7 @@ describe('UserInvite', () => {
 
     await waitFor(() => {
       expect(acceptInviteReservation).toHaveBeenCalledWith(123);
-      expect(mockPush).toHaveBeenCalledWith('/user/reservations_list');
+      expect(mockPush).toHaveBeenCalledWith('/user/reservations_list/123/view');
     });
   });
 

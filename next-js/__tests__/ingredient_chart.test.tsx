@@ -4,7 +4,7 @@ import { io } from 'socket.io-client';
 import { getToken, verifySession } from '../src/lib/dal';
 import { updateListOrders } from '../src/lib/database/order';
 import { IngredientChart } from '../src/components/ingredient_chart';
-import { setPaymentMethod } from '../src/lib/database/reservation';
+import { useRouter } from 'next/navigation';
 
 // Mock socket.io-client
 jest.mock('socket.io-client', () => ({
@@ -28,6 +28,10 @@ jest.mock('../src/lib/database/reservation', () => ({
 jest.mock('../src/lib/dal', () => ({
   verifySession: jest.fn().mockResolvedValue({ id: 1 }),
   getToken: jest.fn().mockResolvedValue('token'),
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn().mockReturnValue({ push: jest.fn() }),
 }));
 
 describe('IngredientChart', () => {
