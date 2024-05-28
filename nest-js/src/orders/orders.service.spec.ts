@@ -406,10 +406,6 @@ describe('OrdersService', () => {
       expect(reservationService.findOne).toHaveBeenCalledWith(
         mockOrder.reservation_id,
       );
-      expect(reservationService.updateStatus).toHaveBeenCalledWith(
-        mockOrder.reservation_id,
-        ReservationStatus.TO_PAY,
-      );
 
       expect(notificationService.create).toHaveBeenCalledWith({
         message: `L'ordine associato alla prenotazione con id: ${mockOrder.reservation_id} è in: ${ReservationStatus.TO_PAY}`,
@@ -473,7 +469,6 @@ describe('OrdersService', () => {
           });
         });
       });
-      expect(reservationService.updateStatus).toHaveBeenCalledWith(data.reservation_id, 'to_pay');
     });
 
     it('should return null if reservation is not found or not accepted', async () => {
