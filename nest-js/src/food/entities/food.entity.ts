@@ -4,14 +4,14 @@ import { Ingredient } from "./ingredient.entity";
 import { Menu } from "../../menu/entities/menu.entity";
 
 export enum FoodType {
-    APPETIZER = 'apertivo',
-    FIRST_COURSE = 'primo',
-    SECOND_COURSE = 'secondo',
-    SIDE_DISH = 'contorno',
-    DESSERT = 'dolce',
-    DRINK = 'bevanda',
-    COFFEE = 'caffè',
-    PIZZA = 'pizza',
+    APPETIZER = 'Aperitivo',
+    FIRST_COURSE = 'Primo',
+    SECOND_COURSE = 'Secondo',
+    SIDE_DISH = 'Contorno',
+    DESSERT = 'Dolce',
+    DRINK = 'Bevanda',
+    COFFEE = 'Caffè',
+    PIZZA = 'Pizza',
 }
 
 @Entity()
