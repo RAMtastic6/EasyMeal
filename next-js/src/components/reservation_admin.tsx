@@ -163,24 +163,22 @@ export default function ReservationDetails({ params }: { params: { id: string } 
             )}
             {reservation.state === "to_pay" && (
               <div>
-                <ul>
-                  <li>
-                    <span className="font-bold">
-                      Utenti che partecipano:
-                    </span>
+                <div className="bg-100 border border-400 p-4 rounded-lg shadow-md text-center">
+                  <ul className="space-y-2 text-gray-800 mt-4">
+                    <li className="font-bold">Utenti che hanno partecipato:</li>
                     {Array.from(new Set(
                       Object.keys(orders).flatMap((key) =>
                         orders[key as keyof typeof orders]
-                          .filter((order: any) => order.customer && order.customer.name && order.customer.surname) // Filtra gli ordini senza customer, nome o cognome
+                          .filter((order: any) => order.customer && order.customer.name && order.customer.surname)
                           .map((order: any) => `${order.customer.name} ${order.customer.surname}`)
                       )
                     )).map((customerFullName, index, array) => (
-                      <span key={customerFullName}>
-                        {' '}{customerFullName}{index < array.length - 1 ? ', ' : ''}
+                      <span key={customerFullName} className="text-600">
+                        {customerFullName}{index < array.length - 1 ? ', ' : ''}
                       </span>
                     ))}
-                  </li>
-                </ul>
+                  </ul>
+                </div>
                 <div className="bg-red-200 p-4 text-center rounded-lg shadow-md">
                   <p className="text-lg font-semibold">
                     Le ordinazioni sono state confermate. La prenotazione è in attesa di pagamento.
