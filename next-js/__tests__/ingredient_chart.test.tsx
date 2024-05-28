@@ -1,9 +1,10 @@
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import { io } from 'socket.io-client';
-import { getToken } from '../src/lib/dal';
+import { getToken, verifySession } from '../src/lib/dal';
 import { updateListOrders } from '../src/lib/database/order';
 import { IngredientChart } from '../src/components/ingredient_chart';
+import { setPaymentMethod } from '../src/lib/database/reservation';
 
 // Mock socket.io-client
 jest.mock('socket.io-client', () => ({
@@ -18,6 +19,15 @@ jest.mock('../src/lib/dal', () => ({
 // Mock updateListOrders
 jest.mock('../src/lib/database/order', () => ({
   updateListOrders: jest.fn(),
+}));
+
+jest.mock('../src/lib/database/reservation', () => ({
+	setPaymentMethod: jest.fn(),
+}));
+
+jest.mock('../src/lib/dal', () => ({
+  verifySession: jest.fn().mockResolvedValue({ id: 1 }),
+  getToken: jest.fn().mockResolvedValue('token'),
 }));
 
 describe('IngredientChart', () => {

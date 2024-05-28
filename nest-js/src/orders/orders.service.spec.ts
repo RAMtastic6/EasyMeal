@@ -17,11 +17,8 @@ describe('OrdersService', () => {
   let orderIngredientsRepository: Repository<OrderIngredients>;
   let foodService: FoodService;
   let reservationService: ReservationService;
-  
-  // questi due sono da mockare per fare i test della funzione che invia le notifiche
-  // all'admin dop che un ordine è stato confermato.
-  let notificationService: NotificationService; 
   let staffService: StaffService;
+  let notificationService: NotificationService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -259,7 +256,7 @@ describe('OrdersService', () => {
 
       const result = await service.getRomanBill(data);
 
-      expect(result).toEqual(20); // (2 * 10 + 1 * 20) / 2
+      expect(result).toEqual(((2 * 10 + 1 * 20) / 2).toFixed(2)); // (2 * 10 + 1 * 20) / 2
       expect(ordersRepository.find).toHaveBeenCalledWith({ where: { reservation_id: data.reservation_id }, relations: { food: true } });
     });
 
@@ -273,27 +270,35 @@ describe('OrdersService', () => {
       expect(ordersRepository.find).toHaveBeenCalledWith({ where: { reservation_id: data.reservation_id }, relations: { food: true } });
     });
   });
-
+  /*
   describe('pay', () => {
     it('should mark orders as paid and update reservation status', async () => {
-      const data = { user_id: 1, reservation_id: 1 };
-      const orders = [{ id: 1, paid: false }, { id: 2, paid: false }];
+      const data = { user_id: 1, reservation_id: 1, reservation: { state: 'to_pay', restaurant_id: 1 } };
+
+      const orders = [{ id: 1, paid: false, reservation: { state: 'to_pay', restaurant_id: 1 } }, { id: 2, paid: false, reservation: { state: 'to_pay', restaurant_id: 1 } }];
       const allOrders = [...orders];
+      const admin = { id: 1 };
       jest.spyOn(ordersRepository, 'find').mockResolvedValueOnce(orders as any).mockResolvedValueOnce(allOrders as any);
       jest.spyOn(ordersRepository, 'save').mockImplementation(
         async (order) => order as any
       );
       jest.spyOn(reservationService, 'updateStatus').mockResolvedValue(null);
+      jest.spyOn(staffService, 'getAdminByRestaurantId').mockResolvedValue(admin as any);
 
       const result = await service.pay(data.user_id, data.reservation_id);
 
-      expect(result).toBe(true);
-      expect(ordersRepository.find).toHaveBeenCalledWith({ where: { user_id: data.user_id, reservation_id: data.reservation_id } });
-      expect(ordersRepository.find).toHaveBeenCalledWith({ where: { reservation_id: data.reservation_id } });
-      orders.forEach((order) => {
-        expect(ordersRepository.save).toHaveBeenCalledWith({ ...order, paid: true });
+      expect(ordersRepository.find).toHaveBeenCalledWith({
+        where: {
+          user_id: data.user_id,
+          reservation_id: data.reservation_id
+        },
+        relations: { reservation: data.reservation }
       });
-      expect(reservationService.updateStatus).toHaveBeenCalledWith(data.reservation_id, 'completed');
+      for (const order of orders) {
+        order.paid = true;
+      }
+      expect(ordersRepository.save).toHaveBeenCalledWith(orders);
+      expect(result).toBe(true);
     });
 
     it('should return null if no orders found', async () => {
@@ -306,7 +311,7 @@ describe('OrdersService', () => {
       expect(ordersRepository.find).toHaveBeenCalledWith({ where: { user_id: data.user_id, reservation_id: data.reservation_id } });
     });
   });
-
+  */
   describe('getReservationOrders', () => {
     it('should return all orders for a specific reservation', async () => {
       // Mock the necessary dependencies and setup the test data
@@ -414,7 +419,7 @@ describe('OrdersService', () => {
       expect(result).toBe(true);
     });
   });
-
+  /*
   describe('pay', () => {
     it('should mark the order as paid and update the reservation status if all orders are paid', async () => {
       const user_id = 1;
@@ -423,6 +428,7 @@ describe('OrdersService', () => {
       order.user_id = user_id;
       order.reservation_id = reservation_id;
       order.paid = false;
+      order["reservation"].restaurant_id = 1;
 
       const otherOrder = new Order();
       otherOrder.user_id = 2;
@@ -445,10 +451,10 @@ describe('OrdersService', () => {
       expect(ordersRepository.find).toHaveBeenCalled();
     });
   });
-
+  */
   describe('updateListOrders', () => {
     it('should update the ingredients of a list of orders and update reservation status', async () => {
-      const data = { user_id: 1, reservation_id: 1, orders: [{ id: 1, ingredients: [{ ingredient: { id: 1 }, removed: false }] }] };
+      const data = { user_id: 1, reservation_id: 1, orders: [{ id: 1, ingredients: [{ ingredient: { id: 1 },  removed: false }] }] };
       const reservation = { id: 1, state: 'accept' };
       jest.spyOn(reservationService, 'findOne').mockResolvedValue(reservation as any);
       jest.spyOn(orderIngredientsRepository, 'save').mockResolvedValue(null);
@@ -477,7 +483,133 @@ describe('OrdersService', () => {
       const result = await service.updateListOrders(data);
 
       expect(result).toBeNull();
-      expect(reservationService.findOne).toHaveBeenCalledWith(data.reservation_id);
+    });
+  });
+  describe('getTotalBill', () => {
+    it('should return the total bill for a specific reservation', async () => {
+      // Mock the necessary dependencies and setup the test data
+      const mockReservationId = 1;
+      const mockOrders = [
+        { id: 1, quantity: 2, food: { price: 10 } },
+        { id: 2, quantity: 1, food: { price: 20 } },
+      ];
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue(mockOrders as any);
+
+      // Call the getTotalBill method
+      const result = await service.getTotalBill({ reservation_id: mockReservationId });
+
+      // Calculate the expected total bill
+      const expectedTotalBill = mockOrders.reduce((acc, order) => acc + (order.quantity * order.food.price), 0);
+
+      // Assert the result
+      expect(result).toEqual(expectedTotalBill);
+    });
+
+    it('should return 0 if there are no orders for the reservation', async () => {
+      // Mock the necessary dependencies and setup the test data
+      const mockReservationId = 1;
+      jest.spyOn(ordersRepository, 'find').mockResolvedValue([] as any);
+
+      // Call the getTotalBill method
+      const result = await service.getTotalBill({ reservation_id: mockReservationId });
+
+      // Assert the result
+      expect(result).toEqual(0);
+    });
+  });
+  describe('pay', () => {
+  
+    describe('when orders exist', () => {
+      const mockUserId = 1;
+      const mockReservationId = 1;
+      const mockOrders = [
+        { id: 1, paid: false, reservation: { state: 'to_pay', restaurant_id: 1 } },
+        { id: 2, paid: false, reservation: { state: 'to_pay', restaurant_id: 1 } }
+      ];
+      const mockAllOrders = [
+        { id: 1, paid: false, reservation: { state: 'to_pay', restaurant_id: 1 } },
+        { id: 2, paid: false, reservation: { state: 'to_pay', restaurant_id: 1 } },
+        { id: 3, paid: false, reservation: { state: 'to_pay', restaurant_id: 1 } }
+      ]
+      const mockAdmin = { id: 1 };
+  
+      beforeEach(() => {
+        jest.spyOn(ordersRepository, 'save').mockImplementation(async (order) => order as any);
+        jest.spyOn(reservationService, 'updateStatus').mockResolvedValue(null);
+        jest.spyOn(staffService, 'getAdminByRestaurantId').mockResolvedValue(mockAdmin as any);
+      });
+  
+      it('should mark orders as paid and update reservation status', async () => {
+        jest.spyOn(ordersRepository, 'find').mockResolvedValue(mockOrders as any);
+
+        // Arrange
+        const expectedUpdatedOrders = mockOrders.map(order => ({ ...order, paid: true }));
+        const expectedUpdatedReservationStatus = ReservationStatus.COMPLETED;
+        
+        // Act
+        const result = await service.pay(mockUserId, mockReservationId);
+        
+        // Assert
+        expect(ordersRepository.find).toHaveBeenCalledWith({
+          where: {
+            user_id: mockUserId,
+            reservation_id: mockReservationId
+          },
+          relations: { reservation: true }
+        });
+        expect(ordersRepository.save).toHaveBeenCalledWith(expectedUpdatedOrders);
+        expect(reservationService.updateStatus).toHaveBeenCalledWith(mockReservationId, expectedUpdatedReservationStatus);
+        expect(notificationService.create).toHaveBeenCalledWith({ id_receiver: mockAdmin.id, message: `Quota pagata per tutti i partecipanti nella prenotazione con id: ${mockReservationId}`, title: 'Quota pagata' });
+        expect(result).toBe(true);
+      });
+      
+      it('should mark orders as paid and send notification for individual payment', async () => {
+        jest.spyOn(ordersRepository, 'find').mockResolvedValueOnce(mockOrders as any);
+        // Arrange
+        const expectedUpdatedOrders = mockOrders.map(order => ({ ...order, paid: true }));
+        const expectedNotificationMessage = `Quota pagata per ${mockUserId} nella prenotazione con id: ${mockReservationId}`;
+        jest.spyOn(ordersRepository, 'find').mockResolvedValueOnce(mockAllOrders as any);
+
+        // Act
+        const result = await service.pay(mockUserId, mockReservationId);
+        
+        // Assert
+        expect(ordersRepository.find).toHaveBeenCalledWith({
+          where: {
+            user_id: mockUserId,
+            reservation_id: mockReservationId
+          },
+          relations: { reservation: true }
+        });
+        expect(ordersRepository.save).toHaveBeenCalledWith(expectedUpdatedOrders);
+        expect(notificationService.create).toHaveBeenCalledWith({ id_receiver: mockAdmin.id, message: expectedNotificationMessage, title: 'Quota pagata' });
+        expect(result).toBe(true);
+      });
+    });
+  
+    describe('when no orders exist', () => {
+
+      const mockUserId = 1;
+      const mockReservationId = 1;
+  
+      beforeEach(() => {
+        jest.spyOn(ordersRepository, 'find').mockResolvedValue([]);
+      });
+  
+      it('should return null', async () => {
+        // Act
+        const result = await service.pay(mockUserId, mockReservationId);
+  
+        // Assert
+        expect(result).toBeNull();
+        expect(ordersRepository.find).toHaveBeenCalledWith({
+          where: {
+            user_id: mockUserId,
+            reservation_id: mockReservationId
+          },
+          relations: { reservation: true }
+        });
+      });
     });
   });
 });

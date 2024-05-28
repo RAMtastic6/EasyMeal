@@ -8,7 +8,7 @@ import { AddQuantityDTO } from './dto/add-quantity.dto';
 import { UpdateIngredientsDTO } from './dto/update-ingredients.dto';
 import { RemoveDTO } from './dto/remove.dto';
 import { PartialBillDTO } from './dto/partial-bill.dto';
-import { FullBillDTO as RomanBillDTO } from './dto/full-bill.dto';
+import { RomanBillDTO } from './dto/full-bill.dto';
 import { UpdateListOrdersDTO } from './dto/update-list-orders.dto';
 import { PayDTO } from './dto/pay.dto';
 
@@ -21,10 +21,10 @@ export class OrdersController {
 
   // da rivedere in generale.
   @Post('create')
-  async create(@Body() body: { 
+  async create(@Body() body: {
     reservation_id: number,
     food_id: number,
-    token: string 
+    token: string
   }) {
     const user = await this.authService.verifyToken(body.token);
     if (user == null) {
@@ -123,18 +123,23 @@ export class OrdersController {
   @HttpCode(200)
   async updateListOrders(@Body() order: UpdateListOrdersDTO) {
     const user = await this.authService.verifyToken(order.token);
-    if(user == null)
+    if (user == null)
       throw new BadRequestException('Invalid token');
     const result = await this.ordersService.updateListOrders({
       user_id: user.id,
       reservation_id: order.reservation_id,
       orders: order.orders
     });
-    if(result == null) 
+    if (result == null)
       throw new BadRequestException('Error updating orders');
 
     
     return result;
+  }
+
+  @Post('totalBill')
+  async totalBill(@Body() order: { reservation_id: number }) {
+    return await this.ordersService.getTotalBill(order);
   }
 
   @Get('reservation/:id')
@@ -144,5 +149,13 @@ export class OrdersController {
       throw new NotFoundException('No orders found');
     }
     return result;
+  }
+
+  @Post('checkOrdersPayStatus')
+  async checkOrdersPayStatus(@Body() data: { token: string, reservation_id: number }) {
+    const user = await this.authService.verifyToken(data.token);
+    if (user == null)
+      throw new BadRequestException('Invalid token');
+    return await this.ordersService.checkOrdersPayStatusByUserId(user.id, data.reservation_id);
   }
 }

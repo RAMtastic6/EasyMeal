@@ -31,12 +31,13 @@ describe('OrdersController', () => {
             updateListOrders: jest.fn(),
             getReservationOrders: jest.fn(),
             pay: jest.fn(),
+            getTotalBill: jest.fn(),
           },
-        }, 
+        },
         {
           provide: AuthenticationService,
           useValue: {
-            verifyToken: jest.fn((x: any) => ({ id: 1, role: StaffRole.ADMIN})),
+            verifyToken: jest.fn((x: any) => ({ id: 1, role: StaffRole.ADMIN })),
           },
         }
       ],
@@ -55,7 +56,7 @@ describe('OrdersController', () => {
         food_id: 1,
         token: 'token',
       };
-      const user = { id: 1 , role: StaffRole.ADMIN};
+      const user = { id: 1, role: StaffRole.ADMIN };
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(user);
       jest.spyOn(ordersService, 'create').mockResolvedValue(
         {} as Order
@@ -95,7 +96,7 @@ describe('OrdersController', () => {
         food_id: 1,
         token: 'token',
       };
-      const user = { id: 1, role: StaffRole.ADMIN};
+      const user = { id: 1, role: StaffRole.ADMIN };
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(user);
       jest.spyOn(ordersService, 'create').mockResolvedValue(null);
 
@@ -133,7 +134,7 @@ describe('OrdersController', () => {
       expect(ordersService.findAll).toHaveBeenCalled();
     });
   });
-  
+
   describe('findOne', () => {
     it('should find an order', async () => {
       // Arrange
@@ -144,15 +145,15 @@ describe('OrdersController', () => {
         food_id: 1,
       };
       jest.spyOn(ordersService, 'findOne').mockResolvedValue(order);
-  
+
       // Act
       const result = await controller.findOne(requestBody);
-  
+
       // Assert
       expect(ordersService.findOne).toHaveBeenCalledWith(requestBody);
       expect(result).toEqual(order);
     });
-  
+
     it('should throw NotFoundException if order is not found', async () => {
       // Arrange
       const requestBody = {
@@ -161,14 +162,14 @@ describe('OrdersController', () => {
         food_id: 1,
       };
       jest.spyOn(ordersService, 'findOne').mockResolvedValue(null);
-  
+
       // Act & Assert
       await expect(controller.findOne(requestBody)).rejects.toThrow(NotFoundException)
         .catch((e) => expect(e.message).toBe('Order not found'));
       expect(ordersService.findOne).toHaveBeenCalledWith(requestBody);
     });
   });
-  
+
   describe('update', () => {
     it('should update an order', async () => {
       // Arrange
@@ -180,12 +181,12 @@ describe('OrdersController', () => {
       };
       const order = { id: 1 } as Order;
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(
-        { id: 1, role: StaffRole.STAFF});
+        { id: 1, role: StaffRole.STAFF });
       jest.spyOn(ordersService, 'addQuantity').mockResolvedValue(order);
-  
+
       // Act
       const result = await controller.update(requestBody);
-  
+
       // Assert
       expect(authService.verifyToken).toHaveBeenCalledWith(requestBody.token);
       expect(ordersService.addQuantity).toHaveBeenCalledWith({
@@ -196,7 +197,7 @@ describe('OrdersController', () => {
       });
       expect(result).toEqual(order);
     });
-  
+
     it('should throw BadRequestException if token is invalid', async () => {
       // Arrange
       const requestBody = {
@@ -206,13 +207,13 @@ describe('OrdersController', () => {
         quantity: 2,
       };
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(null);
-  
+
       // Act & Assert
       await expect(controller.update(requestBody)).rejects.toThrow(BadRequestException)
         .catch((e) => expect(e.message).toBe('Invalid token'));
       expect(authService.verifyToken).toHaveBeenCalledWith(requestBody.token);
     });
-  
+
     it('should throw NotFoundException if order is not found', async () => {
       // Arrange
       const requestBody = {
@@ -222,9 +223,9 @@ describe('OrdersController', () => {
         quantity: 2,
       };
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(
-        { id: 1, role: StaffRole.STAFF});
+        { id: 1, role: StaffRole.STAFF });
       jest.spyOn(ordersService, 'addQuantity').mockResolvedValue(null);
-  
+
       // Act & Assert
       await expect(controller.update(requestBody)).rejects.toThrow(NotFoundException);
       expect(authService.verifyToken).toHaveBeenCalledWith(requestBody.token);
@@ -236,7 +237,7 @@ describe('OrdersController', () => {
       });
     });
   });
-  
+
   describe('updateIngredients', () => {
     it('should update the ingredients of an order', async () => {
       // Arrange
@@ -246,15 +247,15 @@ describe('OrdersController', () => {
       };
       const order = { id: 1 } as Order;
       jest.spyOn(ordersService, 'updateIngredients').mockResolvedValue(order);
-  
+
       // Act
       const result = await controller.updateIngredients(requestBody);
-  
+
       // Assert
       expect(ordersService.updateIngredients).toHaveBeenCalledWith(requestBody);
       expect(result).toEqual(order);
     });
-  
+
     it('should throw NotFoundException if order is not found', async () => {
       // Arrange
       const requestBody = {
@@ -262,14 +263,14 @@ describe('OrdersController', () => {
         ingredients: ['ingredient1', 'ingredient2'],
       };
       jest.spyOn(ordersService, 'updateIngredients').mockResolvedValue(null);
-  
+
       // Act & Assert
       await expect(controller.updateIngredients(requestBody)).rejects.toThrow(NotFoundException)
-      .catch((e) => expect(e.message).toBe('Order not found'));
+        .catch((e) => expect(e.message).toBe('Order not found'));
       expect(ordersService.updateIngredients).toHaveBeenCalledWith(requestBody);
     });
   });
-  
+
   describe('remove', () => {
     it('should remove an order', async () => {
       // Arrange
@@ -280,10 +281,10 @@ describe('OrdersController', () => {
       };
       const order = { id: 1 } as Order;
       jest.spyOn(ordersService, 'remove').mockResolvedValue(order);
-  
+
       // Act
       const result = await controller.remove(requestBody);
-  
+
       // Assert
       expect(ordersService.remove).toHaveBeenCalledWith({
         reservation_id: requestBody.reservation_id,
@@ -292,7 +293,7 @@ describe('OrdersController', () => {
       });
       expect(result).toEqual(order);
     });
-  
+
     it('should throw NotFoundException if order is not found', async () => {
       // Arrange
       const requestBody = {
@@ -301,12 +302,12 @@ describe('OrdersController', () => {
         token: 'token',
       };
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(null);
-  
+
       // Act & Assert
       await expect(controller.remove(requestBody)).rejects.toThrow(BadRequestException);
     });
   });
-  
+
   describe('partialBill', () => {
     it('should calculate the partial bill for a customer', async () => {
       // Arrange
@@ -316,16 +317,16 @@ describe('OrdersController', () => {
       };
       const bill = 50;
       jest.spyOn(ordersService, 'getPartialBill').mockResolvedValue(bill);
-  
+
       // Act
       const result = await controller.partialBill(requestBody);
-  
+
       // Assert
       expect(ordersService.getPartialBill).toHaveBeenCalledWith(requestBody);
       expect(result).toEqual(bill);
     });
   });
-  
+
   describe('RomanBill', () => {
     it('should calculate the full bill for a customer', async () => {
       // Arrange
@@ -333,18 +334,18 @@ describe('OrdersController', () => {
         customer_id: 1,
         reservation_id: 1,
       };
-      const bill = 100;
+      const bill = "100";
       jest.spyOn(ordersService, 'getRomanBill').mockResolvedValue(bill);
-  
+
       // Act
       const result = await controller.fullBill(requestBody);
-  
+
       // Assert
       expect(ordersService.getRomanBill).toHaveBeenCalledWith(requestBody);
       expect(result).toEqual(bill);
     });
   });
-  
+
   describe('updateListOrders', () => {
     it('should update the list of orders for a reservation', async () => {
       // Arrange
@@ -355,12 +356,12 @@ describe('OrdersController', () => {
       };
 
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(
-        { id: 1, role: StaffRole.ADMIN});
+        { id: 1, role: StaffRole.ADMIN });
       jest.spyOn(ordersService, 'updateListOrders').mockResolvedValue(true);
-  
+
       // Act
       const result = await controller.updateListOrders(requestBody);
-  
+
       // Assert
       expect(authService.verifyToken).toHaveBeenCalledWith(requestBody.token);
       expect(ordersService.updateListOrders).toHaveBeenCalledWith({
@@ -370,7 +371,7 @@ describe('OrdersController', () => {
       });
       expect(result).toEqual(true);
     });
-  
+
     it('should throw BadRequestException if token is invalid', async () => {
       // Arrange
       const requestBody = {
@@ -379,28 +380,28 @@ describe('OrdersController', () => {
         orders: [{ id: 1 }, { id: 2 }],
       };
       jest.spyOn(authService, 'verifyToken').mockResolvedValue(null);
-  
+
       // Act & Assert
       await expect(controller.updateListOrders(requestBody)).rejects.toThrow(BadRequestException);
       expect(authService.verifyToken).toHaveBeenCalledWith(requestBody.token);
     });
   });
-  
+
   describe('getReservationOrders', () => {
     it('should get the orders for a reservation', async () => {
       // Arrange
       const reservationId = 1;
       const orders = [{ id: 1 }, { id: 2 }] as Order[];
       jest.spyOn(ordersService, 'getReservationOrders').mockResolvedValue(orders);
-  
+
       // Act
       const result = await controller.getReservationOrders(reservationId);
-  
+
       // Assert
       expect(ordersService.getReservationOrders).toHaveBeenCalledWith(+reservationId);
       expect(result).toEqual(orders);
     });
-  
+
     it('should throw NotFoundException if no orders found for the reservation', async () => {
       // Arrange
       const reservationId = 1;
@@ -434,6 +435,23 @@ describe('OrdersController', () => {
       expect(result).toBeNull();
     });
   });
-});
 
+  describe('totalBill', () => {
+    it('should calculate the total bill for a reservation', async () => {
+      // Arrange
+      const requestBody = {
+        reservation_id: 1,
+      };
+      const bill = 100;
+      jest.spyOn(ordersService, 'getTotalBill').mockResolvedValue(bill);
+
+      // Act
+      const result = await controller.totalBill(requestBody);
+
+      // Assert
+      expect(ordersService.getTotalBill).toHaveBeenCalledWith(requestBody);
+      expect(result).toEqual(bill);
+    });
+  });
+});
 

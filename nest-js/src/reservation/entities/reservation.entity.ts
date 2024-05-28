@@ -39,4 +39,7 @@ export class Reservation {
     @ManyToOne(() => Restaurant, restaurant => restaurant.reservations)
     @JoinColumn({ name: 'restaurant_id' })
     restaurant: Restaurant;
+
+    @Column( {default: false} )
+    isRomanBill: boolean;
 }

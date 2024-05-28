@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class FullBillDTO {
+export class RomanBillDTO {
   @IsNotEmpty()
   customer_id: number;
 

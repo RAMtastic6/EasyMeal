@@ -6,6 +6,7 @@ import { Endpoints } from '../lib/database/endpoints';
 import { Socket, io } from 'socket.io-client';
 import { getToken, verifySession } from '../lib/dal';
 import { deleteOrders, saveOrders } from '../lib/database/order';
+import PaymentMethod from './payment_method';
 
 export default function MenuTable(
 	{ menuData, params }: {
@@ -91,11 +92,6 @@ export default function MenuTable(
 		setPrice(newMenu.foods.reduce((acc, food) => acc + food.price * food.quantity, 0));
 	};
 
-	const [selectedOption, setSelectedOption] = useState('AllaRomana');
-
-	const handleOptionChange = (option: string) => {
-		setSelectedOption(option);
-	};
 
 	return (
 		<>
@@ -142,66 +138,9 @@ export default function MenuTable(
 			<span className="flex items-center mt-8">
 				<span className="h-px flex-1 bg-orange-950"></span>
 			</span>
-
-			<div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-				<div className="mx-auto max-w-3xl">
-					<header className="text-center">
-						<h1 className="text-xl font-bold text-orange-950 sm:text-3xl">Il vostro ordine</h1>
-					</header>
-
-					<div className="mt-8">
-						<div className="mt-8 flex justify-end border-t border-gray-100 pt-8">
-							<div className="w-screen max-w-lg space-y-4">
-								<dl className="space-y-0.5 text-sm text-gray-700">
-									<div className="flex justify-between">
-										<dt>Totale</dt>
-										<dd data-testid="total-price">€{price}</dd>
-									</div>
-								</dl>
-
-								<div className="flex justify-between !text-base font-medium">
-									<dt>La tua parte:</dt>
-								</div>
-								<div>
-									<label
-										htmlFor="AllaRomana"
-										className={`flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-gray-100 bg-white p-4 text-sm font-medium shadow-sm hover:border-gray-200 ${selectedOption === 'AllaRomana' ? 'has-[:checked]:border-orange-700 has-[:checked]:ring-1 has-[:checked]:ring-orange-700' : ''}`}
-										onClick={() => handleOptionChange('AllaRomana')}
-									>
-										<p className="text-gray-700">Alla romana</p>
-										<input
-											type="radio"
-											className="sr-only"
-											id="AllaRomana"
-											checked={selectedOption === 'AllaRomana'}
-											onChange={() => handleOptionChange('AllaRomana')}
-										/>
-									</label>
-								</div>
-
-								<div>
-									<label
-										htmlFor="Ognuno"
-										className={`flex items-center justify-between gap-4 rounded-lg bg-gray-100 p-4 text-sm font-medium shadow-sm`}
-									>
-										<p className="text-gray-700">Ognun per sé (Coming Soon)</p>
-										<input
-											type="radio"
-											className="sr-only"
-											id="Ognuno"
-											disabled
-										/>
-									</label>
-								</div>
-
-								<div className="flex justify-end">
-									<div className="sm:flex sm:gap-4">
-										<Link className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" href={`${params.number}/checkout/`}> Checkout </Link>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+			<div className="flex justify-center mt-4">
+				<div className="sm:flex sm:gap-4">
+					<Link className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" href={`${params.number}/checkout/`}> Checkout </Link>
 				</div>
 			</div>
 		</>

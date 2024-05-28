@@ -69,13 +69,14 @@ export class ReservationService {
     user_id: number,
     reservation_id: number
   }) {
-    const reservation = await this.reservationRepository.findOne({ where: { id: params.reservation_id },
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: params.reservation_id },
       relations: { users: true },
     });
     if (reservation == null) {
       return null
     }
-    if(reservation.number_people <= reservation.users.length) {
+    if (reservation.number_people <= reservation.users.length) {
       return false;
     }
     const user = await this.userService.findOne(params.user_id);
@@ -185,15 +186,17 @@ export class ReservationService {
     await this.reservationRepository.update({ id }, { state });
     //Notify all the users of the reservation changed status
 
-    for (const user of reservation.users) {
-      /*if(user.id === user_id) {
-        continue;
-      }*/
-      await this.notificationService.create({
-        message: `La tua prenotazione con id: ${id} è in: ${state}`,
-        title: 'Aggiornamento prenotazione',
-        id_receiver: user.id,
-      });
+    if (state == ReservationStatus.ACCEPTED || state == ReservationStatus.REJECTED) {
+      for (const user of reservation.users) {
+        /*if(user.id === user_id) {
+          continue;
+        }*/
+        await this.notificationService.create({
+          message: `La tua prenotazione con id: ${id} è in: ${state}`,
+          title: 'Aggiornamento prenotazione',
+          id_receiver: user.id,
+        });
+      }
     }
     return true;
   }
@@ -225,6 +228,17 @@ export class ReservationService {
     if(reservation == null) {
       return false;
     }
+    return true;
+  }
+
+  async setPaymentMethod(reservation_id: number, isRomanBill: boolean) {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservation_id },
+    });
+    if (reservation == null || reservation.state !== ReservationStatus.ACCEPTED) {
+      return null;
+    }
+    await this.reservationRepository.update({ id: reservation_id }, { isRomanBill });
     return true;
   }
 }

@@ -1,5 +1,6 @@
 "use server";
 import { redirect } from 'next/navigation';
+import PaymentMethod from '@/src/components/payment_method';
 import { IngredientChart } from '../../../../components/ingredient_chart';
 import { UserInvite } from '../../../../components/user_invite';
 import { getOrderByReservationId } from '../../../../lib/database/order';
@@ -36,7 +37,9 @@ export default async function Page({
     );
   }
   return (
-    <IngredientChart fetchedOrders={orders} reservationId={number} />
+    <>
+      <IngredientChart fetchedOrders={orders} reservationId={number} />
+    </>
   );
 }
 

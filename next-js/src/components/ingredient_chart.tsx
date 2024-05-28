@@ -4,11 +4,14 @@ import { io, Socket } from "socket.io-client";
 import { Endpoints } from "../lib/database/endpoints";
 import { saveOrders, updateIngredientsOrder, updateListOrders } from "../lib/database/order";
 import { getToken } from "../lib/dal";
+import PaymentMethod from "./payment_method";
+import { setPaymentMethod } from "../lib/database/reservation";
 
 
 
 export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrders: any, reservationId: number }) {
   const [orders, setOrders] = useState<any>(fetchedOrders);
+  const [selectedOption, setSelectedOption] = useState('AllaRomana');
   const socket = useRef<Socket>();
 
   console.log(fetchedOrders);
@@ -42,7 +45,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
 
   useEffect(() => {
     getToken().then((token) => {
-      if(!token) return;
+      if (!token) return;
       socket.current = io(Endpoints.socket, {
         query: {
           id_prenotazione: reservationId,
@@ -66,7 +69,9 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
       reservation_id: reservationId,
       orders: orders,
     });
-    if (result == false) {
+    const isRomanBill = selectedOption === 'AllaRomana' ? true : false;
+    const payment_method = await setPaymentMethod({ reservation_id: reservationId, isRomanBill });
+    if (result == false || payment_method == false) {
       alert('Ordine già confermato!');
       return;
     }
@@ -75,6 +80,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
     });
     
     alert('Ordine aggiornato');
+    //TODO: riepilogo ordine? pagina apposta?
   }
 
   return (
@@ -104,10 +110,16 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
           </div>
         </div>
       ))}
+      <PaymentMethod selectedOption={selectedOption} setSelectedOption={setSelectedOption} params={reservationId} />
       {/* Conferma */}
-      <div className="flex justify-center my-4">
-        <button onClick={submit} className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded" data-testid="conferma-button">Conferma</button>
+      <div className="flex justify-center mt-4 my-20">
+        <div className="sm:flex sm:gap-4">
+          <button onClick={submit} className="inline-block rounded bg-orange-950 px-8 py-3 text-sm font-medium text-white hover:bg-orange-900 focus:outline-none focus:ring" data-testid="conferma-button">
+            Conferma
+          </button>
+        </div>
       </div>
+
     </>
   );
 }

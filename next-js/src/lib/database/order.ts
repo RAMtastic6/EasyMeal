@@ -4,13 +4,14 @@ import { Endpoints } from "./endpoints";
 import { verifySession } from "../dal";
 import exp from "constants";
 import { redirect } from "next/dist/server/api-utils";
+import { getToken } from "../dal";
 
 export async function getOrderByReservationId(id: number) {
 	const res = await fetch(Endpoints.order + 'reservation/' + id, {
 		method: 'GET',
 		cache: 'no-cache',
 	});
-	if(res.status === 404) {
+	if (res.status === 404) {
 		return null;
 	}
 	const data = await res.json();
@@ -25,16 +26,20 @@ export async function getOrderByReservationId(id: number) {
 	return sortedData;
 }
 
-export async function getRomanBill(id: number) {
-	const res = await fetch(Endpoints.order + '/romanBill', {
+export async function getRomanBill(data: {
+	customer_id: number,
+	reservation_id: number,
+}) {
+	const request = await fetch(Endpoints.order + 'romanBill', {
 		method: 'POST',
+		cache: 'no-cache',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ reservation_id: id })
+		body: JSON.stringify(data),
 	});
-	const data = await res.json();
-	return data;
+	const result = await request.json();
+	return result;
 }
 
 export async function saveOrders(data: {
@@ -42,7 +47,7 @@ export async function saveOrders(data: {
 	food_id: number,
 }) {
 	const token = cookies().get('session')?.value;
-	if(!token) {
+	if (!token) {
 		return false;
 	}
 	const request = await fetch(Endpoints.order + "create", {
@@ -64,7 +69,7 @@ export async function deleteOrders(data: {
 	food_id: number,
 }) {
 	const token = cookies().get('session')?.value;
-	if(!token) {
+	if (!token) {
 		return false;
 	}
 	const request = await fetch(Endpoints.order + "remove", {
@@ -87,7 +92,7 @@ export async function updateIngredientsOrder(data: {
 	ingredients: any[],
 }) {
 	const token = cookies().get('session')?.value;
-	if(!token) {
+	if (!token) {
 		return false;
 	}
 	const request = await fetch(Endpoints.order + 'updateIngredients', {
@@ -106,7 +111,7 @@ export async function updateIngredientsOrder(data: {
 
 export async function updateListOrders(data: any) {
 	const token = cookies().get('session')?.value;
-	if(!token) {
+	if (!token) {
 		return false;
 	}
 	// Togliamo la categoria dagli ordini
@@ -115,20 +120,97 @@ export async function updateListOrders(data: any) {
 		return acc;
 	}, []);
 	const request = await fetch(Endpoints.order + 'updateListOrders', {
-			method: 'POST',
-			cache: 'no-cache',
-			headers: {
-					'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-					orders,
-					reservation_id: data.reservation_id,
-					token: token,
-			}),
+		method: 'POST',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			orders,
+			reservation_id: data.reservation_id,
+			token: token,
+		}),
 	});
-	if(request.status !== 200) {
+	if (request.status !== 200) {
 		console.log(request.status);
-		return false; 
+		return false;
+	}
+	const result = await request.json();
+	return result;
+}
+
+export async function getPartialBill(data: {
+	customer_id: number,
+	reservation_id: number,
+}) {
+	const request = await fetch(Endpoints.order + 'partialBill', {
+		method: 'POST',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(data),
+	});
+	const result = await request.json();
+	return result;
+}
+
+export async function getTotalBill(data: {
+	reservation_id: number,
+}) {
+	const request = await fetch(Endpoints.order + 'totalBill', {
+		method: 'POST',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(data),
+	});
+	const result = await request.json();
+	return result;
+}
+
+export async function pay(
+	data: {
+		reservation_id: number,
+	}) {
+	const session = await verifySession();
+	const request = await fetch(Endpoints.order + 'pay', {
+		method: 'POST',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			reservation_id: data.reservation_id,
+			user_id: session.id,
+		}),
+	});
+	if(!request.ok) {
+		return false;
+	}
+	const result = await request.json();
+	return result;
+}
+
+export async function checkOrdersPayStatus(data: {
+	reservation_id: number,
+}) {
+	const token = await getToken();
+	const request = await fetch(Endpoints.order + 'checkOrdersPayStatus', {
+		method: 'POST',
+		cache: 'no-cache',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			reservation_id: data.reservation_id,
+			token: token,
+		}),
+	});
+	console.log(request.status);
+	if(!request.ok) {
+		return false;
 	}
 	const result = await request.json();
 	return result;
