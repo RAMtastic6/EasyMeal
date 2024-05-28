@@ -89,7 +89,7 @@ export function IngredientChart({ fetchedOrders, reservationId }: { fetchedOrder
     <>
       {Object.keys(orders).map((key: string) => (
         <div key={orders[key]} className="container mx-auto">
-          <h1 className="text-3xl font-bold mb-4">{key}</h1>
+          <h1 className="text-2xl font-bold pt-2 pl-4 mb-4">{key}</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {orders[key].map((order: any, dishIndex: number) => (
               <div key={dishIndex} className="bg-white shadow-md rounded p-4">

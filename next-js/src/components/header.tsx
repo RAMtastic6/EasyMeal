@@ -40,28 +40,64 @@ export default function Header({ isLogin, isAdmin }: { isLogin: boolean, isAdmin
 						</div>
 					</div>
 				</div>
-				<div className="mt-4 flex items-center justify-center space-x-4 border-t-2 border-black px-4 py-2"> {/* Aggiunta del padding ai lati */}
-					<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/" data-testid="home-link">Home</Link>
-					<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/create_reservation" data-testid="create-reservation-link">Crea prenotazione</Link> 
-					{isAdmin && (
-						<Link
-							href="/admin/reservations_list"
-							className="text-white font-medium hover:text-gray-800 text-lg underline"
-							data-testid="admin-reservations-link"
-						>
-							Lista prenotazioni ristorante
-						</Link>
-					)} 
-					{!isAdmin && (
-						<Link
-							href="/user/reservations_list"
-							className="text-white font-medium hover:text-gray-800 text-lg underline"
-							data-testid="user-reservations-link"
-						>
-							Lista prenotazioni utente
-						</Link>
-					)}
+				<div className="mt-4 flex items-center justify-center space-x-4 border-t-2 border-black px-4 py-2 hidden md:block"> {/* Aggiunta del padding ai lati */}
+							<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/" data-testid="home-link">Home</Link>
+							<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/create_reservation" data-testid="create-reservation-link">Crea prenotazione</Link> 
+							{isAdmin && (
+								<Link
+									href="/admin/reservations_list"
+									className="text-white font-medium hover:text-gray-800 text-lg underline"
+									data-testid="admin-reservations-link"
+								>
+									Lista prenotazioni ristorante
+								</Link>
+							)} 
+							{!isAdmin && (
+								<Link
+									href="/user/reservations_list"
+									className="text-white font-medium hover:text-gray-800 text-lg underline"
+									data-testid="user-reservations-link"
+								>
+									Lista prenotazioni utente
+								</Link>
+							)}
+					
+					
+					
 				</div>
+
+				<div className="mt-4 flex items-center justify-center space-x-4 border-t-2 border-black px-4 py-2 block md:hidden text-xs"> {/* Aggiunta del padding ai lati */}
+					<ul className="text-center list-none">
+						<li>
+							<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/" data-testid="home-link">Home</Link>
+						</li>
+						<li>
+							<Link className="text-white font-medium hover:text-gray-800 text-lg underline" href="/create_reservation" data-testid="create-reservation-link">Crea prenotazione</Link> 
+						</li>
+						<li>
+							{isAdmin && (
+								<Link
+									href="/admin/reservations_list"
+									className="text-white font-medium hover:text-gray-800 text-lg underline"
+									data-testid="admin-reservations-link"
+								>
+									Lista prenotazioni ristorante
+								</Link>
+							)} 
+							{!isAdmin && (
+								<Link
+									href="/user/reservations_list"
+									className="text-white font-medium hover:text-gray-800 text-lg underline"
+									data-testid="user-reservations-link"
+								>
+									Lista prenotazioni utente
+								</Link>
+							)}
+						</li>
+					</ul>
+				</div>
+
+
 			</div>
 		</header>
 	);

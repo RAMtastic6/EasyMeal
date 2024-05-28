@@ -79,18 +79,18 @@ describe('Verifica il funzionamento frontend del componente ReservationsUser', (
     });
 
     // Verifica dei nomi dei ristoranti
-    expect(screen.getByText('Ristorante 1')).toBeInTheDocument();
-    expect(screen.getByText('Ristorante 2')).toBeInTheDocument();
-    expect(screen.getByText('Ristorante 3')).toBeInTheDocument();
-    expect(screen.getByText('Ristorante 4')).toBeInTheDocument();
-    expect(screen.getByText('Ristorante 5')).toBeInTheDocument();
+    expect(screen.getAllByText('Ristorante 1')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Ristorante 2')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Ristorante 3')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Ristorante 4')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Ristorante 5')[0]).toBeInTheDocument();
 
     // Verifica degli stati delle prenotazioni
-    expect(screen.getByText('In attesa di conferma')).toBeInTheDocument();
-    expect(screen.getByText('Accettata')).toBeInTheDocument();
-    expect(screen.getByText('Rifiutata')).toBeInTheDocument();
-    expect(screen.getByText('Da pagare')).toBeInTheDocument();
-    expect(screen.getByText('Completata')).toBeInTheDocument();
+    expect(screen.getAllByText('In attesa di conferma')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Accettata')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Rifiutata')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Da pagare')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Completata')[0]).toBeInTheDocument();
 
     // Verifica quantità prenotazioni
     expect(screen.getByText('Visualizzate 5 prenotazioni')).toBeInTheDocument();

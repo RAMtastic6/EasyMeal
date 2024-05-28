@@ -49,11 +49,11 @@ describe('Verifica il funzionamento frontend del componente ReservationsAdmin', 
       expect(getReservationsByAdminId).toHaveBeenCalledTimes(1);
     });
 
-    expect(screen.getByText('In attesa di conferma')).toBeInTheDocument();
-    expect(screen.getByText('Accettata')).toBeInTheDocument();
-    expect(screen.getByText('Rifiutata')).toBeInTheDocument();
-    expect(screen.getByText('Da pagare')).toBeInTheDocument();
-    expect(screen.getByText('Completata')).toBeInTheDocument();
+    expect(screen.getAllByText('In attesa di conferma')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Accettata')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Rifiutata')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Da pagare')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Completata')[0]).toBeInTheDocument();
 
   });
 });
