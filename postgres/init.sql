@@ -1258,11 +1258,11 @@ INSERT INTO public.staff (id, restaurant_id, user_id, ruolo) VALUES (2, 2, 2, 'a
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (2, 'test', 'test', 'admin2@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'admin1@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (3, 'test', 'test', 'admin3@dc.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (4, 'dc', 'dc', 'dc@', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
-INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (5, 's', 's', 'sas@sas', '$2b$13$igZzV4v/GS9ysbULdYwV.uzWS4BPwGlGc9K063kEbr21d9rgMcutK');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (2, 'test', 'test', 'admin2@admin.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (1, 'user', 'user', 'admin1@admin.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (3, 'test', 'test', 'admin3@admin.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (4, 'user', 'user', 'user1@user.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
+INSERT INTO public."user" (id, name, surname, email, password) OVERRIDING SYSTEM VALUE VALUES (5, 'user2', 'user2', 'user2@user.it', '$2b$13$sOqnpSq4PnqCEPhA9Zj1leHA1VV3lQ5fm3Z9eYtnFY3617/jbtkfG');
 
 
 --
