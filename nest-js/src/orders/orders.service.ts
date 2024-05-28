@@ -242,7 +242,6 @@ export class OrdersService {
         });
       }
     };
-    await this.reservationService.updateStatus(reservation_id, ReservationStatus.TO_PAY);
 
     // prendere admin tramite l'id del ristorante
     const admin = await this.staffService.getAdminByRestaurantId(reservation.restaurant_id); 

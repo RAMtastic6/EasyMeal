@@ -239,6 +239,7 @@ export class ReservationService {
       return null;
     }
     await this.reservationRepository.update({ id: reservation_id }, { isRomanBill });
+    await this.updateStatus(reservation_id, ReservationStatus.TO_PAY);
     return true;
   }
 }
