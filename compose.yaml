@@ -1,0 +1,97 @@
+#version: '3' <- deprecated
+
+services:
+  postgres:
+    networks:
+      - webnet
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: easy-meal
+    volumes:
+      - ./postgres/:/docker-entrypoint-initdb.d
+      - db:/var/lib/postgresql/data
+    ports:
+      - "7070:7070"
+    command: -p 7070
+
+  backend:
+    networks:
+      - webnet
+    build: 
+      context: nest-js/.
+      dockerfile: Dockerfile
+    ports:
+      - "6969:6969"
+    command: npm run start:dev
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_PORT=7070
+      - POSTGRES_HOST=postgres
+    develop:
+      watch:
+        - path: ./nest-js
+          target: /var/backend
+          action: sync
+          ignore:
+            - node_modules/
+        - path: ./nest-js/package.json
+          target: /var/backend/package.json
+          action: rebuild
+
+  socket:
+    networks:
+      - webnet
+    build: 
+      context: websocket-server/.
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    command: npm run start:dev
+    environment:
+      - BACKEND_HOST=backend
+    develop:
+      watch:
+        - path: ./websocket-server
+          target: /var/socket
+          action: sync
+          ignore:
+            - node_modules/
+        - path: ./websocket-server/package.json
+          target: /var/socket/package.json
+          action: rebuild
+
+  frontend:
+    networks:
+      - webnet
+    build:
+      context: next-js/.
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    develop:
+      watch:
+        - path: ./next-js
+          target: /var/frontend
+          action: sync
+          ignore:
+            - node_modules/
+        - path: ./next-js/package.json
+          target: /var/frontend/package.json
+          action: rebuild
+    environment:
+      - BACKEND_HOST=backend
+      - SOCKET=socket
+    command: npm run dev
+    depends_on:
+      - backend
+      
+networks:
+  webnet:
+    driver: bridge
+
+volumes:
+  db:
+    driver: local
