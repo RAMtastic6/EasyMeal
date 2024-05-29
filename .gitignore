@@ -1,7 +1,11 @@
 .vscode
 
-## MACOS
+### macOS ###
+
 .DS_Store
+.AppleDouble
+.LSOverride
+
 # Logs
 logs
 *.log
