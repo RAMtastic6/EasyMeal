@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/RAMtastic6/EasyMeal/badge.svg?branch=develop)](https://coveralls.io/github/RAMtastic6/EasyMeal?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/RAMtastic6/EasyMeal/badge.svg)](https://coveralls.io/github/RAMtastic6/EasyMeal)
 # EasyMeal
 Progetto del gruppo 14 per il capitolato Easy Meal.
 
