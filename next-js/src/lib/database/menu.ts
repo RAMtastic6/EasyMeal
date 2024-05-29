@@ -3,8 +3,8 @@ import { Endpoints } from "./endpoints";
 
 export async function getMenuByRestaurantId(id: number) {
     const response = await fetch(`${Endpoints.restaurant}${id}/menu`, {cache: "no-cache"});
-    if (!response.ok) {
-        throw new Error('Error fetching menu from the database');
+    if(!response.ok) {
+        return null
     }
     const data = await response.json();
     return data;

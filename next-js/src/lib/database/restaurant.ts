@@ -93,6 +93,7 @@ export async function getRestaurantsTotalPages(params: RestaurantFilter, ITEMS_P
 		cache: 'no-cache',
 	});
 	if (!response.ok) {
+		console.log(response.statusText);
 		throw new Error('Error fetching total pages from the database');
 	}
 	const data = await response.json()

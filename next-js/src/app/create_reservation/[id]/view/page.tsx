@@ -23,10 +23,8 @@ export default function Page({ params }: { params: { id: string } }) {
       console.log(result.menu_id);
       // chiamata che prende il menu
       const menu_data = await getMenuByRestaurantId(result.menu_id);
-      console.log(menu_data.menu.foods);
-
       setRestaurant(result);
-      setMenu(menu_data.menu.foods);
+      setMenu(menu_data?.menu?.foods ?? null);
       setLoading(false);
     }
     fetchData();
@@ -54,10 +52,12 @@ export default function Page({ params }: { params: { id: string } }) {
         </div>
         <div className="space-y-4">
           <div>
-            <FoodList menu={menu} />
+            {menu && <FoodList menu={menu} />}
+            {!menu && <p>Menu non disponibile</p>}
           </div>
           <div>
-            <ReservationForm restaurant_id={parseInt(id)} />
+            {menu && <ReservationForm restaurant_id={parseInt(id)} />}
+            {!menu && <p>Non è possibile prenotare in questo ristorante</p>}
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { Restaurant } from './entities/restaurant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { StaffRole } from '../staff/enities/staff.entity';
+import { Day } from '../daysopen/entities/daysopen.entity';
 
 @Injectable()
 export class RestaurantService {
@@ -21,8 +22,12 @@ export class RestaurantService {
   }, currentPage: number, ITEMS_PER_PAGE: number): Promise<Restaurant[]> {
     let queryBuilder = this.restaurantRepo.createQueryBuilder('restaurant');
     if (query.date) {
-      const dayOfWeek = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][new Date(query.date).getDay()];
-      queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
+      const date = new Date(query.date);
+      const dayOfWeek = date.getDay(); // 0 (Sunday) - 6 (Saturday)
+      const dayEnum = dayOfWeek; 
+      queryBuilder = queryBuilder
+          .innerJoin('restaurant.daysOpen', 'daysOpen')
+          .where('daysOpen.dayOpen = :day', { day: dayEnum });
     }
     if (query.name) {
       queryBuilder = queryBuilder.andWhere('restaurant.name LIKE :name', { name: `%${query.name}%` });
@@ -139,8 +144,12 @@ export class RestaurantService {
   }) {
     let queryBuilder = this.restaurantRepo.createQueryBuilder('restaurant');
     if (query.date) {
-      const dayOfWeek = ["domenica", "lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato"][new Date(query.date).getDay()];
-      queryBuilder = queryBuilder.innerJoin('restaurant.daysOpen', 'daysOpen', 'daysOpen.dayOpen = :dayOfWeek', { dayOfWeek });
+      const date = new Date(query.date);
+      const dayOfWeek = date.getDay(); // 0 (Sunday) - 6 (Saturday)
+      const dayEnum = dayOfWeek; 
+      queryBuilder = queryBuilder
+          .innerJoin('restaurant.daysOpen', 'daysOpen')
+          .where('daysOpen.dayOpen = :day', { day: dayEnum });
     }
     if (query.name) {
       queryBuilder = queryBuilder.andWhere('restaurant.name LIKE :name', { name: `%${query.name}%` });

@@ -63,6 +63,7 @@ describe('RestaurantService', () => {
       const queryBuilder = {
         innerJoin: () => queryBuilder,
         andWhere: () => queryBuilder,
+        where: () => queryBuilder,
         getMany: jest.fn().mockReturnValue([]),
         skip: () => ({
           take: () => queryBuilder

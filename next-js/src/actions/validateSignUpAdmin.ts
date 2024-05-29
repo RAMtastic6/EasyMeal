@@ -65,9 +65,9 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
     closing: string;
   }[] = [];
   daysOfWeek.forEach((day: Day, index: number) => {
-    const isOpen = data[`${day}-isOpen`] === 'on';
-    const opening: string = data[`${day}-apertura`];
-    const closing: string = data[`${day}-chiusura`];
+    const isOpen = formData.get(`${day}-isOpen`) === 'on';
+    const opening: string = formData.get(`${day}-apertura`) as string;
+    const closing: string = formData.get(`${day}-chiusura`) as string;
     if (isOpen && opening && closing) {
       daysOpenData.push({
         day_open: index,
@@ -76,6 +76,7 @@ export async function validateSignUpAdmin(prevState: any, formData: FormData) {
       });
     }
   });
+  console.log('daysOpenData', daysOpenData);
 
   const json: AdminDto = {
     email: data['email'],
