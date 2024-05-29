@@ -41,9 +41,11 @@ export class DaysopenService {
         opening: day.opening,
         closing: day.closing
       });
+      console.log(daysopen);
       await manager.save(daysopen);
       }
+      return true;
     }
-    return true;
+    return false;
   }
 }

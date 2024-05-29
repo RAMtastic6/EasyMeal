@@ -125,6 +125,7 @@ export class UserService {
 
       await query.commitTransaction();
     } catch(e) {
+      console.log(e)
       if(query.isTransactionActive)
         await query.rollbackTransaction();
       result = null;
